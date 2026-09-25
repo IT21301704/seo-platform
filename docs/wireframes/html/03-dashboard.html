@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<title>Dashboard</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;background:#F4F4F1}
+a{color:#2446C7}a:hover{color:#16308F}
+.card{background:#fff;border:1px solid #E1E1DC;border-radius:10px;box-sizing:border-box}
+.lbl{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#5C6066;font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border-radius:8px;background:#2446C7;color:#fff;font-family:'IBM Plex Sans',sans-serif;font-size:14px;font-weight:600;border:0;text-decoration:none;box-sizing:border-box;cursor:pointer}
+a.btn:hover{color:#fff;background:#1B389F}
+.btn2{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border-radius:8px;background:#fff;color:#1A1D21;font-family:'IBM Plex Sans',sans-serif;font-size:14px;font-weight:600;border:1px solid #CFCFC8;text-decoration:none;box-sizing:border-box;cursor:pointer}
+a.btn2:hover{color:#1A1D21;background:#F4F4F1}
+.pill{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;font-weight:600;white-space:nowrap}
+.crit{background:#FDECEA;color:#B42318}.high{background:#FEF0E1;color:#A64206}.med{background:#FBF4D9;color:#7A5E00}.low{background:#E6F4EA;color:#1F7A3A}.info{background:#EEF1FB;color:#2446C7}.gray{background:#EFEFEB;color:#4A4E54}
+.mono{font-family:'IBM Plex Mono',monospace}
+table{border-collapse:collapse;width:100%}
+th{font-size:12px;text-align:left;color:#5C6066;font-weight:600;padding:10px 12px;border-bottom:1px solid #E1E1DC;text-transform:uppercase;letter-spacing:.04em}
+td{font-size:14px;padding:11px 12px;border-bottom:1px solid #EDEDE8;vertical-align:middle}
+.bar{height:8px;border-radius:4px;background:#EDEDE8;overflow:hidden}
+.bar>div{height:100%;background:#2446C7;border-radius:4px}
+</style>
+
+</head>
+<body>
+<div id="root"><div style="width: 1280px; height: 900px; display: flex; background: #F4F4F1; font-family: 'IBM Plex Sans', sans-serif; color: #1A1D21">
+<div data-scope="sidebar" data-active="dashboard" style="display:contents"><nav aria-label="Main navigation" style="width: 240px; flex-shrink: 0; height: 900px; box-sizing: border-box; background: #15181D; color: #E8E8E3; font-family: 'IBM Plex Sans', sans-serif; display: flex; flex-direction: column; gap: 16px; padding: 18px 14px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 8px">
+<div style="width: 28px; height: 28px; border-radius: 7px; background: #2446C7; display: flex; align-items: center; justify-content: center">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l5-5 4 4 7-8"></path></svg>
+</div>
+<span style="font-size: 16px; font-weight: 700">[Product name]</span>
+</div>
+<div style="background: #22262D; border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 11px; color: #A3A7AD; text-transform: uppercase; letter-spacing: 0.06em">Project</span>
+<span style="font-size: 14px; font-weight: 600">example-store.com</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 16px">
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 11px; color: #8D9197; text-transform: uppercase; letter-spacing: 0.08em; padding: 0 12px 4px">Analyse</span>
+
+<a href="03-dashboard.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;background:#2446C7;color:#FFFFFF;font-weight:600;">Dashboard</a>
+
+<a href="04-issue-manager.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Issue manager</a>
+
+<a href="13-sitemap-check.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Sitemap check</a>
+
+<a href="06-ai-copilot.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">AI Copilot</a>
+
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 11px; color: #8D9197; text-transform: uppercase; letter-spacing: 0.08em; padding: 0 12px 4px">Fix</span>
+
+<a href="07-auto-fix-review.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Auto-fix review</a>
+
+<a href="14-sitemap-url-lists.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Sitemap URL lists</a>
+
+<a href="08-change-log.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Change log</a>
+
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 11px; color: #8D9197; text-transform: uppercase; letter-spacing: 0.08em; padding: 0 12px 4px">Grow</span>
+
+<a href="15-keyword-research.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Keyword research</a>
+
+<a href="10-monitoring.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Monitoring</a>
+
+<a href="11-authority.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Authority (off-page)</a>
+
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 11px; color: #8D9197; text-transform: uppercase; letter-spacing: 0.08em; padding: 0 12px 4px">Settings</span>
+
+<a href="09-integrations.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Integrations</a>
+
+<a href="12-plans-billing.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Plans &amp; billing</a>
+
+<a href="01-add-website.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Add website</a>
+
+</div>
+
+</div>
+<div style="margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 12px 8px 0; border-top: 1px solid #2C3038">
+<div style="width: 32px; height: 32px; border-radius: 16px; background: #3A3F48; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600">AP</div>
+<div style="display: flex; flex-direction: column">
+<span style="font-size: 13px; font-weight: 600">[User name]</span>
+<span style="font-size: 12px; color: #A3A7AD">Owner · Pro plan</span>
+</div>
+</div>
+</nav></div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; min-width: 0">
+<header style="height: 64px; flex-shrink: 0; box-sizing: border-box; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E1E1DC; background: #FFFFFF">
+<div style="display: flex; flex-direction: column">
+<span style="font-size: 12px; color: #5C6066">example-store.com</span>
+<h1 style="margin: 0; font-size: 20px; font-weight: 600">Dashboard</h1>
+</div>
+<div style="display: flex; gap: 12px; align-items: center">
+<span class="pill gray">Last audit: 24 Sep 2026, 10:42</span>
+<a class="btn2" href="#">Export PDF</a>
+<a class="btn" href="02-audit-running.html">Run audit</a>
+</div>
+</header>
+<main style="padding: 24px 32px; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; gap: 20px">
+<section class="card" style="width: 290px; flex-shrink: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 12px">
+<span class="lbl" style="align-self: flex-start">SEO Health Score</span>
+<svg width="160" height="160" viewBox="0 0 160 160" role="img" aria-label="Health score 82 out of 100">
+<circle cx="80" cy="80" r="66" fill="none" stroke="#EDEDE8" stroke-width="14"></circle>
+<circle cx="80" cy="80" r="66" fill="none" stroke="#2446C7" stroke-width="14" stroke-linecap="round" stroke-dasharray="340.1 414.7" transform="rotate(-90 80 80)"></circle>
+<text x="80" y="86" text-anchor="middle" font-size="42" font-weight="700" fill="#1A1D21" font-family="IBM Plex Sans, sans-serif">82</text>
+<text x="80" y="108" text-anchor="middle" font-size="13" fill="#5C6066" font-family="IBM Plex Sans, sans-serif">out of 100</text>
+</svg>
+<span class="pill crit">−5 since last audit</span>
+<p style="margin: 0; font-size: 12px; line-height: 1.5; color: #5C6066; text-align: center">Ruleset v1.0.0 · Weights v1<br>Same input always returns the same score</p>
+</section>
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 20px; min-width: 0">
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+<a href="04-issue-manager.html" class="card" style="padding: 16px; text-decoration: none; color: #1A1D21; display: flex; flex-direction: column; gap: 6px">
+<span class="pill crit" style="align-self: flex-start">Critical</span>
+<span style="font-size: 32px; font-weight: 700">5</span>
+<span style="font-size: 13px; color: #5C6066">Fix these first</span>
+</a>
+<a href="04-issue-manager.html" class="card" style="padding: 16px; text-decoration: none; color: #1A1D21; display: flex; flex-direction: column; gap: 6px">
+<span class="pill high" style="align-self: flex-start">High</span>
+<span style="font-size: 32px; font-weight: 700">17</span>
+<span style="font-size: 13px; color: #5C6066">Large impact</span>
+</a>
+<a href="04-issue-manager.html" class="card" style="padding: 16px; text-decoration: none; color: #1A1D21; display: flex; flex-direction: column; gap: 6px">
+<span class="pill med" style="align-self: flex-start">Medium</span>
+<span style="font-size: 32px; font-weight: 700">42</span>
+<span style="font-size: 13px; color: #5C6066">Plan to fix</span>
+</a>
+<a href="04-issue-manager.html" class="card" style="padding: 16px; text-decoration: none; color: #1A1D21; display: flex; flex-direction: column; gap: 6px">
+<span class="pill low" style="align-self: flex-start">Passed</span>
+<span style="font-size: 32px; font-weight: 700">384</span>
+<span style="font-size: 13px; color: #5C6066">Checks passing</span>
+</a>
+</div>
+<section class="card" style="padding: 18px 20px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<span class="lbl">Score by category</span>
+<span style="font-size: 12px; color: #5C6066">Weight in overall score shown in brackets</span>
+</div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 36px">
+<div style="display: flex; align-items: center; gap: 12px"><span style="width: 190px; font-size: 14px">Technical (20%)</span><div class="bar" style="flex-grow: 1"><div style="width: 92%"></div></div><span class="mono" style="width: 28px; text-align: right; font-size: 14px">92</span></div>
+<div style="display: flex; align-items: center; gap: 12px"><span style="width: 190px; font-size: 14px">Indexing (15%)</span><div class="bar" style="flex-grow: 1"><div style="width: 80%"></div></div><span class="mono" style="width: 28px; text-align: right; font-size: 14px">80</span></div>
+<div style="display: flex; align-items: center; gap: 12px"><span style="width: 190px; font-size: 14px">On-page (20%)</span><div class="bar" style="flex-grow: 1"><div style="width: 82%"></div></div><span class="mono" style="width: 28px; text-align: right; font-size: 14px">82</span></div>
+<div style="display: flex; align-items: center; gap: 12px"><span style="width: 190px; font-size: 14px">Performance (15%)</span><div class="bar" style="flex-grow: 1"><div style="width: 71%"></div></div><span class="mono" style="width: 28px; text-align: right; font-size: 14px">71</span></div>
+<div style="display: flex; align-items: center; gap: 12px"><span style="width: 190px; font-size: 14px">Internal links (10%)</span><div class="bar" style="flex-grow: 1"><div style="width: 90%"></div></div><span class="mono" style="width: 28px; text-align: right; font-size: 14px">90</span></div>
+<div style="display: flex; align-items: center; gap: 12px"><span style="width: 190px; font-size: 14px">Structured data (10%)</span><div class="bar" style="flex-grow: 1"><div style="width: 68%"></div></div><span class="mono" style="width: 28px; text-align: right; font-size: 14px">68</span></div>
+<div style="display: flex; align-items: center; gap: 12px"><span style="width: 190px; font-size: 14px">AI discoverability (10%)</span><div class="bar" style="flex-grow: 1"><div style="width: 88%"></div></div><span class="mono" style="width: 28px; text-align: right; font-size: 14px">88</span></div>
+<a href="11-authority.html" style="display: flex; align-items: center; gap: 12px; text-decoration: none; color: #5C6066; font-size: 14px">Authority (off-page) is tracked separately →</a>
+</div>
+</section>
+</div>
+</div>
+<div style="display: flex; gap: 20px">
+<section class="card" style="flex-grow: 1; padding: 18px 8px 8px; display: flex; flex-direction: column; gap: 8px; min-width: 0">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 0 12px">
+<span class="lbl">Top 5 priorities</span>
+<a href="04-issue-manager.html" style="font-size: 14px; font-weight: 600">See all 64 issues</a>
+</div>
+<table>
+<thead><tr><th>Issue</th><th>Pages</th><th>Severity</th><th>Priority</th><th></th></tr></thead>
+<tbody>
+<tr><td><div style="font-weight: 600">Important pages set to noindex</div><div style="font-size: 12px; color: #5C6066">Indexing · IDX-003</div></td><td class="mono">8</td><td><span class="pill crit">Critical</span></td><td class="mono">9.6</td><td style="text-align: right"><a href="05-issue-detail.html">View</a></td></tr>
+<tr><td><div style="font-weight: 600">Missing meta description</div><div style="font-size: 12px; color: #5C6066">On-page · ONP-004</div></td><td class="mono">24</td><td><span class="pill high">High</span></td><td class="mono">8.0</td><td style="text-align: right"><a href="07-auto-fix-review.html">Auto-fix</a></td></tr>
+<tr><td><div style="font-weight: 600">Slow Largest Contentful Paint on mobile</div><div style="font-size: 12px; color: #5C6066">Performance · PRF-001</div></td><td class="mono">31</td><td><span class="pill high">High</span></td><td class="mono">7.4</td><td style="text-align: right"><a href="05-issue-detail.html">View</a></td></tr>
+<tr><td><div style="font-weight: 600">Broken internal links</div><div style="font-size: 12px; color: #5C6066">Links · LNK-002</div></td><td class="mono">17</td><td><span class="pill high">High</span></td><td class="mono">7.1</td><td style="text-align: right"><a href="07-auto-fix-review.html">Auto-fix</a></td></tr>
+<tr><td style="border-bottom: 0"><div style="font-weight: 600">Product schema missing "offers"</div><div style="font-size: 12px; color: #5C6066">Structured data · SD-004</div></td><td class="mono" style="border-bottom: 0">42</td><td style="border-bottom: 0"><span class="pill med">Medium</span></td><td class="mono" style="border-bottom: 0">6.0</td><td style="text-align: right; border-bottom: 0"><a href="07-auto-fix-review.html">Auto-fix</a></td></tr>
+</tbody>
+</table>
+</section>
+<div style="width: 330px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px">
+<section class="card" style="padding: 18px 20px; display: flex; flex-direction: column; gap: 10px">
+<span class="lbl">Score trend · last 6 audits</span>
+<svg width="288" height="96" viewBox="0 0 288 96" role="img" aria-label="Score trend 72, 75, 78, 80, 87, 82">
+<line x1="8" y1="88" x2="280" y2="88" stroke="#E1E1DC" stroke-width="1"></line>
+<polyline points="8,62 62,55 117,47 171,42 226,24 280,37" fill="none" stroke="#2446C7" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"></polyline>
+<circle cx="280" cy="37" r="4" fill="#2446C7"></circle>
+</svg>
+<div style="display: flex; justify-content: space-between; font-size: 12px; color: #5C6066"><span>20 Aug</span><span>24 Sep</span></div>
+</section>
+<section class="card" style="padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; flex-grow: 1">
+<span class="lbl">Since last audit</span>
+<div style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px"><span class="pill crit">New</span><span>8 pages became noindex after a theme update</span></div>
+<div style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px"><span class="pill low">Fixed</span><span>3 issues fixed and verified</span></div>
+<div style="display: flex; gap: 10px; align-items: flex-start; font-size: 14px"><span class="pill gray">Info</span><span>12 new pages found in sitemap</span></div>
+<a href="10-monitoring.html" style="font-size: 14px; font-weight: 600; margin-top: auto">Open monitoring</a>
+</section>
+</div>
+</div>
+</main>
+</div>
+</div></div>
+
+
+
+</body></html>

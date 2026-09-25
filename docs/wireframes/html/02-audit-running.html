@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<title>Audit in progress</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;background:#F4F4F1}
+a{color:#2446C7}a:hover{color:#16308F}
+.card{background:#fff;border:1px solid #E1E1DC;border-radius:10px;box-sizing:border-box}
+.lbl{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#5C6066;font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border-radius:8px;background:#2446C7;color:#fff;font-family:'IBM Plex Sans',sans-serif;font-size:14px;font-weight:600;border:0;text-decoration:none;box-sizing:border-box;cursor:pointer}
+a.btn:hover{color:#fff;background:#1B389F}
+.btn2{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border-radius:8px;background:#fff;color:#1A1D21;font-family:'IBM Plex Sans',sans-serif;font-size:14px;font-weight:600;border:1px solid #CFCFC8;text-decoration:none;box-sizing:border-box;cursor:pointer}
+a.btn2:hover{color:#1A1D21;background:#F4F4F1}
+.pill{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;font-weight:600;white-space:nowrap}
+.crit{background:#FDECEA;color:#B42318}.high{background:#FEF0E1;color:#A64206}.med{background:#FBF4D9;color:#7A5E00}.low{background:#E6F4EA;color:#1F7A3A}.info{background:#EEF1FB;color:#2446C7}.gray{background:#EFEFEB;color:#4A4E54}
+.mono{font-family:'IBM Plex Mono',monospace}
+table{border-collapse:collapse;width:100%}
+th{font-size:12px;text-align:left;color:#5C6066;font-weight:600;padding:10px 12px;border-bottom:1px solid #E1E1DC;text-transform:uppercase;letter-spacing:.04em}
+td{font-size:14px;padding:11px 12px;border-bottom:1px solid #EDEDE8;vertical-align:middle}
+.bar{height:8px;border-radius:4px;background:#EDEDE8;overflow:hidden}
+.bar>div{height:100%;background:#2446C7;border-radius:4px}
+.field{height:40px;width:100%;border:1px solid #CFCFC8;border-radius:8px;padding:0 12px;font-family:'IBM Plex Sans',sans-serif;font-size:14px;color:#1A1D21;background:#fff;box-sizing:border-box}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#1A1D21}
+input[type=checkbox]{width:18px;height:18px;accent-color:#2446C7;margin:0}
+</style>
+
+</head>
+<body>
+<div id="root"><div style="width: 1280px; height: 900px; display: flex; background: #F4F4F1; font-family: 'IBM Plex Sans', sans-serif; color: #1A1D21">
+<div data-scope="sidebar" data-active="dashboard" style="display:contents"><nav aria-label="Main navigation" style="width: 240px; flex-shrink: 0; height: 900px; box-sizing: border-box; background: #15181D; color: #E8E8E3; font-family: 'IBM Plex Sans', sans-serif; display: flex; flex-direction: column; gap: 16px; padding: 18px 14px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 8px">
+<div style="width: 28px; height: 28px; border-radius: 7px; background: #2446C7; display: flex; align-items: center; justify-content: center">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l5-5 4 4 7-8"></path></svg>
+</div>
+<span style="font-size: 16px; font-weight: 700">[Product name]</span>
+</div>
+<div style="background: #22262D; border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 11px; color: #A3A7AD; text-transform: uppercase; letter-spacing: 0.06em">Project</span>
+<span style="font-size: 14px; font-weight: 600">example-store.com</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 16px">
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 11px; color: #8D9197; text-transform: uppercase; letter-spacing: 0.08em; padding: 0 12px 4px">Analyse</span>
+
+<a href="03-dashboard.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;background:#2446C7;color:#FFFFFF;font-weight:600;">Dashboard</a>
+
+<a href="04-issue-manager.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Issue manager</a>
+
+<a href="13-sitemap-check.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Sitemap check</a>
+
+<a href="06-ai-copilot.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">AI Copilot</a>
+
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 11px; color: #8D9197; text-transform: uppercase; letter-spacing: 0.08em; padding: 0 12px 4px">Fix</span>
+
+<a href="07-auto-fix-review.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Auto-fix review</a>
+
+<a href="14-sitemap-url-lists.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Sitemap URL lists</a>
+
+<a href="08-change-log.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Change log</a>
+
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 11px; color: #8D9197; text-transform: uppercase; letter-spacing: 0.08em; padding: 0 12px 4px">Grow</span>
+
+<a href="15-keyword-research.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Keyword research</a>
+
+<a href="10-monitoring.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Monitoring</a>
+
+<a href="11-authority.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Authority (off-page)</a>
+
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 11px; color: #8D9197; text-transform: uppercase; letter-spacing: 0.08em; padding: 0 12px 4px">Settings</span>
+
+<a href="09-integrations.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Integrations</a>
+
+<a href="12-plans-billing.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Plans &amp; billing</a>
+
+<a href="01-add-website.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Add website</a>
+
+</div>
+
+</div>
+<div style="margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 12px 8px 0; border-top: 1px solid #2C3038">
+<div style="width: 32px; height: 32px; border-radius: 16px; background: #3A3F48; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600">AP</div>
+<div style="display: flex; flex-direction: column">
+<span style="font-size: 13px; font-weight: 600">[User name]</span>
+<span style="font-size: 12px; color: #A3A7AD">Owner · Pro plan</span>
+</div>
+</div>
+</nav></div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; min-width: 0">
+<header style="height: 64px; flex-shrink: 0; box-sizing: border-box; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E1E1DC; background: #FFFFFF">
+<div style="display: flex; flex-direction: column"><span style="font-size: 12px; color: #5C6066">example-store.com · started 24 Sep 2026, 10:31</span><h1 style="margin: 0; font-size: 20px; font-weight: 600">Audit in progress</h1></div>
+<div style="display: flex; gap: 12px"><button class="btn2">Cancel audit</button><a class="btn2" href="03-dashboard.html">View results when done</a></div>
+</header>
+<main style="padding: 24px 32px; display: flex; gap: 20px">
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 20px; min-width: 0">
+<section class="card" style="padding: 22px; display: flex; flex-direction: column; gap: 12px">
+<div style="display: flex; justify-content: space-between; align-items: baseline"><span style="font-size: 18px; font-weight: 600">Step 2 of 6 · Crawling pages</span><span style="font-size: 14px; color: #5C6066">About 4 minutes left</span></div>
+<div class="bar" style="height: 12px; border-radius: 6px"><div style="width: 38%; border-radius: 6px"></div></div>
+<span style="font-size: 14px; color: #4A4E54">842 of 1,000 pages crawled (plan limit) · 310 rendered with a headless browser</span>
+</section>
+<section class="card" style="padding: 8px 22px; display: flex; flex-direction: column">
+<div style="display: flex; gap: 16px; align-items: center; padding: 14px 0; border-bottom: 1px solid #EDEDE8"><span class="pill low" style="width: 80px; justify-content: center">Done</span><div style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 600">1 · Discover</span><span style="font-size: 13px; color: #5C6066">robots.txt read, 3 sitemaps found, 1,184 URLs queued in fixed order</span></div></div>
+<div style="display: flex; gap: 16px; align-items: center; padding: 14px 0; border-bottom: 1px solid #EDEDE8"><span class="pill info" style="width: 80px; justify-content: center">Running</span><div style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 600">2 · Crawl</span><span style="font-size: 13px; color: #5C6066">Status codes, redirects, canonicals, meta, headings, links, images</span></div><span class="mono" style="font-size: 13px">842 / 1,000</span></div>
+<div style="display: flex; gap: 16px; align-items: center; padding: 14px 0; border-bottom: 1px solid #EDEDE8"><span class="pill info" style="width: 80px; justify-content: center">Running</span><div style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 600">3 · Render</span><span style="font-size: 13px; color: #5C6066">Headless browser for pages that need JavaScript</span></div><span class="mono" style="font-size: 13px">310 / 842</span></div>
+<div style="display: flex; gap: 16px; align-items: center; padding: 14px 0; border-bottom: 1px solid #EDEDE8"><span class="pill gray" style="width: 80px; justify-content: center">Waiting</span><div style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 600">4 · Performance</span><span style="font-size: 13px; color: #5C6066">Real-user Core Web Vitals (CrUX) + median of 5 lab runs</span></div></div>
+<div style="display: flex; gap: 16px; align-items: center; padding: 14px 0; border-bottom: 1px solid #EDEDE8"><span class="pill gray" style="width: 80px; justify-content: center">Waiting</span><div style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 600">5 · Run checks</span><span style="font-size: 13px; color: #5C6066">82 rule-based checks produce the score. No AI involved in scoring.</span></div></div>
+<div style="display: flex; gap: 16px; align-items: center; padding: 14px 0"><span class="pill gray" style="width: 80px; justify-content: center">Waiting</span><div style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 15px; font-weight: 600">6 · Explain</span><span style="font-size: 13px; color: #5C6066">AI writes explanations and fix steps for failed checks only</span></div></div>
+</section>
+<p style="margin: 0; font-size: 13px; color: #5C6066">Crawler identifies itself as SEOPlatformBot/1.0, respects robots.txt and limits speed to 2 requests per second.</p>
+</div>
+<div style="width: 340px; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px">
+<section class="card" style="padding: 20px; display: flex; flex-direction: column; gap: 12px">
+<span class="lbl">Run fingerprint</span>
+<div style="display: flex; justify-content: space-between; font-size: 13px"><span style="color: #5C6066">Input</span><span>Live URL</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 13px"><span style="color: #5C6066">Snapshot hash</span><span class="mono">computing…</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 13px"><span style="color: #5C6066">Crawler</span><span class="mono">v1.0.0</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 13px"><span style="color: #5C6066">Ruleset</span><span class="mono">v1.0.0</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 13px"><span style="color: #5C6066">Weights</span><span class="mono">v1</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 13px"><span style="color: #5C6066">AI model / prompt</span><span class="mono">[MODEL ID] / v1.0</span></div>
+<p style="margin: 0; padding: 12px; background: #EEF1FB; border-radius: 8px; font-size: 13px; line-height: 1.5; color: #1A1D21">If your site has not changed, you get exactly the same result as last time.</p>
+</section>
+<section class="card" style="padding: 20px; display: flex; flex-direction: column; gap: 10px; flex-grow: 1; min-height: 0">
+<span class="lbl">Live log</span>
+<div class="mono" style="font-size: 12px; line-height: 1.9; color: #4A4E54; display: flex; flex-direction: column">
+<span>10:38:02  200  /products/blue-ceramic-mug</span>
+<span>10:38:02  301  /mugs → /collections/mugs</span>
+<span style="color: #B42318">10:38:03  404  /blog/old-post</span>
+<span>10:38:03  200  /about</span>
+<span>10:38:04  200  /collections/gift-sets</span>
+<span>10:38:04  200  /blog/care-guide</span>
+<span style="color: #A64206">10:38:05  302  /sale → /collections/sale</span>
+<span>10:38:05  200  /contact</span>
+<span>10:38:06  200  /faq</span>
+</div>
+</section>
+</div>
+</main>
+</div>
+</div></div>
+
+
+
+</body></html>

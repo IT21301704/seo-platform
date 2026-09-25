@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<title>Add a website</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;background:#F4F4F1}
+a{color:#2446C7}a:hover{color:#16308F}
+.card{background:#fff;border:1px solid #E1E1DC;border-radius:10px;box-sizing:border-box}
+.lbl{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#5C6066;font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border-radius:8px;background:#2446C7;color:#fff;font-family:'IBM Plex Sans',sans-serif;font-size:14px;font-weight:600;border:0;text-decoration:none;box-sizing:border-box;cursor:pointer}
+a.btn:hover{color:#fff;background:#1B389F}
+.btn2{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border-radius:8px;background:#fff;color:#1A1D21;font-family:'IBM Plex Sans',sans-serif;font-size:14px;font-weight:600;border:1px solid #CFCFC8;text-decoration:none;box-sizing:border-box;cursor:pointer}
+a.btn2:hover{color:#1A1D21;background:#F4F4F1}
+.pill{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;font-weight:600;white-space:nowrap}
+.crit{background:#FDECEA;color:#B42318}.high{background:#FEF0E1;color:#A64206}.med{background:#FBF4D9;color:#7A5E00}.low{background:#E6F4EA;color:#1F7A3A}.info{background:#EEF1FB;color:#2446C7}.gray{background:#EFEFEB;color:#4A4E54}
+.mono{font-family:'IBM Plex Mono',monospace}
+table{border-collapse:collapse;width:100%}
+th{font-size:12px;text-align:left;color:#5C6066;font-weight:600;padding:10px 12px;border-bottom:1px solid #E1E1DC;text-transform:uppercase;letter-spacing:.04em}
+td{font-size:14px;padding:11px 12px;border-bottom:1px solid #EDEDE8;vertical-align:middle}
+.bar{height:8px;border-radius:4px;background:#EDEDE8;overflow:hidden}
+.bar>div{height:100%;background:#2446C7;border-radius:4px}
+.field{height:40px;width:100%;border:1px solid #CFCFC8;border-radius:8px;padding:0 12px;font-family:'IBM Plex Sans',sans-serif;font-size:14px;color:#1A1D21;background:#fff;box-sizing:border-box}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#1A1D21}
+input[type=checkbox]{width:18px;height:18px;accent-color:#2446C7;margin:0}
+</style>
+
+</head>
+<body>
+<div id="root"><div style="width: 1280px; height: 900px; display: flex; background: #F4F4F1; font-family: 'IBM Plex Sans', sans-serif; color: #1A1D21">
+<aside style="width: 340px; flex-shrink: 0; box-sizing: border-box; background: #FFFFFF; border-right: 1px solid #E1E1DC; padding: 32px 28px; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; align-items: center; gap: 10px">
+<div style="width: 28px; height: 28px; border-radius: 7px; background: #2446C7; display: flex; align-items: center; justify-content: center">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l5-5 4 4 7-8"></path></svg>
+</div>
+<span style="font-size: 16px; font-weight: 700">[Product name]</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<h1 style="margin: 0; font-size: 26px; font-weight: 700; line-height: 1.2">Add your website</h1>
+<p style="margin: 0; font-size: 14px; line-height: 1.5; color: #5C6066">Four quick steps. You can skip the optional ones and connect them later.</p>
+</div>
+<ol style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px">
+<li style="display: flex; gap: 12px; align-items: center; padding: 10px 12px; border-radius: 8px; background: #EEF1FB"><span style="width: 26px; height: 26px; border-radius: 13px; background: #2446C7; color: #FFFFFF; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center">1</span><div style="display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">Website</span><span style="font-size: 12px; color: #5C6066">URL or code upload</span></div></li>
+<li style="display: flex; gap: 12px; align-items: center; padding: 10px 12px"><span style="width: 26px; height: 26px; border-radius: 13px; border: 1.5px solid #CFCFC8; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; box-sizing: border-box">2</span><div style="display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">Verify ownership</span><span style="font-size: 12px; color: #5C6066">Needed for auto-fix</span></div></li>
+<li style="display: flex; gap: 12px; align-items: center; padding: 10px 12px"><span style="width: 26px; height: 26px; border-radius: 13px; border: 1.5px solid #CFCFC8; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; box-sizing: border-box">3</span><div style="display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">Connect data</span><span style="font-size: 12px; color: #5C6066">Optional</span></div></li>
+<li style="display: flex; gap: 12px; align-items: center; padding: 10px 12px"><span style="width: 26px; height: 26px; border-radius: 13px; border: 1.5px solid #CFCFC8; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; box-sizing: border-box">4</span><div style="display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">Audit settings</span><span style="font-size: 12px; color: #5C6066">Country, language, schedule</span></div></li>
+</ol>
+<div class="card" style="padding: 16px; display: flex; flex-direction: column; gap: 8px; background: #F9F9F7; margin-top: auto">
+<span class="lbl">What happens next</span>
+<p style="margin: 0; font-size: 13px; line-height: 1.5; color: #4A4E54">We crawl up to your plan's page limit, run every check, and show your Health Score. A first audit usually takes 5–10 minutes.</p>
+</div>
+</aside>
+<main style="flex-grow: 1; padding: 32px 40px; display: flex; flex-direction: column; gap: 20px; min-width: 0">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; flex-grow: 1">
+<section class="card" style="padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<span class="lbl">Step 1 · Website</span>
+<div role="tablist" aria-label="Input type" style="display: flex; background: #F4F4F1; border-radius: 8px; padding: 4px; gap: 4px">
+<button role="tab" aria-selected="true" style="flex-grow: 1; height: 34px; border: 0; border-radius: 6px; background: #FFFFFF; font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 600; color: #1A1D21; box-shadow: 0 1px 2px rgba(0,0,0,0.08)">Live URL</button>
+<button role="tab" aria-selected="false" style="flex-grow: 1; height: 34px; border: 0; border-radius: 6px; background: transparent; font-family: 'IBM Plex Sans', sans-serif; font-size: 14px; font-weight: 500; color: #4A4E54">Upload code (ZIP / Git)</button>
+</div>
+<label class="f">Website URL<input class="field" type="url" value="https://example-store.com" style=""></label>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<span style="font-size: 13px; font-weight: 600">We found</span>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<span class="pill low">sitemap.xml · 1,184 URLs</span>
+<span class="pill low">robots.txt</span>
+<span class="pill low">HTTPS valid</span>
+<span class="pill info">CMS: WordPress</span>
+</div>
+</div>
+<p style="margin: 0; font-size: 12px; line-height: 1.5; color: #5C6066">Code uploads skip server checks such as redirects and real speed. Those show as "Not applicable", never as failed.</p>
+</section>
+<section class="card" style="padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<span class="lbl">Step 2 · Verify ownership</span>
+<fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px">
+<legend style="font-size: 13px; font-weight: 600; margin-bottom: 8px">Choose a method</legend>
+<label style="display: flex; align-items: center; gap: 10px; font-size: 14px; padding: 10px 12px; border: 1.5px solid #2446C7; border-radius: 8px"><input type="radio" name="verify" checked="" style="">DNS TXT record <span class="pill info" style="margin-left: auto">Recommended</span></label>
+<label style="display: flex; align-items: center; gap: 10px; font-size: 14px; padding: 10px 12px; border: 1px solid #E1E1DC; border-radius: 8px"><input type="radio" name="verify" style="">HTML meta tag</label>
+<label style="display: flex; align-items: center; gap: 10px; font-size: 14px; padding: 10px 12px; border: 1px solid #E1E1DC; border-radius: 8px"><input type="radio" name="verify" style="">Upload a verification file</label>
+</fieldset>
+<div style="display: flex; gap: 8px; align-items: center">
+<code class="mono" style="flex-grow: 1; background: #F4F4F1; border-radius: 6px; padding: 10px 12px; font-size: 13px">seo-verify=8f3a…c21</code>
+<button class="btn2" style="height: 38px">Copy</button>
+</div>
+<div style="display: flex; gap: 10px; align-items: center"><span class="pill med">Waiting for DNS</span><button class="btn2" style="height: 34px">Check now</button></div>
+</section>
+<section class="card" style="padding: 22px; display: flex; flex-direction: column; gap: 12px">
+<span class="lbl">Step 3 · Connect data (optional)</span>
+<div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #EDEDE8"><div style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">Google Search Console</span><span style="font-size: 12px; color: #5C6066">Indexing status, search queries, links</span></div><button class="btn2" style="height: 36px">Connect</button></div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid #EDEDE8"><div style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">Google Analytics 4</span><span style="font-size: 12px; color: #5C6066">Traffic per page, to rank issue impact</span></div><button class="btn2" style="height: 36px">Connect</button></div>
+<div style="display: flex; align-items: center; gap: 12px; padding: 10px 0"><div style="flex-grow: 1; display: flex; flex-direction: column"><span style="font-size: 14px; font-weight: 600">WordPress plugin</span><span style="font-size: 12px; color: #5C6066">Lets approved fixes be published</span></div><button class="btn2" style="height: 36px">Install</button></div>
+</section>
+<section class="card" style="padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<span class="lbl">Step 4 · Audit settings</span>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px">
+<label class="f">Target country<select class="field"><option>Sri Lanka</option></select></label>
+<label class="f">Language<select class="field"><option>English</option></select></label>
+<label class="f">Search engine<select class="field"><option>Google</option></select></label>
+<label class="f">Crawl frequency<select class="field"><option>Weekly</option></select></label>
+</div>
+<label class="f">Page limit<select class="field"><option>1,000 pages (Starter plan)</option></select></label>
+</section>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center">
+<span style="font-size: 13px; color: #5C6066">We respect robots.txt and crawl politely (2 requests per second).</span>
+<div style="display: flex; gap: 12px"><a class="btn2" href="03-dashboard.html">Cancel</a><a class="btn" href="02-audit-running.html">Start first audit</a></div>
+</div>
+</main>
+</div></div>
+
+
+
+</body></html>

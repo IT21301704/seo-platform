@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<title>Keyword research</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;background:#F4F4F1}
+a{color:#2446C7}a:hover{color:#16308F}
+.card{background:#fff;border:1px solid #E1E1DC;border-radius:10px;box-sizing:border-box}
+.lbl{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#5C6066;font-weight:600}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border-radius:8px;background:#2446C7;color:#fff;font-family:'IBM Plex Sans',sans-serif;font-size:14px;font-weight:600;border:0;text-decoration:none;box-sizing:border-box;cursor:pointer}
+a.btn:hover{color:#fff;background:#1B389F}
+.btn2{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border-radius:8px;background:#fff;color:#1A1D21;font-family:'IBM Plex Sans',sans-serif;font-size:14px;font-weight:600;border:1px solid #CFCFC8;text-decoration:none;box-sizing:border-box;cursor:pointer}
+a.btn2:hover{color:#1A1D21;background:#F4F4F1}
+.pill{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:12px;font-size:12px;font-weight:600;white-space:nowrap}
+.crit{background:#FDECEA;color:#B42318}.high{background:#FEF0E1;color:#A64206}.med{background:#FBF4D9;color:#7A5E00}.low{background:#E6F4EA;color:#1F7A3A}.info{background:#EEF1FB;color:#2446C7}.gray{background:#EFEFEB;color:#4A4E54}
+.mono{font-family:'IBM Plex Mono',monospace}
+table{border-collapse:collapse;width:100%}
+th{font-size:12px;text-align:left;color:#5C6066;font-weight:600;padding:10px 12px;border-bottom:1px solid #E1E1DC;text-transform:uppercase;letter-spacing:.04em}
+td{font-size:14px;padding:11px 12px;border-bottom:1px solid #EDEDE8;vertical-align:middle}
+.bar{height:8px;border-radius:4px;background:#EDEDE8;overflow:hidden}
+.bar>div{height:100%;background:#2446C7;border-radius:4px}
+.field{height:40px;width:100%;border:1px solid #CFCFC8;border-radius:8px;padding:0 12px;font-family:'IBM Plex Sans',sans-serif;font-size:14px;color:#1A1D21;background:#fff;box-sizing:border-box}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#1A1D21}
+input[type=checkbox]{width:18px;height:18px;accent-color:#2446C7;margin:0}
+</style>
+
+</head>
+<body>
+<div id="root"><div style="width: 1280px; height: 900px; display: flex; background: #F4F4F1; font-family: 'IBM Plex Sans', sans-serif; color: #1A1D21">
+<div data-scope="sidebar" data-active="keywords" style="display:contents"><nav aria-label="Main navigation" style="width: 240px; flex-shrink: 0; height: 900px; box-sizing: border-box; background: #15181D; color: #E8E8E3; font-family: 'IBM Plex Sans', sans-serif; display: flex; flex-direction: column; gap: 16px; padding: 18px 14px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 8px">
+<div style="width: 28px; height: 28px; border-radius: 7px; background: #2446C7; display: flex; align-items: center; justify-content: center">
+<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 17l5-5 4 4 7-8"></path></svg>
+</div>
+<span style="font-size: 16px; font-weight: 700">[Product name]</span>
+</div>
+<div style="background: #22262D; border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 11px; color: #A3A7AD; text-transform: uppercase; letter-spacing: 0.06em">Project</span>
+<span style="font-size: 14px; font-weight: 600">example-store.com</span>
+</div>
+<div style="display: flex; flex-direction: column; gap: 16px">
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 11px; color: #8D9197; text-transform: uppercase; letter-spacing: 0.08em; padding: 0 12px 4px">Analyse</span>
+
+<a href="03-dashboard.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Dashboard</a>
+
+<a href="04-issue-manager.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Issue manager</a>
+
+<a href="13-sitemap-check.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Sitemap check</a>
+
+<a href="06-ai-copilot.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">AI Copilot</a>
+
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 11px; color: #8D9197; text-transform: uppercase; letter-spacing: 0.08em; padding: 0 12px 4px">Fix</span>
+
+<a href="07-auto-fix-review.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Auto-fix review</a>
+
+<a href="14-sitemap-url-lists.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Sitemap URL lists</a>
+
+<a href="08-change-log.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Change log</a>
+
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 11px; color: #8D9197; text-transform: uppercase; letter-spacing: 0.08em; padding: 0 12px 4px">Grow</span>
+
+<a href="15-keyword-research.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;background:#2446C7;color:#FFFFFF;font-weight:600;">Keyword research</a>
+
+<a href="10-monitoring.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Monitoring</a>
+
+<a href="11-authority.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Authority (off-page)</a>
+
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 11px; color: #8D9197; text-transform: uppercase; letter-spacing: 0.08em; padding: 0 12px 4px">Settings</span>
+
+<a href="09-integrations.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Integrations</a>
+
+<a href="12-plans-billing.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Plans &amp; billing</a>
+
+<a href="01-add-website.html" style="display:flex;align-items:center;height:34px;padding:0 12px;border-radius:6px;font-size:14px;text-decoration:none;color:#C9CCD1;font-weight:500;">Add website</a>
+
+</div>
+
+</div>
+<div style="margin-top: auto; display: flex; align-items: center; gap: 10px; padding: 12px 8px 0; border-top: 1px solid #2C3038">
+<div style="width: 32px; height: 32px; border-radius: 16px; background: #3A3F48; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600">AP</div>
+<div style="display: flex; flex-direction: column">
+<span style="font-size: 13px; font-weight: 600">[User name]</span>
+<span style="font-size: 12px; color: #A3A7AD">Owner · Pro plan</span>
+</div>
+</div>
+</nav></div>
+<div style="flex-grow: 1; display: flex; flex-direction: column; min-width: 0">
+<header style="height: 64px; flex-shrink: 0; box-sizing: border-box; padding: 0 32px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #E1E1DC; background: #FFFFFF">
+<div style="display: flex; flex-direction: column"><span style="font-size: 12px; color: #5C6066">Google · Sri Lanka · English · data snapshot 1 Sep 2026</span><h1 style="margin: 0; font-size: 20px; font-weight: 600">Keyword research</h1></div>
+<div style="display: flex; gap: 12px"><a class="btn2" href="#">Export</a><button class="btn">Save to keyword map</button></div>
+</header>
+<main style="padding: 18px 32px; display: flex; flex-direction: column; gap: 14px">
+<div style="display: flex; gap: 10px">
+<input class="field" type="search" aria-label="Seed keyword" value="ceramic mugs" style="flex-grow: 1;">
+<select class="field" aria-label="Country" style="width: 150px"><option>Sri Lanka</option></select>
+<select class="field" aria-label="Language" style="width: 130px"><option>English</option></select>
+<button class="btn" style="white-space: nowrap">Find keywords</button>
+</div>
+<div role="tablist" aria-label="Keyword views" style="display: flex; gap: 4px; border-bottom: 1px solid #E1E1DC">
+<button role="tab" aria-selected="true" style="height: 38px; padding: 0 14px; border: 0; border-bottom: 2px solid #2446C7; background: transparent; font-family: inherit; font-size: 14px; font-weight: 600; color: #1A1D21">Ideas (184)</button>
+<button role="tab" aria-selected="false" style="height: 38px; padding: 0 14px; border: 0; border-bottom: 2px solid transparent; background: transparent; font-family: inherit; font-size: 14px; color: #4A4E54">Clusters (12)</button>
+<button role="tab" aria-selected="false" style="height: 38px; padding: 0 14px; border: 0; border-bottom: 2px solid transparent; background: transparent; font-family: inherit; font-size: 14px; color: #4A4E54">Keyword map</button>
+<button role="tab" aria-selected="false" style="height: 38px; padding: 0 14px; border: 0; border-bottom: 2px solid transparent; background: transparent; font-family: inherit; font-size: 14px; color: #4A4E54">Quick wins (6)</button>
+<button role="tab" aria-selected="false" style="height: 38px; padding: 0 14px; border: 0; border-bottom: 2px solid transparent; background: transparent; font-family: inherit; font-size: 14px; color: #4A4E54">Cannibalization (1)</button>
+<button role="tab" aria-selected="false" style="height: 38px; padding: 0 14px; border: 0; border-bottom: 2px solid transparent; background: transparent; font-family: inherit; font-size: 14px; color: #4A4E54">Content gaps (3)</button>
+</div>
+<div style="display: flex; gap: 18px">
+<section class="card" style="flex-grow: 1; padding: 0 8px; min-width: 0">
+<table>
+<thead><tr><th>Keyword</th><th>Intent</th><th>Volume / mo</th><th>Difficulty</th><th>Your position</th><th>Mapped page</th></tr></thead>
+<tbody>
+<tr><td style="font-weight: 600">ceramic mugs</td><td><span class="pill info">Commercial</span></td><td class="mono">[VOL]</td><td><div style="display: flex; align-items: center; gap: 8px"><div class="bar" style="width: 60px"><div style="width: 62%"></div></div><span class="mono" style="font-size: 12px">62</span></div></td><td class="mono">14</td><td class="mono" style="font-size: 12px">/collections/mugs</td></tr>
+<tr><td style="font-weight: 600">buy coffee mugs online</td><td><span class="pill low">Transactional</span></td><td class="mono">[VOL]</td><td><div style="display: flex; align-items: center; gap: 8px"><div class="bar" style="width: 60px"><div style="width: 48%"></div></div><span class="mono" style="font-size: 12px">48</span></div></td><td class="mono">9</td><td class="mono" style="font-size: 12px">/collections/mugs</td></tr>
+<tr><td style="font-weight: 600">gift mugs</td><td><span class="pill info">Commercial</span></td><td class="mono">[VOL]</td><td><div style="display: flex; align-items: center; gap: 8px"><div class="bar" style="width: 60px"><div style="width: 40%"></div></div><span class="mono" style="font-size: 12px">40</span></div></td><td class="mono">11</td><td><span class="pill crit">2 pages</span></td></tr>
+<tr><td style="font-weight: 600">personalised mugs</td><td><span class="pill low">Transactional</span></td><td class="mono">[VOL]</td><td><div style="display: flex; align-items: center; gap: 8px"><div class="bar" style="width: 60px"><div style="width: 35%"></div></div><span class="mono" style="font-size: 12px">35</span></div></td><td style="color: #5C6066">—</td><td><span class="pill med">No page</span></td></tr>
+<tr><td style="font-weight: 600">how to clean ceramic mugs</td><td><span class="pill gray">Informational</span></td><td class="mono">[VOL]</td><td><div style="display: flex; align-items: center; gap: 8px"><div class="bar" style="width: 60px"><div style="width: 18%"></div></div><span class="mono" style="font-size: 12px">18</span></div></td><td class="mono">6</td><td class="mono" style="font-size: 12px">/blog/care-guide</td></tr>
+<tr><td style="font-weight: 600">large coffee mug 500ml</td><td><span class="pill low">Transactional</span></td><td class="mono">[VOL]</td><td><div style="display: flex; align-items: center; gap: 8px"><div class="bar" style="width: 60px"><div style="width: 22%"></div></div><span class="mono" style="font-size: 12px">22</span></div></td><td class="mono">17</td><td class="mono" style="font-size: 12px">/products/big-mug</td></tr>
+<tr><td style="font-weight: 600">handmade mugs sri lanka</td><td><span class="pill info">Commercial</span></td><td class="mono">[VOL]</td><td><div style="display: flex; align-items: center; gap: 8px"><div class="bar" style="width: 60px"><div style="width: 15%"></div></div><span class="mono" style="font-size: 12px">15</span></div></td><td class="mono">4</td><td class="mono" style="font-size: 12px">/about</td></tr>
+<tr><td style="font-weight: 600; border-bottom: 0">enamel camping mug</td><td style="border-bottom: 0"><span class="pill low">Transactional</span></td><td class="mono" style="border-bottom: 0">[VOL]</td><td style="border-bottom: 0"><div style="display: flex; align-items: center; gap: 8px"><div class="bar" style="width: 60px"><div style="width: 28%"></div></div><span class="mono" style="font-size: 12px">28</span></div></td><td style="color: #5C6066; border-bottom: 0">—</td><td style="border-bottom: 0"><span class="pill med">No page</span></td></tr>
+</tbody>
+</table>
+</section>
+<div style="width: 280px; flex-shrink: 0; display: flex; flex-direction: column; gap: 14px">
+<section class="card" style="padding: 14px 16px; display: flex; flex-direction: column; gap: 8px">
+<span class="lbl">Quick wins · positions 5–20</span>
+<div style="display: flex; justify-content: space-between; font-size: 13px"><span>buy coffee mugs online</span><span class="mono">#9</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 13px"><span>gift mugs</span><span class="mono">#11</span></div>
+<div style="display: flex; justify-content: space-between; font-size: 13px"><span>ceramic mugs</span><span class="mono">#14</span></div>
+<span style="font-size: 12px; color: #5C6066">High impressions in Search Console. Improve title and content first.</span>
+</section>
+<section class="card" style="padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; border-color: #F3C6C1">
+<span class="lbl">Cannibalization</span>
+<span style="font-size: 14px; font-weight: 600">"gift mugs" · 2 pages compete</span>
+<span class="mono" style="font-size: 12px; color: #4A4E54">/collections/gift-sets<br>/blog/gift-mug-ideas</span>
+<span style="font-size: 12px; color: #5C6066">Suggestion: keep the collection as the target and link to it from the blog post.</span>
+<a href="04-issue-manager.html" style="font-size: 13px; font-weight: 600">Open issue KWD-002</a>
+</section>
+<section class="card" style="padding: 14px 16px; display: flex; flex-direction: column; gap: 8px">
+<span class="lbl">Content gap</span>
+<span style="font-size: 14px; font-weight: 600">"personalised mugs" cluster · no page</span>
+<span style="font-size: 12px; color: #5C6066">6 keywords in this cluster. AI can draft a page outline for you to review.</span>
+<button class="btn2" style="height: 34px; align-self: flex-start">Create page brief</button>
+</section>
+</div>
+</div>
+<span style="font-size: 12px; color: #5C6066">[VOL] = volume from the keyword data provider. Positions come from Search Console (last 28 days). Keyword sets are saved as dated snapshots so reports stay consistent.</span>
+</main>
+</div>
+</div></div>
+
+
+
+</body></html>
