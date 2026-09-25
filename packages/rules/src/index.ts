@@ -1,3 +1,6 @@
-// Deterministic rule engine: one file per rule in a category folder, plus a registry (M5).
-// Skeleton only. Implementation starts in Phase 1 (see docs/REQUIREMENTS.md Part K).
-export {};
+export * from "./types";
+export { fixType } from "./define";
+export { runRules, evaluateRule } from "./engine";
+export { recheckDescription, DESCRIPTION_MIN, DESCRIPTION_MAX } from "../onpage/onp-004-meta-description";
+export type { DescriptionCheck } from "../onpage/onp-004-meta-description";
+export { RULES, RULES_BY_ID } from "./registry";

@@ -1,4 +1,15 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["src"]
+  "include": [
+    "src",
+    "technical",
+    "indexing",
+    "onpage",
+    "performance",
+    "links",
+    "schema",
+    "ai",
+    "sitemap",
+    "offpage"
+  ]
 }

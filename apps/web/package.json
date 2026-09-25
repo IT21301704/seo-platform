@@ -3,18 +3,46 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "exports": {
-    ".": "./src/index.ts"
-  },
   "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start --port 3000",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@seo/shared": "workspace:*"
+    "@fontsource/ibm-plex-mono": "catalog:",
+    "@fontsource/ibm-plex-sans": "catalog:",
+    "@seo/crawler": "workspace:*",
+    "@seo/db": "workspace:*",
+    "@seo/llm": "workspace:*",
+    "@seo/rules": "workspace:*",
+    "@seo/scoring": "workspace:*",
+    "@seo/shared": "workspace:*",
+    "@seo/worker": "workspace:*",
+    "class-variance-authority": "catalog:",
+    "clsx": "catalog:",
+    "exceljs": "catalog:",
+    "ioredis": "catalog:",
+    "next": "catalog:",
+    "next-auth": "catalog:",
+    "nodemailer": "catalog:",
+    "playwright": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "recharts": "catalog:",
+    "tailwind-merge": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
+    "@playwright/test": "catalog:",
+    "@tailwindcss/postcss": "catalog:",
     "@types/node": "catalog:",
+    "@types/nodemailer": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "tailwindcss": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

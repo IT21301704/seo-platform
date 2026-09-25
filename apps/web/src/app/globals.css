@@ -1,0 +1,61 @@
+@import "tailwindcss";
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-sans/600.css";
+@import "@fontsource/ibm-plex-sans/700.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+
+/* Design tokens from REQUIREMENTS Part G / the approved wireframes. */
+@theme {
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --color-canvas: #f4f4f1;
+  --color-line: #e1e1dc;
+  --color-line-soft: #ededea;
+  --color-ink: #1a1d21;
+  --color-muted: #5c6066;
+  --color-primary: #2446c7;
+  --color-primary-dark: #1b389f;
+  --color-primary-soft: #eef1fb;
+  --color-sidebar: #15181d;
+  --color-sidebar-card: #22262d;
+
+  --color-crit: #b42318;
+  --color-crit-bg: #fdecea;
+  --color-high: #a64206;
+  --color-high-bg: #fef0e1;
+  --color-med: #7a5e00;
+  --color-med-bg: #fbf4d9;
+  --color-pass: #1f7a3a;
+  --color-pass-bg: #e6f4ea;
+  --color-gray: #4a4e54;
+  --color-gray-bg: #efefeb;
+}
+
+@layer base {
+  html {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+  }
+  a {
+    color: var(--color-primary);
+  }
+  a:hover {
+    color: #16308f;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+@utility label-caps {
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  font-weight: 600;
+}

@@ -1,0 +1,5218 @@
+{
+  "counts": {
+    "critical": 3,
+    "high": 4,
+    "low": 0,
+    "medium": 0,
+    "notApplicable": 8,
+    "passed": 501
+  },
+  "crawledAt": "2026-09-25T00:00:00Z",
+  "inputType": "url",
+  "pages": {
+    "crawled": 11,
+    "indexable": 11,
+    "rendered": 0
+  },
+  "reportSchema": 1,
+  "rootUrl": "https://example-store.com/",
+  "rules": [
+    {
+      "appliesTo": "url",
+      "autoFixable": false,
+      "category": "ai",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "rendered": false
+          },
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {
+            "rendered": false
+          },
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {
+            "rendered": false
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {
+            "rendered": false
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {
+            "rendered": false
+          },
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {
+            "rendered": false
+          },
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {
+            "rendered": false
+          },
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {
+            "rendered": false
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {
+            "rendered": false
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {
+            "rendered": false
+          },
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {
+            "rendered": false
+          },
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 0.8,
+        "effort": 4,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "medium",
+      "ruleId": "AI-001",
+      "scoreCategory": "ai",
+      "severity": "high",
+      "status": "pass",
+      "title": "Key content only appears after JavaScript runs",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "ai",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {
+            "allowed": [
+              "Google-Extended",
+              "GPTBot",
+              "OAI-SearchBot",
+              "ClaudeBot",
+              "PerplexityBot"
+            ],
+            "blocked": [],
+            "intent": "allow"
+          },
+          "result": "pass",
+          "url": null
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "AI-002",
+      "scoreCategory": "ai",
+      "severity": "high",
+      "status": "pass",
+      "title": "robots.txt rules for AI crawlers do not match your choice",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "ai",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "found": [
+              "About: https://example-store.com/about/",
+              "Contact: https://example-store.com/contact/",
+              "FAQ: https://example-store.com/faq/",
+              "Services or Pricing: https://example-store.com/pricing/",
+              "Policies: https://example-store.com/policies/privacy/"
+            ]
+          },
+          "result": "pass",
+          "url": null
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 0.8,
+        "effort": 4,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "AI-003",
+      "scoreCategory": "ai",
+      "severity": "medium",
+      "status": "pass",
+      "title": "Missing clear About, Contact, FAQ, Services/Pricing or Policies pages",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "ai",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": null
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "AI-004",
+      "scoreCategory": "ai",
+      "severity": "medium",
+      "status": "pass",
+      "title": "Business name, address or phone differ across the site",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "ai",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 10
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "AI-005",
+      "scoreCategory": "ai",
+      "severity": "high",
+      "status": "pass",
+      "title": "Important pages block snippets (nosnippet)",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "ai",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "questions": 6
+          },
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 0.8,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 2,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "AI-006",
+      "scoreCategory": "ai",
+      "severity": "low",
+      "status": "pass",
+      "title": "FAQ page is not in question-and-answer format",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "url",
+      "autoFixable": false,
+      "category": "ai",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "links": 11
+          },
+          "result": "pass",
+          "url": "https://example-store.com/llms.txt"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 0.8,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 2,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "AI-007",
+      "scoreCategory": "ai",
+      "severity": "low",
+      "status": "pass",
+      "title": "llms.txt is malformed",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "indexing",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "IDX-001",
+      "scoreCategory": "indexing",
+      "severity": "medium",
+      "status": "pass",
+      "title": "Canonical tag is missing",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "url",
+      "autoFixable": true,
+      "category": "indexing",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {
+            "canonical": "https://example-store.com/"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {
+            "canonical": "https://example-store.com/about/"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {
+            "canonical": "https://example-store.com/blog/"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {
+            "canonical": "https://example-store.com/blog/care-guide/"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {
+            "canonical": "https://example-store.com/collections/mugs/"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {
+            "canonical": "https://example-store.com/contact/"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {
+            "canonical": "https://example-store.com/faq/"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {
+            "canonical": "https://example-store.com/policies/privacy/"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {
+            "canonical": "https://example-store.com/policies/shipping-returns/"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {
+            "canonical": "https://example-store.com/pricing/"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {
+            "canonical": "https://example-store.com/services/"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "IDX-002",
+      "scoreCategory": "indexing",
+      "severity": "high",
+      "status": "pass",
+      "title": "Canonical points to a broken, redirected or noindex URL",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "indexing",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 10
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 5,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "IDX-003",
+      "scoreCategory": "indexing",
+      "severity": "critical",
+      "status": "pass",
+      "title": "Important pages set to noindex",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "url",
+      "autoFixable": false,
+      "category": "indexing",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 10
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "inboundLinks": 10
+          },
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {
+            "inboundLinks": 10
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {
+            "inboundLinks": 2
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {
+            "inboundLinks": 10
+          },
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {
+            "inboundLinks": 10
+          },
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {
+            "inboundLinks": 10
+          },
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {
+            "inboundLinks": 10
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {
+            "inboundLinks": 10
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {
+            "inboundLinks": 10
+          },
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {
+            "inboundLinks": 10
+          },
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 0.9,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "IDX-004",
+      "scoreCategory": "indexing",
+      "severity": "medium",
+      "status": "pass",
+      "title": "Orphan pages (in the sitemap but not linked)",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "indexing",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 0.8,
+        "effort": 3,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "medium",
+      "ruleId": "IDX-005",
+      "scoreCategory": "indexing",
+      "severity": "medium",
+      "status": "pass",
+      "title": "Duplicate content across pages",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "indexing",
+      "counts": {
+        "fail": 0,
+        "na": 1,
+        "pass": 0
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "reason": "Nothing on this site for this check"
+          },
+          "result": "na",
+          "url": null
+        }
+      ],
+      "passRatio": null,
+      "priority": {
+        "confidence": 1,
+        "effort": 3,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "medium",
+      "ruleId": "IDX-006",
+      "scoreCategory": "indexing",
+      "severity": "medium",
+      "status": "na",
+      "title": "hreflang errors",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "indexing",
+      "counts": {
+        "fail": 0,
+        "na": 1,
+        "pass": 0
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "reason": "Nothing on this site for this check"
+          },
+          "result": "na",
+          "url": null
+        }
+      ],
+      "passRatio": null,
+      "priority": {
+        "confidence": 1,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 2,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "medium",
+      "ruleId": "IDX-007",
+      "scoreCategory": "indexing",
+      "severity": "low",
+      "status": "na",
+      "title": "Paginated pages canonicalise to page 1",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "links",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 2,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "LNK-001",
+      "scoreCategory": "links",
+      "severity": "low",
+      "status": "pass",
+      "title": "Links that search engines cannot follow",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "links",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "auto-low",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "LNK-002",
+      "scoreCategory": "links",
+      "severity": "high",
+      "status": "pass",
+      "title": "Broken internal links",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "url",
+      "autoFixable": false,
+      "category": "links",
+      "counts": {
+        "fail": 0,
+        "na": 1,
+        "pass": 0
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "reason": "Nothing on this site for this check"
+          },
+          "result": "na",
+          "url": null
+        }
+      ],
+      "passRatio": null,
+      "priority": {
+        "confidence": 0.9,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "LNK-003",
+      "scoreCategory": "links",
+      "severity": "medium",
+      "status": "na",
+      "title": "Broken external links",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "links",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "depth": 0
+          },
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {
+            "depth": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {
+            "depth": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {
+            "depth": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {
+            "depth": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {
+            "depth": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {
+            "depth": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {
+            "depth": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {
+            "depth": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {
+            "depth": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {
+            "depth": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 3,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "LNK-004",
+      "scoreCategory": "links",
+      "severity": "medium",
+      "status": "pass",
+      "title": "Pages more than 3 clicks from the home page",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "links",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 0.8,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 2,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "LNK-005",
+      "scoreCategory": "links",
+      "severity": "low",
+      "status": "pass",
+      "title": "Internal links with empty or generic anchor text",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "links",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 10
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 2,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "LNK-006",
+      "scoreCategory": "links",
+      "severity": "low",
+      "status": "pass",
+      "title": "Pages without breadcrumbs",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "links",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 2,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "LNK-007",
+      "scoreCategory": "links",
+      "severity": "low",
+      "status": "pass",
+      "title": "Internal links marked nofollow",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "onpage",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "auto-low",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "ONP-001",
+      "scoreCategory": "onpage",
+      "severity": "high",
+      "status": "pass",
+      "title": "Missing page title",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "onpage",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "auto-low",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "ONP-002",
+      "scoreCategory": "onpage",
+      "severity": "medium",
+      "status": "pass",
+      "title": "Duplicate page titles",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "onpage",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "auto-low",
+      "outcomes": [
+        {
+          "evidence": {
+            "length": 57
+          },
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {
+            "length": 49
+          },
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {
+            "length": 48
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {
+            "length": 53
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {
+            "length": 49
+          },
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {
+            "length": 56
+          },
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {
+            "length": 51
+          },
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {
+            "length": 39
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {
+            "length": 52
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {
+            "length": 54
+          },
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {
+            "length": 58
+          },
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 2,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "ONP-003",
+      "scoreCategory": "onpage",
+      "severity": "low",
+      "status": "pass",
+      "title": "Title too short or too long",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "onpage",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "auto-low",
+      "outcomes": [
+        {
+          "evidence": {
+            "length": 127
+          },
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {
+            "length": 130
+          },
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {
+            "length": 128
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {
+            "length": 128
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {
+            "length": 129
+          },
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {
+            "length": 122
+          },
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {
+            "length": 127
+          },
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {
+            "length": 125
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {
+            "length": 128
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {
+            "length": 126
+          },
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {
+            "length": 124
+          },
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "ONP-004",
+      "scoreCategory": "onpage",
+      "severity": "high",
+      "status": "pass",
+      "title": "Missing meta description",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "onpage",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "ONP-005",
+      "scoreCategory": "onpage",
+      "severity": "medium",
+      "status": "pass",
+      "title": "Page does not have exactly one H1",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "onpage",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 2,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "ONP-006",
+      "scoreCategory": "onpage",
+      "severity": "low",
+      "status": "pass",
+      "title": "Heading levels are skipped",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "onpage",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "words": 214
+          },
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {
+            "words": 168
+          },
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {
+            "words": 71
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {
+            "words": 245
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {
+            "words": 57
+          },
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {
+            "words": 79
+          },
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {
+            "words": 189
+          },
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {
+            "words": 144
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {
+            "words": 196
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {
+            "words": 129
+          },
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {
+            "words": 171
+          },
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 0.7,
+        "effort": 4,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "ONP-007",
+      "scoreCategory": "onpage",
+      "severity": "medium",
+      "status": "pass",
+      "title": "Thin content",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "onpage",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "auto-low",
+      "outcomes": [
+        {
+          "evidence": {
+            "images": 2
+          },
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {
+            "images": 2
+          },
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {
+            "images": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {
+            "images": 2
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {
+            "images": 4
+          },
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {
+            "images": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {
+            "images": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {
+            "images": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {
+            "images": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {
+            "images": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {
+            "images": 2
+          },
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "ONP-008",
+      "scoreCategory": "onpage",
+      "severity": "medium",
+      "status": "pass",
+      "title": "Images without alt text",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "onpage",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 0.7,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 2,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "ONP-009",
+      "scoreCategory": "onpage",
+      "severity": "low",
+      "status": "pass",
+      "title": "Images with non-descriptive file names",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "onpage",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 0.8,
+        "effort": 3,
+        "failingItems": 0,
+        "impact": 2,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "ONP-010",
+      "scoreCategory": "onpage",
+      "severity": "low",
+      "status": "pass",
+      "title": "URLs are not clean",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "onpage",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 2,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "ONP-011",
+      "scoreCategory": "onpage",
+      "severity": "low",
+      "status": "pass",
+      "title": "Missing Open Graph tags",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "onpage",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 2,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "ONP-012",
+      "scoreCategory": "onpage",
+      "severity": "low",
+      "status": "pass",
+      "title": "Missing Twitter/X card tags",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "onpage",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "lang": "en"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {
+            "lang": "en"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {
+            "lang": "en"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {
+            "lang": "en"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {
+            "lang": "en"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {
+            "lang": "en"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {
+            "lang": "en"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {
+            "lang": "en"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {
+            "lang": "en"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {
+            "lang": "en"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {
+            "lang": "en"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "ONP-013",
+      "scoreCategory": "onpage",
+      "severity": "medium",
+      "status": "pass",
+      "title": "Missing or invalid lang attribute",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "onpage",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "ONP-014",
+      "scoreCategory": "onpage",
+      "severity": "high",
+      "status": "pass",
+      "title": "Missing mobile viewport",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "url",
+      "autoFixable": false,
+      "category": "performance",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "band": "good",
+            "basis": "recorded",
+            "source": "fixture"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 4,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "medium",
+      "ruleId": "PRF-001",
+      "scoreCategory": "performance",
+      "severity": "high",
+      "status": "pass",
+      "title": "Largest Contentful Paint (LCP) is not in the \"good\" band on mobile",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "url",
+      "autoFixable": false,
+      "category": "performance",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "band": "good",
+            "basis": "recorded",
+            "source": "fixture"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 4,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "medium",
+      "ruleId": "PRF-002",
+      "scoreCategory": "performance",
+      "severity": "high",
+      "status": "pass",
+      "title": "Interaction to Next Paint (INP) is not in the \"good\" band on mobile",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "url",
+      "autoFixable": false,
+      "category": "performance",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "band": "good",
+            "basis": "recorded",
+            "source": "fixture"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 4,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "medium",
+      "ruleId": "PRF-003",
+      "scoreCategory": "performance",
+      "severity": "medium",
+      "status": "pass",
+      "title": "Cumulative Layout Shift (CLS) is not in the \"good\" band on mobile",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "performance",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "bytes": 6794
+          },
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {
+            "bytes": 5016
+          },
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {
+            "bytes": 4211
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {
+            "bytes": 6435
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {
+            "bytes": 4953
+          },
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {
+            "bytes": 5801
+          },
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {
+            "bytes": 6949
+          },
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {
+            "bytes": 4588
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {
+            "bytes": 4991
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {
+            "bytes": 5185
+          },
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {
+            "bytes": 5944
+          },
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 3,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "PRF-004",
+      "scoreCategory": "performance",
+      "severity": "medium",
+      "status": "pass",
+      "title": "HTML document is too large",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "url",
+      "autoFixable": false,
+      "category": "performance",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "images": 2
+          },
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {
+            "images": 2
+          },
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {
+            "images": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {
+            "images": 2
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {
+            "images": 4
+          },
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {
+            "images": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {
+            "images": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {
+            "images": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {
+            "images": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {
+            "images": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {
+            "images": 2
+          },
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "PRF-005",
+      "scoreCategory": "performance",
+      "severity": "medium",
+      "status": "pass",
+      "title": "Images are too large or use old formats",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "performance",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 5
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 2,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "PRF-006",
+      "scoreCategory": "performance",
+      "severity": "low",
+      "status": "pass",
+      "title": "Images are not lazy-loaded correctly",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "performance",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "medium",
+      "ruleId": "PRF-007",
+      "scoreCategory": "performance",
+      "severity": "medium",
+      "status": "pass",
+      "title": "Render-blocking scripts in <head>",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "url",
+      "autoFixable": false,
+      "category": "performance",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "encoding": "br"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {
+            "encoding": "br"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {
+            "encoding": "br"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {
+            "encoding": "br"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {
+            "encoding": "br"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {
+            "encoding": "br"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {
+            "encoding": "br"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {
+            "encoding": "br"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {
+            "encoding": "br"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {
+            "encoding": "br"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {
+            "encoding": "br"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "PRF-008",
+      "scoreCategory": "performance",
+      "severity": "medium",
+      "status": "pass",
+      "title": "HTML is not compressed",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "url",
+      "autoFixable": false,
+      "category": "performance",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 2,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "PRF-009",
+      "scoreCategory": "performance",
+      "severity": "low",
+      "status": "pass",
+      "title": "No caching headers",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "schema",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "blocks": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {
+            "blocks": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {
+            "blocks": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {
+            "blocks": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {
+            "blocks": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {
+            "blocks": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {
+            "blocks": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {
+            "blocks": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {
+            "blocks": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {
+            "blocks": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {
+            "blocks": 1
+          },
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SD-001",
+      "scoreCategory": "schema",
+      "severity": "high",
+      "status": "pass",
+      "title": "Invalid JSON-LD structured data",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "schema",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {
+            "name": "Example Store Ceramics"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SD-002",
+      "scoreCategory": "schema",
+      "severity": "medium",
+      "status": "pass",
+      "title": "Home page has no Organization structured data",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "schema",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 2
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SD-003",
+      "scoreCategory": "schema",
+      "severity": "medium",
+      "status": "pass",
+      "title": "LocalBusiness structured data is incomplete",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "schema",
+      "counts": {
+        "fail": 0,
+        "na": 1,
+        "pass": 0
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {
+            "reason": "Nothing on this site for this check"
+          },
+          "result": "na",
+          "url": null
+        }
+      ],
+      "passRatio": null,
+      "priority": {
+        "confidence": 1,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SD-004",
+      "scoreCategory": "schema",
+      "severity": "high",
+      "status": "na",
+      "title": "Product schema missing \"offers\" or required fields",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "schema",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 10
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 2,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SD-005",
+      "scoreCategory": "schema",
+      "severity": "low",
+      "status": "pass",
+      "title": "BreadcrumbList structured data is invalid",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": false,
+      "category": "schema",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 0.9,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SD-006",
+      "scoreCategory": "schema",
+      "severity": "high",
+      "status": "pass",
+      "title": "Structured data does not match the visible content",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "schema",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SD-007",
+      "scoreCategory": "schema",
+      "severity": "medium",
+      "status": "pass",
+      "title": "FAQPage structured data is incomplete",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "schema",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SD-008",
+      "scoreCategory": "schema",
+      "severity": "medium",
+      "status": "pass",
+      "title": "Article structured data is incomplete",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "schema",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 2,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SD-009",
+      "scoreCategory": "schema",
+      "severity": "low",
+      "status": "pass",
+      "title": "Service structured data is incomplete",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "sitemap",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {
+            "sitemaps": [
+              "https://example-store.com/sitemap.xml"
+            ]
+          },
+          "result": "pass",
+          "url": null
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 5,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SMP-001",
+      "scoreCategory": "technical",
+      "severity": "critical",
+      "status": "pass",
+      "title": "No XML sitemap found",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "sitemap",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {
+            "sitemaps": [
+              "https://example-store.com/sitemap.xml"
+            ]
+          },
+          "result": "pass",
+          "url": null
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SMP-002",
+      "scoreCategory": "technical",
+      "severity": "high",
+      "status": "pass",
+      "title": "Sitemap is not listed in robots.txt",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "sitemap",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {
+            "kind": "urlset"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/sitemap.xml"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 5,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SMP-004",
+      "scoreCategory": "technical",
+      "severity": "critical",
+      "status": "pass",
+      "title": "Sitemap is not valid XML",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "sitemap",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {
+            "bytes": 1604,
+            "urls": 14
+          },
+          "result": "pass",
+          "url": "https://example-store.com/sitemap.xml"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 5,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SMP-005",
+      "scoreCategory": "technical",
+      "severity": "critical",
+      "status": "pass",
+      "title": "Sitemap exceeds 50,000 URLs or 50 MB",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "sitemap",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 14
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/products/blue-ceramic-mug/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/products/gift-set/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/products/speckled-stoneware-mug/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SMP-006",
+      "scoreCategory": "technical",
+      "severity": "high",
+      "status": "pass",
+      "title": "Sitemap URLs are relative, on another host or not HTTPS",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "url",
+      "autoFixable": true,
+      "category": "sitemap",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SMP-007",
+      "scoreCategory": "indexing",
+      "severity": "high",
+      "status": "pass",
+      "title": "Sitemap lists redirected or broken URLs",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "sitemap",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SMP-008",
+      "scoreCategory": "indexing",
+      "severity": "high",
+      "status": "pass",
+      "title": "Sitemap lists noindex pages",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "sitemap",
+      "counts": {
+        "fail": 3,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {
+            "blockedFor": "Googlebot"
+          },
+          "result": "fail",
+          "url": "https://example-store.com/products/blue-ceramic-mug/"
+        },
+        {
+          "evidence": {
+            "blockedFor": "Googlebot"
+          },
+          "result": "fail",
+          "url": "https://example-store.com/products/gift-set/"
+        },
+        {
+          "evidence": {
+            "blockedFor": "Googlebot"
+          },
+          "result": "fail",
+          "url": "https://example-store.com/products/speckled-stoneware-mug/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 0.7857,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 3,
+        "impact": 4,
+        "pagesFactor": 1.15,
+        "priority": 4.6
+      },
+      "riskLevel": "high",
+      "ruleId": "SMP-009",
+      "scoreCategory": "indexing",
+      "severity": "high",
+      "status": "fail",
+      "title": "Sitemap lists URLs blocked by robots.txt",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "sitemap",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SMP-010",
+      "scoreCategory": "indexing",
+      "severity": "medium",
+      "status": "pass",
+      "title": "Sitemap lists non-canonical URLs",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "sitemap",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 14
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {
+            "lastmod": "2026-09-02"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {
+            "lastmod": "2026-09-01"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {
+            "lastmod": "2026-08-12"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {
+            "lastmod": "2026-09-02"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {
+            "lastmod": "2026-09-01"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {
+            "lastmod": "2026-09-01"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {
+            "lastmod": "2026-09-01"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {
+            "lastmod": "2026-09-01"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {
+            "lastmod": "2026-09-01"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {
+            "lastmod": "2026-09-01"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {
+            "lastmod": "2026-09-01"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/products/blue-ceramic-mug/"
+        },
+        {
+          "evidence": {
+            "lastmod": "2026-09-01"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/products/gift-set/"
+        },
+        {
+          "evidence": {
+            "lastmod": "2026-09-01"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/products/speckled-stoneware-mug/"
+        },
+        {
+          "evidence": {
+            "lastmod": "2026-09-01"
+          },
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SMP-011",
+      "scoreCategory": "indexing",
+      "severity": "medium",
+      "status": "pass",
+      "title": "Invalid or future lastmod dates",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "url",
+      "autoFixable": true,
+      "category": "sitemap",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SMP-012",
+      "scoreCategory": "indexing",
+      "severity": "high",
+      "status": "pass",
+      "title": "Indexable pages missing from the sitemap",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "sitemap",
+      "counts": {
+        "fail": 0,
+        "na": 1,
+        "pass": 0
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {
+            "reason": "Nothing on this site for this check"
+          },
+          "result": "na",
+          "url": null
+        }
+      ],
+      "passRatio": null,
+      "priority": {
+        "confidence": 1,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SMP-015",
+      "scoreCategory": "indexing",
+      "severity": "medium",
+      "status": "na",
+      "title": "Invalid hreflang alternates in the sitemap",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "sitemap",
+      "counts": {
+        "fail": 0,
+        "na": 1,
+        "pass": 0
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {
+            "reason": "Nothing on this site for this check"
+          },
+          "result": "na",
+          "url": null
+        }
+      ],
+      "passRatio": null,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 2,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SMP-016",
+      "scoreCategory": "indexing",
+      "severity": "low",
+      "status": "na",
+      "title": "Invalid image or video sitemap entries",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "technical",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {
+            "status": 200
+          },
+          "result": "pass",
+          "url": "https://example-store.com/robots.txt"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "TEC-001",
+      "scoreCategory": "technical",
+      "severity": "high",
+      "status": "pass",
+      "title": "robots.txt is missing or invalid",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "both",
+      "autoFixable": true,
+      "category": "technical",
+      "counts": {
+        "fail": 3,
+        "na": 0,
+        "pass": 10
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {
+            "blockedFor": "Googlebot"
+          },
+          "result": "fail",
+          "url": "https://example-store.com/products/blue-ceramic-mug/"
+        },
+        {
+          "evidence": {
+            "blockedFor": "Googlebot"
+          },
+          "result": "fail",
+          "url": "https://example-store.com/products/gift-set/"
+        },
+        {
+          "evidence": {
+            "blockedFor": "Googlebot"
+          },
+          "result": "fail",
+          "url": "https://example-store.com/products/speckled-stoneware-mug/"
+        },
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 0.7692,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 3,
+        "impact": 5,
+        "pagesFactor": 1.15,
+        "priority": 5.8
+      },
+      "riskLevel": "high",
+      "ruleId": "TEC-002",
+      "scoreCategory": "technical",
+      "severity": "critical",
+      "status": "fail",
+      "title": "Important pages are blocked by robots.txt",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "url",
+      "autoFixable": false,
+      "category": "technical",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 11
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "status": 200
+          },
+          "result": "pass",
+          "url": "https://example-store.com/"
+        },
+        {
+          "evidence": {
+            "status": 200
+          },
+          "result": "pass",
+          "url": "https://example-store.com/about/"
+        },
+        {
+          "evidence": {
+            "status": 200
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/"
+        },
+        {
+          "evidence": {
+            "status": 200
+          },
+          "result": "pass",
+          "url": "https://example-store.com/blog/care-guide/"
+        },
+        {
+          "evidence": {
+            "status": 200
+          },
+          "result": "pass",
+          "url": "https://example-store.com/collections/mugs/"
+        },
+        {
+          "evidence": {
+            "status": 200
+          },
+          "result": "pass",
+          "url": "https://example-store.com/contact/"
+        },
+        {
+          "evidence": {
+            "status": 200
+          },
+          "result": "pass",
+          "url": "https://example-store.com/faq/"
+        },
+        {
+          "evidence": {
+            "status": 200
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/privacy/"
+        },
+        {
+          "evidence": {
+            "status": 200
+          },
+          "result": "pass",
+          "url": "https://example-store.com/policies/shipping-returns/"
+        },
+        {
+          "evidence": {
+            "status": 200
+          },
+          "result": "pass",
+          "url": "https://example-store.com/pricing/"
+        },
+        {
+          "evidence": {
+            "status": 200
+          },
+          "result": "pass",
+          "url": "https://example-store.com/services/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 3,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "TEC-003",
+      "scoreCategory": "technical",
+      "severity": "high",
+      "status": "pass",
+      "title": "Pages return server errors (5xx) or fail to load",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "url",
+      "autoFixable": true,
+      "category": "technical",
+      "counts": {
+        "fail": 0,
+        "na": 1,
+        "pass": 0
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {
+            "reason": "Nothing on this site for this check"
+          },
+          "result": "na",
+          "url": null
+        }
+      ],
+      "passRatio": null,
+      "priority": {
+        "confidence": 1,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "TEC-004",
+      "scoreCategory": "technical",
+      "severity": "medium",
+      "status": "na",
+      "title": "Redirect chains longer than one hop",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "url",
+      "autoFixable": true,
+      "category": "technical",
+      "counts": {
+        "fail": 0,
+        "na": 1,
+        "pass": 0
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {
+            "reason": "Nothing on this site for this check"
+          },
+          "result": "na",
+          "url": null
+        }
+      ],
+      "passRatio": null,
+      "priority": {
+        "confidence": 1,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "TEC-005",
+      "scoreCategory": "technical",
+      "severity": "high",
+      "status": "na",
+      "title": "Redirect loops",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "url",
+      "autoFixable": false,
+      "category": "technical",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {},
+          "result": "pass",
+          "url": "https://example-store.com/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 3,
+        "failingItems": 0,
+        "impact": 5,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "TEC-006",
+      "scoreCategory": "technical",
+      "severity": "critical",
+      "status": "pass",
+      "title": "Site is not served over HTTPS with a valid certificate",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "url",
+      "autoFixable": false,
+      "category": "technical",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "location": "https://example-store.com/",
+            "status": 301
+          },
+          "result": "pass",
+          "url": "http://example-store.com/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "TEC-007",
+      "scoreCategory": "technical",
+      "severity": "high",
+      "status": "pass",
+      "title": "HTTP does not redirect to HTTPS",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "url",
+      "autoFixable": false,
+      "category": "technical",
+      "counts": {
+        "fail": 0,
+        "na": 0,
+        "pass": 1
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "location": "https://example-store.com/",
+            "status": 301
+          },
+          "result": "pass",
+          "url": "https://www.example-store.com/"
+        }
+      ],
+      "passRatio": 1,
+      "priority": {
+        "confidence": 1,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "TEC-008",
+      "scoreCategory": "technical",
+      "severity": "medium",
+      "status": "pass",
+      "title": "www and non-www versions both serve the site",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "url",
+      "autoFixable": false,
+      "category": "technical",
+      "counts": {
+        "fail": 1,
+        "na": 0,
+        "pass": 0
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "probeUrl": "https://example-store.com/seo-platform-404-probe-7f3c9a/",
+            "redirected": false,
+            "status": 200
+          },
+          "result": "fail",
+          "url": null
+        }
+      ],
+      "passRatio": 0,
+      "priority": {
+        "confidence": 1,
+        "effort": 2,
+        "failingItems": 1,
+        "impact": 4,
+        "pagesFactor": 2,
+        "priority": 4
+      },
+      "riskLevel": "medium",
+      "ruleId": "TEC-009",
+      "scoreCategory": "technical",
+      "severity": "high",
+      "status": "fail",
+      "title": "Missing pages do not return a 404 status",
+      "version": "1.0.0"
+    }
+  ],
+  "score": {
+    "categories": {
+      "ai": 100,
+      "indexing": 98,
+      "links": 100,
+      "onpage": 100,
+      "performance": 100,
+      "schema": 100,
+      "technical": 91
+    },
+    "health": 98,
+    "sitemap": 98
+  },
+  "versions": {
+    "crawlerVersion": "1.0.0",
+    "rulesetVersion": "1.0.0",
+    "snapshotSetHash": "d4a934760299286bcca4c02975f060fc1ab29bcf2beb252a43679d1863fe9845",
+    "weightsVersion": "v1"
+  }
+}

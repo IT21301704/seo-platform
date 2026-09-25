@@ -4,17 +4,35 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./queue": "./src/queue.ts",
+    "./progress": "./src/progress.ts",
+    "./storage": "./src/storage.ts",
+    "./crawls": "./src/crawls.ts"
   },
   "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "start": "tsx src/main.ts",
+    "seed": "tsx src/seed.ts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run"
   },
   "dependencies": {
-    "@seo/shared": "workspace:*"
+    "@aws-sdk/client-s3": "catalog:",
+    "@seo/crawler": "workspace:*",
+    "@seo/db": "workspace:*",
+    "@seo/llm": "workspace:*",
+    "@seo/rules": "workspace:*",
+    "@seo/scoring": "workspace:*",
+    "@seo/shared": "workspace:*",
+    "bullmq": "catalog:",
+    "ioredis": "catalog:",
+    "yauzl": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
+    "@types/yauzl": "catalog:",
+    "tsx": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

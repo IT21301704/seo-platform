@@ -8,10 +8,13 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run"
   },
   "dependencies": {
-    "@seo/shared": "workspace:*"
+    "@anthropic-ai/sdk": "catalog:",
+    "@seo/rules": "workspace:*",
+    "@seo/shared": "workspace:*",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

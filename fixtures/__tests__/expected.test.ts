@@ -19,7 +19,9 @@ describe("fixture inventory", () => {
   });
 
   it("has exactly one expected JSON per fixture", () => {
-    const expectedFiles = readdirSync(EXPECTED_DIR).sort();
+    const expectedFiles = readdirSync(EXPECTED_DIR)
+      .filter((f) => f.endsWith(".json"))
+      .sort();
     expect(expectedFiles).toEqual(ALL_FIXTURES.map((f) => `${f}.json`).sort());
   });
 });

@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-seo_local_only}
       POSTGRES_DB: ${POSTGRES_DB:-seo_platform}
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT:-5433}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -30,39 +30,18 @@ services:
       timeout: 5s
       retries: 10
 
-  minio:
-    image: minio/minio:latest
-    command: server /data --console-address ":9001"
+  # S3-compatible object storage for HTML snapshots. MinIO images are no longer published on
+  # Docker Hub/quay.io, so we use SeaweedFS (Apache-2.0). The app creates the bucket on startup.
+  s3:
+    image: chrislusf/seaweedfs:latest
+    command: server -dir=/data -s3 -s3.port=8333 -volume.max=0 -master.volumeSizeLimitMB=512
     environment:
-      MINIO_ROOT_USER: ${S3_ACCESS_KEY_ID:-minio_local}
-      MINIO_ROOT_PASSWORD: ${S3_SECRET_ACCESS_KEY:-minio_local_only}
+      AWS_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:-minio_local}
+      AWS_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:-minio_local_only}
     ports:
-      - "9000:9000" # S3 API
-      - "9001:9001" # web console
+      - "9000:8333" # S3 API
     volumes:
-      - minio-data:/data
-    healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
-  # One-shot job: creates the snapshot bucket, then exits.
-  minio-init:
-    image: minio/mc:latest
-    depends_on:
-      minio:
-        condition: service_healthy
-    entrypoint: >
-      /bin/sh -c "
-      mc alias set local http://minio:9000 $${MINIO_USER} $${MINIO_PASSWORD} &&
-      mc mb --ignore-existing local/$${BUCKET}
-      "
-    environment:
-      MINIO_USER: ${S3_ACCESS_KEY_ID:-minio_local}
-      MINIO_PASSWORD: ${S3_SECRET_ACCESS_KEY:-minio_local_only}
-      BUCKET: ${S3_BUCKET:-snapshots}
-    restart: "no"
+      - s3-data:/data
 
   # WordPress test site for the companion plugin (Phase 3): apply → verify → rollback.
   wordpress-db:
@@ -91,7 +70,7 @@ services:
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:-wp_local_only}
     ports:
-      - "8080:80"
+      - "${WORDPRESS_PORT:-8088}:80"
     volumes:
       - wordpress-data:/var/www/html
       - ./apps/wp-plugin:/var/www/html/wp-content/plugins/seo-platform:ro
@@ -99,6 +78,6 @@ services:
 volumes:
   postgres-data:
   redis-data:
-  minio-data:
+  s3-data:
   wordpress-db-data:
   wordpress-data:

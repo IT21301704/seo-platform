@@ -18,13 +18,16 @@
     "test:e2e": "echo \"No e2e tests until Phase 1 (Playwright)\"",
     "db:generate": "pnpm --filter @seo/db db:generate",
     "db:migrate": "pnpm --filter @seo/db db:migrate",
-    "db:migration:sql": "pnpm --filter @seo/db db:migration:sql"
+    "db:migration:sql": "pnpm --filter @seo/db db:migration:sql",
+    "fixtures:update": "pnpm --filter @seo/fixtures fixtures:update",
+    "db:seed": "pnpm --filter @seo/worker seed"
   },
   "devDependencies": {
     "@eslint/js": "catalog:",
     "eslint": "catalog:",
     "globals": "catalog:",
     "prettier": "catalog:",
+    "tsx": "catalog:",
     "turbo": "catalog:",
     "typescript": "catalog:",
     "typescript-eslint": "catalog:"

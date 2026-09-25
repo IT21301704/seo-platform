@@ -2,7 +2,10 @@
   "fixture": "broken-technical",
   "rulesetVersion": "1.0.0",
   "description": "Technical faults: unknown URLs return 200 (soft 404) and robots.txt blocks the product pages.",
-  "changedFiles": ["_fixture.json", "robots.txt"],
+  "changedFiles": [
+    "_fixture.json",
+    "robots.txt"
+  ],
   "expectedFailures": [
     {
       "ruleId": "TEC-009",
@@ -41,5 +44,5 @@
     }
   ],
   "allOtherApplicableRules": "pass",
-  "expectedScore": null
+  "expectedScore": 98
 }

@@ -8,9 +8,11 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run"
   },
   "dependencies": {
+    "@seo/crawler": "workspace:*",
+    "@seo/rules": "workspace:*",
     "@seo/shared": "workspace:*"
   },
   "devDependencies": {

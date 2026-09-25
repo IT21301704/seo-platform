@@ -5,15 +5,19 @@
   "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test:fixtures": "vitest run"
+    "test:fixtures": "vitest run",
+    "fixtures:update": "tsx scripts/update-reports.ts"
   },
   "dependencies": {
-    "@seo/shared": "workspace:*"
+    "@seo/shared": "workspace:*",
+    "@seo/crawler": "workspace:*",
+    "@seo/scoring": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "catalog:",
     "cheerio": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "tsx": "catalog:"
   }
 }

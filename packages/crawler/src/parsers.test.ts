@@ -1,0 +1,107 @@
+import { describe, expect, it } from "vitest";
+import { extractPageFacts } from "./extract";
+import { parseRobots } from "./robots";
+import { isW3cDate, parseSitemap } from "./sitemap";
+
+describe("parseRobots", () => {
+  const robots = parseRobots(
+    "https://a.com/robots.txt",
+    "User-agent: *\nDisallow: /private/\n\nUser-agent: GPTBot\nDisallow: /\n\nSitemap: https://a.com/sitemap.xml\nNonsense line\n",
+  );
+
+  it("applies the most specific group", () => {
+    expect(robots.isAllowed("https://a.com/", "GPTBot")).toBe(false);
+    expect(robots.isAllowed("https://a.com/", "Googlebot")).toBe(true);
+    expect(robots.isAllowed("https://a.com/private/x", "Googlebot")).toBe(false);
+  });
+
+  it("lists sitemaps and invalid lines", () => {
+    expect(robots.sitemaps).toEqual(["https://a.com/sitemap.xml"]);
+    expect(robots.invalidLines).toEqual([8]);
+  });
+
+  it("allows everything without a robots.txt", () => {
+    expect(parseRobots("https://a.com/robots.txt", null).isAllowed("https://a.com/x", "GPTBot")).toBe(true);
+  });
+});
+
+describe("parseSitemap", () => {
+  it("parses a urlset", () => {
+    const s = parseSitemap(
+      `<?xml version="1.0"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>https://a.com/</loc><lastmod>2026-01-02</lastmod></url></urlset>`,
+    );
+    expect(s.kind).toBe("urlset");
+    expect(s.namespaceOk).toBe(true);
+    expect(s.entries).toEqual([
+      { loc: "https://a.com/", lastmod: "2026-01-02", alternates: [], images: [], videos: [] },
+    ]);
+  });
+
+  it("parses a sitemap index", () => {
+    const s = parseSitemap(
+      `<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><sitemap><loc>https://a.com/s1.xml</loc></sitemap></sitemapindex>`,
+    );
+    expect(s.kind).toBe("sitemapindex");
+    expect(s.children).toEqual(["https://a.com/s1.xml"]);
+  });
+
+  it("reports malformed XML and a wrong namespace", () => {
+    expect(parseSitemap("<urlset><url>").wellFormed).toBe(false);
+    const wrongNs = parseSitemap(`<urlset xmlns="http://example.com/"><url><loc>https://a.com/</loc></url></urlset>`);
+    expect(wrongNs.namespaceOk).toBe(false);
+  });
+
+  it("validates W3C dates", () => {
+    expect(isW3cDate("2026-09-01")).toBe(true);
+    expect(isW3cDate("2026-09-01T10:00:00+05:30")).toBe(true);
+    expect(isW3cDate("01/09/2026")).toBe(false);
+  });
+});
+
+describe("extractPageFacts", () => {
+  const html = `<!doctype html><html lang="en"><head>
+    <title> A  title </title><meta name="description" content="Desc">
+    <meta name="robots" content="index, NoSnippet"><link rel="canonical" href="/x/">
+    <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","name":"A"}]}</script>
+    <script type="application/ld+json">{bad json</script>
+    <script src="/app.js"></script>
+  </head><body><header><a href="/nav/">Nav</a></header>
+    <main><h1>Hello</h1><h3>Skip</h3><p>One two three</p><img src="/a.png" alt="A" loading="lazy"><a href="/in/" rel="nofollow">In</a></main>
+    <footer><a href="mailto:x@a.com">Mail</a></footer></body></html>`;
+  const facts = extractPageFacts(html, "https://a.com/page/", { "x-robots-tag": "otherbot: noindex, max-snippet:0" });
+
+  it("reads head tags", () => {
+    expect(facts.title).toBe("A title");
+    expect(facts.metaDescription).toBe("Desc");
+    expect(facts.canonical).toBe("https://a.com/x/");
+    expect(facts.lang).toBe("en");
+  });
+
+  it("merges robots directives, ignoring other bots", () => {
+    expect(facts.robotsDirectives).toEqual(["index", "max-snippet:0", "nosnippet"]);
+  });
+
+  it("parses JSON-LD, flattening @graph and recording errors", () => {
+    expect(facts.jsonLd[0]?.nodes[0]?.["@type"]).toBe("Organization");
+    expect(facts.jsonLd[1]?.ok).toBe(false);
+  });
+
+  it("classifies links by region", () => {
+    expect(facts.links.map((l) => [l.url, l.region, l.rel])).toEqual([
+      ["https://a.com/nav/", "header", []],
+      ["https://a.com/in/", "main", ["nofollow"]],
+      [null, "footer", []],
+    ]);
+  });
+
+  it("collects headings, main text and scripts", () => {
+    expect(facts.headings).toEqual([
+      { level: 1, text: "Hello" },
+      { level: 3, text: "Skip" },
+    ]);
+    expect(facts.mainText).toBe("Hello Skip One two three In");
+    expect(facts.scripts.filter((s) => s.src)).toEqual([
+      { src: "/app.js", type: null, inHead: true, async: false, defer: false },
+    ]);
+  });
+});

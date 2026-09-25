@@ -24,7 +24,7 @@ Full spec: `docs/REQUIREMENTS.md` (single source of truth). Decisions log: `docs
 - Keep functions small and typed. No `any`. Prefer server components; client components only for interactivity.
 
 ## Commands (keep this section up to date)
-- `docker compose up -d` — Postgres, Redis, MinIO, WordPress test site (http://localhost:8080)
+- `docker compose up -d` — Postgres, Redis, S3 storage (SeaweedFS), WordPress test site (http://localhost:8088)
 - `pnpm install` — needs pnpm 10 (`npm i -g pnpm@10` or `corepack enable`)
 - `pnpm dev` — web + worker (from Phase 1)
 - `pnpm lint` / `pnpm typecheck` / `pnpm format:check`

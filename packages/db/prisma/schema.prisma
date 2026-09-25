@@ -115,6 +115,17 @@ enum AuditTag {
   regressed
 }
 
+enum VerificationMethod {
+  dns
+  meta
+  file
+}
+
+enum AiCrawlerIntent {
+  allow
+  block
+}
+
 enum ChangeSource {
   ai
   user
@@ -142,22 +153,27 @@ model Organization {
   issueItems   IssueItem[]
   llmOutputs   LlmOutput[]
   auditLogs    AuditLog[]
+  reports      Report[]
 
   @@map("organizations")
 }
 
 model User {
-  id             String   @id @default(cuid())
+  id             String    @id @default(cuid())
   organizationId String
   email          String
   name           String?
-  role           Role     @default(viewer)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  image          String?
+  emailVerified  DateTime?
+  role           Role      @default(viewer)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   organization  Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   assignedItems IssueItem[]
   auditLogs     AuditLog[]
+  accounts      Account[]
+  sessions      Session[]
 
   @@unique([email])
   @@index([organizationId])
@@ -165,18 +181,26 @@ model User {
 }
 
 model Project {
-  id             String         @id @default(cuid())
-  organizationId String
-  name           String
-  rootUrl        String
-  verifiedAt     DateTime?
-  cmsType        CmsType        @default(unknown)
-  country        String
-  language       String
-  crawlFrequency CrawlFrequency @default(manual)
-  pageLimit      Int
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  id                 String             @id @default(cuid())
+  organizationId     String
+  name               String
+  rootUrl            String
+  verifiedAt         DateTime?
+  cmsType            CmsType            @default(unknown)
+  country            String
+  language           String
+  crawlFrequency     CrawlFrequency     @default(manual)
+  pageLimit          Int
+  searchEngine       String             @default("google")
+  /// Owner choice checked by AI-002.
+  aiCrawlerIntent    AiCrawlerIntent    @default(allow)
+  verificationMethod VerificationMethod @default(dns)
+  /// Value the owner publishes (DNS TXT / meta tag / file) to prove ownership.
+  verificationToken  String
+  /// Onboarding detection chips (sitemap, robots.txt, HTTPS, CMS).
+  detection          Json               @default("{}")
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   crawls       Crawl[]
@@ -191,31 +215,38 @@ model Project {
 
 /// One audit run. Stores every version needed to reproduce it (CLAUDE.md rule 2).
 model Crawl {
-  id              String      @id @default(cuid())
-  organizationId  String
-  projectId       String
-  inputType       InputType
-  status          CrawlStatus @default(queued)
-  crawlerVersion  String
-  rulesetVersion  String
-  weightsVersion  String
-  promptVersion   String
-  llmModelId      String
+  id                String      @id @default(cuid())
+  organizationId    String
+  projectId         String
+  inputType         InputType
+  status            CrawlStatus @default(queued)
+  crawlerVersion    String
+  rulesetVersion    String
+  weightsVersion    String
+  promptVersion     String
+  llmModelId        String
   /// SHA-256 over sorted page content hashes; null until the crawl finishes.
-  snapshotSetHash String?
-  pagesFound      Int         @default(0)
-  pagesCrawled    Int         @default(0)
-  pagesRendered   Int         @default(0)
-  error           String?
-  startedAt       DateTime?
-  finishedAt      DateTime?
-  createdAt       DateTime    @default(now())
+  snapshotSetHash   String?
+  pagesFound        Int         @default(0)
+  pagesCrawled      Int         @default(0)
+  pagesRendered     Int         @default(0)
+  /// Upload key for code audits (deleted after the audit).
+  inputRef          String?
+  healthScore       Int?
+  reportHash        String?
+  /// Set when an unchanged site reused an earlier report (same snapshot + versions).
+  reusedFromCrawlId String?
+  error             String?
+  startedAt         DateTime?
+  finishedAt        DateTime?
+  createdAt         DateTime    @default(now())
 
   organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   project      Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
   pages        Page[]
   checkResults CheckResult[]
   scores       Score[]
+  report       Report?
 
   @@index([organizationId, projectId, createdAt])
   @@index([organizationId, snapshotSetHash])
@@ -235,8 +266,11 @@ model Page {
   contentHash    String?
   rawHash        String?
   renderedHash   String?
-  depth          Int
+  depth          Int?
   isIndexable    Boolean
+  contentType    String?
+  discoveredVia  String
+  wasRendered    Boolean  @default(false)
   snapshotPath   String?
   createdAt      DateTime @default(now())
 
@@ -316,6 +350,8 @@ model CheckResult {
   ruleVersion    String
   /// Null for site-level rules.
   pageId         String?
+  /// URL the check is about (may be a URL that was not crawled, e.g. robots-blocked).
+  url            String?
   result         CheckResultValue
   evidence       Json             @default("{}")
 
@@ -353,6 +389,9 @@ model Issue {
   organizationId String
   projectId      String
   ruleId         String
+  title          String
+  category       Category
+  severity       Severity
   source         IssueSource @default(site_audit)
   openCount      Int         @default(0)
   totalCount     Int         @default(0)
@@ -383,6 +422,8 @@ model IssueItem {
   status         IssueItemStatus @default(open)
   auditTag       AuditTag        @default(new)
   ignoredReason  String?
+  evidence       Json            @default("{}")
+  lastCrawlId    String?
   assigneeId     String?
   dueDate        DateTime?
   firstSeen      DateTime
@@ -446,4 +487,68 @@ model AuditLog {
   @@index([organizationId, entityType, entityId])
   @@index([organizationId, createdAt])
   @@map("audit_log")
+}
+
+// ─── Reports ────────────────────────────────────────────────────────────────
+
+/// Full deterministic report JSON of a crawl (serializeReport output).
+model Report {
+  id             String   @id @default(cuid())
+  organizationId String
+  crawlId        String   @unique
+  reportHash     String
+  reportJson     Json
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  crawl        Crawl        @relation(fields: [crawlId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, reportHash])
+  @@map("reports")
+}
+
+// ─── Auth.js ────────────────────────────────────────────────────────────────
+// Identity tables used by the Auth.js Prisma adapter. They belong to a user (who belongs to an
+// organization) rather than holding tenant data, so they are not scoped by organizationId.
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+  @@map("verification_tokens")
 }
