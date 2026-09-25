@@ -1,0 +1,20 @@
+# Example Store Ceramics
+
+> Small pottery studio in Galle Fort, Sri Lanka, making handmade stoneware mugs, gift sets and custom mugs, and running beginner pottery workshops. Delivery within Sri Lanka only.
+
+## Shop
+- [Handmade mugs](https://example-store.com/collections/mugs/): all mugs with prices
+- [Blue ceramic mug](https://example-store.com/products/blue-ceramic-mug/): 350 ml, LKR 4,500
+- [Speckled stoneware mug](https://example-store.com/products/speckled-stoneware-mug/): 400 ml, LKR 4,900
+- [Mug gift set](https://example-store.com/products/gift-set/): two mugs in a gift box, LKR 12,500
+
+## Services and prices
+- [Services](https://example-store.com/services/): custom mugs (minimum 12) and pottery workshops
+- [Pricing](https://example-store.com/pricing/): all prices and delivery costs
+
+## About and support
+- [About](https://example-store.com/about/): our story and how we make mugs
+- [FAQ](https://example-store.com/faq/): care, delivery, returns, workshops
+- [Contact](https://example-store.com/contact/): address, phone, email, opening hours
+- [Shipping and returns](https://example-store.com/policies/shipping-returns/)
+- [Privacy policy](https://example-store.com/policies/privacy/)

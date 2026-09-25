@@ -1,0 +1,19 @@
+{
+  "name": "@seo/fixtures",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test:fixtures": "vitest run"
+  },
+  "dependencies": {
+    "@seo/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "cheerio": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
+  }
+}

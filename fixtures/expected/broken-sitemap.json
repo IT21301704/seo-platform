@@ -1,0 +1,30 @@
+{
+  "fixture": "broken-sitemap",
+  "rulesetVersion": "1.0.0",
+  "description": "Sitemap faults: no Sitemap line in robots.txt, a 404 URL in the sitemap, a noindex URL in the sitemap, and a lastmod date in the future.",
+  "changedFiles": ["policies/privacy/index.html", "robots.txt", "sitemap.xml"],
+  "expectedFailures": [
+    {
+      "ruleId": "SMP-002",
+      "url": null,
+      "note": "robots.txt has no Sitemap: line"
+    },
+    {
+      "ruleId": "SMP-007",
+      "url": "https://example-store.com/blog/old-post/",
+      "note": "listed in sitemap.xml but returns 404"
+    },
+    {
+      "ruleId": "SMP-008",
+      "url": "https://example-store.com/policies/privacy/",
+      "note": "listed in sitemap.xml but has meta robots noindex (not an important page, so IDX-003 passes)"
+    },
+    {
+      "ruleId": "SMP-011",
+      "url": "https://example-store.com/blog/care-guide/",
+      "note": "lastmod 2027-03-01 is after crawledAt 2026-09-25"
+    }
+  ],
+  "allOtherApplicableRules": "pass",
+  "expectedScore": null
+}

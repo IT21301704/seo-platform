@@ -1,0 +1,45 @@
+{
+  "fixture": "broken-technical",
+  "rulesetVersion": "1.0.0",
+  "description": "Technical faults: unknown URLs return 200 (soft 404) and robots.txt blocks the product pages.",
+  "changedFiles": ["_fixture.json", "robots.txt"],
+  "expectedFailures": [
+    {
+      "ruleId": "TEC-009",
+      "url": null,
+      "note": "unknown URLs return HTTP 200 instead of 404"
+    },
+    {
+      "ruleId": "TEC-002",
+      "url": "https://example-store.com/products/blue-ceramic-mug/",
+      "note": "key page disallowed for Googlebot and our crawler in robots.txt"
+    },
+    {
+      "ruleId": "TEC-002",
+      "url": "https://example-store.com/products/gift-set/",
+      "note": "key page disallowed for Googlebot and our crawler in robots.txt"
+    },
+    {
+      "ruleId": "TEC-002",
+      "url": "https://example-store.com/products/speckled-stoneware-mug/",
+      "note": "key page disallowed for Googlebot and our crawler in robots.txt"
+    },
+    {
+      "ruleId": "SMP-009",
+      "url": "https://example-store.com/products/blue-ceramic-mug/",
+      "note": "cascade: robots-blocked URL listed in sitemap.xml"
+    },
+    {
+      "ruleId": "SMP-009",
+      "url": "https://example-store.com/products/gift-set/",
+      "note": "cascade: robots-blocked URL listed in sitemap.xml"
+    },
+    {
+      "ruleId": "SMP-009",
+      "url": "https://example-store.com/products/speckled-stoneware-mug/",
+      "note": "cascade: robots-blocked URL listed in sitemap.xml"
+    }
+  ],
+  "allOtherApplicableRules": "pass",
+  "expectedScore": null
+}

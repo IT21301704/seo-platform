@@ -1,0 +1,32 @@
+{
+  "name": "seo-platform",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "test:fixtures": "turbo run test:fixtures",
+    "test:e2e": "echo \"No e2e tests until Phase 1 (Playwright)\"",
+    "db:generate": "pnpm --filter @seo/db db:generate",
+    "db:migrate": "pnpm --filter @seo/db db:migrate",
+    "db:migration:sql": "pnpm --filter @seo/db db:migration:sql"
+  },
+  "devDependencies": {
+    "@eslint/js": "catalog:",
+    "eslint": "catalog:",
+    "globals": "catalog:",
+    "prettier": "catalog:",
+    "turbo": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
+  }
+}

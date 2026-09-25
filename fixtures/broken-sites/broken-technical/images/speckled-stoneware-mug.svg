@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img">
+  <title>Speckled stoneware mug</title>
+  <rect width="600" height="600" fill="#f1ece4"/>
+  <path d="M180 170h200v250a50 50 0 0 1-50 50h-100a50 50 0 0 1-50-50z" fill="#e8dcc6"/>
+  <path d="M380 230a60 60 0 0 1 0 120" stroke="#e8dcc6" stroke-width="28" fill="none"/>
+  <circle cx="230" cy="250" r="4" fill="#6b4f3a"/>
+  <circle cx="300" cy="320" r="3" fill="#6b4f3a"/>
+  <circle cx="260" cy="400" r="4" fill="#6b4f3a"/>
+</svg>

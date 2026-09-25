@@ -1,0 +1,25 @@
+{
+  "fixture": "broken-ai",
+  "rulesetVersion": "1.0.0",
+  "description": "AI-discoverability faults: robots.txt blocks GPTBot and ClaudeBot against the owner's intent, FAQ answers only exist after JavaScript runs, and the pricing page has nosnippet.",
+  "changedFiles": ["assets/faq.js", "faq/index.html", "pricing/index.html", "robots.txt"],
+  "expectedFailures": [
+    {
+      "ruleId": "AI-002",
+      "url": null,
+      "note": "robots.txt disallows GPTBot and ClaudeBot; ownerIntent.aiCrawlers is 'allow'"
+    },
+    {
+      "ruleId": "AI-001",
+      "url": "https://example-store.com/faq/",
+      "note": "FAQ questions and answers are missing from the raw HTML (injected by /assets/faq.js)"
+    },
+    {
+      "ruleId": "AI-005",
+      "url": "https://example-store.com/pricing/",
+      "note": "meta robots nosnippet on a key page"
+    }
+  ],
+  "allOtherApplicableRules": "pass",
+  "expectedScore": null
+}

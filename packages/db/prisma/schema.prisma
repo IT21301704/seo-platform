@@ -1,0 +1,449 @@
+// Phase 0–1 data model (docs/REQUIREMENTS.md Part H).
+// Multi-tenant: EVERY table carries organizationId, and every index starts with it.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+enum Role {
+  owner
+  admin
+  editor
+  viewer
+}
+
+enum CmsType {
+  wordpress
+  shopify
+  webflow
+  nextjs
+  static
+  other
+  unknown
+}
+
+enum CrawlFrequency {
+  manual
+  weekly
+  daily
+}
+
+enum InputType {
+  url
+  code
+}
+
+enum CrawlStatus {
+  queued
+  discovering
+  crawling
+  rendering
+  performance
+  checking
+  explaining
+  completed
+  failed
+  cancelled
+}
+
+enum Category {
+  technical
+  indexing
+  onpage
+  performance
+  links
+  schema
+  ai
+  sitemap
+  a11y
+  offpage
+}
+
+enum Severity {
+  critical
+  high
+  medium
+  low
+}
+
+enum AppliesTo {
+  url
+  code
+  both
+}
+
+enum RiskLevel {
+  low
+  medium
+  high
+}
+
+enum CheckResultValue {
+  pass
+  fail
+  na
+}
+
+enum IssueSource {
+  site_audit
+  sitemap_api
+  keywords
+  monitoring
+}
+
+enum IssueItemStatus {
+  open
+  in_progress
+  fixed
+  verified
+  reopened
+  ignored
+}
+
+/// Tag set on each audit (REQUIREMENTS M19).
+enum AuditTag {
+  new
+  still_open
+  resolved
+  regressed
+}
+
+enum ChangeSource {
+  ai
+  user
+  system
+}
+
+// ─── Tenancy ────────────────────────────────────────────────────────────────
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users        User[]
+  projects     Project[]
+  crawls       Crawl[]
+  pages        Page[]
+  pageFacts    PageFact[]
+  links        Link[]
+  rules        Rule[]
+  checkResults CheckResult[]
+  scores       Score[]
+  issues       Issue[]
+  issueItems   IssueItem[]
+  llmOutputs   LlmOutput[]
+  auditLogs    AuditLog[]
+
+  @@map("organizations")
+}
+
+model User {
+  id             String   @id @default(cuid())
+  organizationId String
+  email          String
+  name           String?
+  role           Role     @default(viewer)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization  Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  assignedItems IssueItem[]
+  auditLogs     AuditLog[]
+
+  @@unique([email])
+  @@index([organizationId])
+  @@map("users")
+}
+
+model Project {
+  id             String         @id @default(cuid())
+  organizationId String
+  name           String
+  rootUrl        String
+  verifiedAt     DateTime?
+  cmsType        CmsType        @default(unknown)
+  country        String
+  language       String
+  crawlFrequency CrawlFrequency @default(manual)
+  pageLimit      Int
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  crawls       Crawl[]
+  issues       Issue[]
+  issueItems   IssueItem[]
+
+  @@unique([organizationId, rootUrl])
+  @@map("projects")
+}
+
+// ─── Crawl + snapshot ───────────────────────────────────────────────────────
+
+/// One audit run. Stores every version needed to reproduce it (CLAUDE.md rule 2).
+model Crawl {
+  id              String      @id @default(cuid())
+  organizationId  String
+  projectId       String
+  inputType       InputType
+  status          CrawlStatus @default(queued)
+  crawlerVersion  String
+  rulesetVersion  String
+  weightsVersion  String
+  promptVersion   String
+  llmModelId      String
+  /// SHA-256 over sorted page content hashes; null until the crawl finishes.
+  snapshotSetHash String?
+  pagesFound      Int         @default(0)
+  pagesCrawled    Int         @default(0)
+  pagesRendered   Int         @default(0)
+  error           String?
+  startedAt       DateTime?
+  finishedAt      DateTime?
+  createdAt       DateTime    @default(now())
+
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  pages        Page[]
+  checkResults CheckResult[]
+  scores       Score[]
+
+  @@index([organizationId, projectId, createdAt])
+  @@index([organizationId, snapshotSetHash])
+  @@map("crawls")
+}
+
+model Page {
+  id             String   @id @default(cuid())
+  organizationId String
+  crawlId        String
+  url            String
+  normalizedUrl  String
+  statusCode     Int?
+  /// [{ url, status }] for each hop.
+  redirectChain  Json     @default("[]")
+  /// SHA-256 of the HTML the rules evaluated.
+  contentHash    String?
+  rawHash        String?
+  renderedHash   String?
+  depth          Int
+  isIndexable    Boolean
+  snapshotPath   String?
+  createdAt      DateTime @default(now())
+
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  crawl        Crawl         @relation(fields: [crawlId], references: [id], onDelete: Cascade)
+  facts        PageFact[]
+  links        Link[]
+  checkResults CheckResult[]
+
+  @@unique([crawlId, normalizedUrl])
+  @@index([organizationId, crawlId])
+  @@map("pages")
+}
+
+/// Extracted facts (title, meta, headings, images, JSON-LD, ...) as key/value JSON.
+model PageFact {
+  id             String @id @default(cuid())
+  organizationId String
+  pageId         String
+  key            String
+  value          Json
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  page         Page         @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@unique([pageId, key])
+  @@index([organizationId, pageId])
+  @@map("page_facts")
+}
+
+model Link {
+  id             String  @id @default(cuid())
+  organizationId String
+  fromPageId     String
+  toUrl          String
+  anchorText     String
+  isInternal     Boolean
+  rel            String?
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  fromPage     Page         @relation(fields: [fromPageId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, fromPageId])
+  @@index([organizationId, toUrl])
+  @@map("links")
+}
+
+// ─── Rules + results ────────────────────────────────────────────────────────
+
+/// Rule catalog as registered for a ruleset version.
+/// organizationId is null for built-in rules (shared by all tenants).
+model Rule {
+  id             String    @id @default(cuid())
+  organizationId String?
+  ruleId         String
+  version        String
+  rulesetVersion String
+  category       Category
+  severity       Severity
+  title          String
+  appliesTo      AppliesTo
+  autoFixable    Boolean
+  riskLevel      RiskLevel
+
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([ruleId, rulesetVersion])
+  @@index([organizationId])
+  @@map("rules")
+}
+
+model CheckResult {
+  id             String           @id @default(cuid())
+  organizationId String
+  crawlId        String
+  ruleId         String
+  ruleVersion    String
+  /// Null for site-level rules.
+  pageId         String?
+  result         CheckResultValue
+  evidence       Json             @default("{}")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  crawl        Crawl        @relation(fields: [crawlId], references: [id], onDelete: Cascade)
+  page         Page?        @relation(fields: [pageId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, crawlId, ruleId])
+  @@index([organizationId, pageId])
+  @@map("check_results")
+}
+
+/// One row per category plus one health row (category = null) per crawl.
+model Score {
+  id             String    @id @default(cuid())
+  organizationId String
+  crawlId        String
+  category       Category?
+  value          Int
+  weightsVersion String
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  crawl        Crawl        @relation(fields: [crawlId], references: [id], onDelete: Cascade)
+
+  @@unique([crawlId, category])
+  @@index([organizationId, crawlId])
+  @@map("scores")
+}
+
+// ─── Issue manager (M19) ────────────────────────────────────────────────────
+
+/// Issue type: one per rule per project.
+model Issue {
+  id             String      @id @default(cuid())
+  organizationId String
+  projectId      String
+  ruleId         String
+  source         IssueSource @default(site_audit)
+  openCount      Int         @default(0)
+  totalCount     Int         @default(0)
+  /// Computed by the rule engine / scoring package, never by the LLM.
+  priority       Decimal     @default(0) @db.Decimal(6, 2)
+  lastCrawlId    String?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  items        IssueItem[]
+
+  @@unique([projectId, ruleId])
+  @@index([organizationId, projectId, priority])
+  @@map("issues")
+}
+
+/// Issue item: rule × page, tracked across audits by stableKey = ruleId + normalisedUrl.
+model IssueItem {
+  id             String          @id @default(cuid())
+  organizationId String
+  projectId      String
+  issueId        String
+  stableKey      String
+  ruleId         String
+  url            String
+  status         IssueItemStatus @default(open)
+  auditTag       AuditTag        @default(new)
+  ignoredReason  String?
+  assigneeId     String?
+  dueDate        DateTime?
+  firstSeen      DateTime
+  lastSeen       DateTime
+  regressedAt    DateTime?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  issue        Issue        @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  assignee     User?        @relation(fields: [assigneeId], references: [id], onDelete: SetNull)
+
+  @@unique([projectId, stableKey])
+  @@index([organizationId, projectId, status])
+  @@index([organizationId, issueId])
+  @@index([organizationId, assigneeId])
+  @@map("issue_items")
+}
+
+// ─── LLM cache ──────────────────────────────────────────────────────────────
+
+/// Cached Claude output. cacheKey = ruleId + contentHash + promptVersion + modelId.
+model LlmOutput {
+  id             String   @id @default(cuid())
+  organizationId String
+  cacheKey       String
+  ruleId         String
+  contentHash    String
+  promptVersion  String
+  modelId        String
+  /// Zod-validated JSON (whyItMatters, fixSteps, ...).
+  output         Json
+  isFallback     Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, cacheKey])
+  @@map("llm_outputs")
+}
+
+// ─── Audit log ──────────────────────────────────────────────────────────────
+
+/// Every write action (REQUIREMENTS Part I, M14).
+model AuditLog {
+  id             String       @id @default(cuid())
+  organizationId String
+  actorId        String?
+  action         String
+  entityType     String
+  entityId       String
+  before         Json?
+  after          Json?
+  source         ChangeSource
+  createdAt      DateTime     @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  actor        User?        @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, entityType, entityId])
+  @@index([organizationId, createdAt])
+  @@map("audit_log")
+}

@@ -24,13 +24,15 @@ Full spec: `docs/REQUIREMENTS.md` (single source of truth). Decisions log: `docs
 - Keep functions small and typed. No `any`. Prefer server components; client components only for interactivity.
 
 ## Commands (keep this section up to date)
-- `docker compose up -d` — Postgres, Redis, MinIO, WordPress test site
-- `pnpm install`
-- `pnpm dev` — web + worker
-- `pnpm test` — unit tests (Vitest)
+- `docker compose up -d` — Postgres, Redis, MinIO, WordPress test site (http://localhost:8080)
+- `pnpm install` — needs pnpm 10 (`npm i -g pnpm@10` or `corepack enable`)
+- `pnpm dev` — web + worker (from Phase 1)
+- `pnpm lint` / `pnpm typecheck` / `pnpm format:check`
+- `pnpm test` — unit tests (Vitest), including the migration test on in-process Postgres
 - `pnpm test:fixtures` — golden/broken site results + determinism check (10 runs)
-- `pnpm test:e2e` — Playwright
-- `pnpm db:migrate` — Prisma migrations
+- `pnpm test:e2e` — Playwright (from Phase 1)
+- `pnpm db:generate` — generate the Prisma client
+- `pnpm db:migrate` — apply Prisma migrations (needs `DATABASE_URL`)
 
 ## Environment variables (never commit values)
 DATABASE_URL, REDIS_URL, S3_*, ANTHROPIC_API_KEY, LLM_MODEL_ID, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, PSI_API_KEY, ENCRYPTION_KEY, NEXTAUTH_SECRET, STRIPE_* (Phase 4)

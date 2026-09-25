@@ -1,0 +1,9 @@
+{
+  "fixture": "golden-site",
+  "rulesetVersion": "1.0.0",
+  "description": "Fully optimised, AI-discoverable reference site. Every applicable rule passes; the Health Score must be 100.",
+  "changedFiles": [],
+  "expectedFailures": [],
+  "allOtherApplicableRules": "pass",
+  "expectedScore": 100
+}

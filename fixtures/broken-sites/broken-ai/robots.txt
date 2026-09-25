@@ -1,0 +1,25 @@
+# robots.txt for example-store.com
+# All crawlers, including search and AI assistants, may read the whole site.
+
+User-agent: *
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+Sitemap: https://example-store.com/sitemap.xml

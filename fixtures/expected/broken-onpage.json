@@ -1,0 +1,40 @@
+{
+  "fixture": "broken-onpage",
+  "rulesetVersion": "1.0.0",
+  "description": "On-page faults: a missing meta description, a duplicate title, two H1s and an image without alt text.",
+  "changedFiles": [
+    "about/index.html",
+    "blog/care-guide/index.html",
+    "collections/mugs/index.html",
+    "products/speckled-stoneware-mug/index.html"
+  ],
+  "expectedFailures": [
+    {
+      "ruleId": "ONP-004",
+      "url": "https://example-store.com/about/",
+      "note": "meta description removed"
+    },
+    {
+      "ruleId": "ONP-002",
+      "url": "https://example-store.com/products/blue-ceramic-mug/",
+      "note": "title duplicated by the speckled mug page"
+    },
+    {
+      "ruleId": "ONP-002",
+      "url": "https://example-store.com/products/speckled-stoneware-mug/",
+      "note": "title copied from the blue mug page"
+    },
+    {
+      "ruleId": "ONP-005",
+      "url": "https://example-store.com/blog/care-guide/",
+      "note": "second <h1> ('Washing')"
+    },
+    {
+      "ruleId": "ONP-008",
+      "url": "https://example-store.com/collections/mugs/",
+      "note": "speckled mug image has no alt attribute"
+    }
+  ],
+  "allOtherApplicableRules": "pass",
+  "expectedScore": null
+}

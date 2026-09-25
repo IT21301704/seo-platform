@@ -1,0 +1,33 @@
+{
+  "origin": "https://example-store.com",
+  "crawledAt": "2026-09-25T00:00:00Z",
+  "alternateOrigins": [
+    "http://example-store.com",
+    "http://www.example-store.com",
+    "https://www.example-store.com"
+  ],
+  "statusOverrides": {},
+  "redirects": [
+    {
+      "from": "/shop/",
+      "to": "/collections/mugs/",
+      "status": 301
+    }
+  ],
+  "notFoundFile": "404.html",
+  "notFoundStatus": 404,
+  "compression": "br",
+  "headers": {
+    "cache-control": "public, max-age=3600",
+    "strict-transport-security": "max-age=31536000",
+    "x-content-type-options": "nosniff"
+  },
+  "performance": {
+    "lcp": "good",
+    "inp": "good",
+    "cls": "good"
+  },
+  "ownerIntent": {
+    "aiCrawlers": "allow"
+  }
+}

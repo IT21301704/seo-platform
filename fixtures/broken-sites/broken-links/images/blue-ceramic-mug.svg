@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" width="600" height="600" role="img">
+  <title>Blue glazed ceramic mug</title>
+  <rect width="600" height="600" fill="#f1ece4"/>
+  <path d="M180 170h200v250a50 50 0 0 1-50 50h-100a50 50 0 0 1-50-50z" fill="#1f4e79"/>
+  <path d="M380 230a60 60 0 0 1 0 120" stroke="#1f4e79" stroke-width="28" fill="none"/>
+</svg>

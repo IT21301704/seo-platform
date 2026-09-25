@@ -1,0 +1,39 @@
+{
+  "fixture": "broken-indexing",
+  "rulesetVersion": "1.0.0",
+  "description": "Indexing faults: an important page set to noindex, a canonical pointing to a 404, and a missing canonical.",
+  "changedFiles": [
+    "about/index.html",
+    "policies/privacy/index.html",
+    "products/gift-set/index.html"
+  ],
+  "expectedFailures": [
+    {
+      "ruleId": "IDX-003",
+      "url": "https://example-store.com/about/",
+      "note": "important page has meta robots noindex"
+    },
+    {
+      "ruleId": "SMP-008",
+      "url": "https://example-store.com/about/",
+      "note": "cascade: the noindex URL is still listed in sitemap.xml"
+    },
+    {
+      "ruleId": "IDX-002",
+      "url": "https://example-store.com/products/gift-set/",
+      "note": "canonical points to /products/gift-sets/, which returns 404"
+    },
+    {
+      "ruleId": "SMP-010",
+      "url": "https://example-store.com/products/gift-set/",
+      "note": "cascade: the sitemap lists a URL whose canonical is elsewhere"
+    },
+    {
+      "ruleId": "IDX-001",
+      "url": "https://example-store.com/policies/privacy/",
+      "note": "canonical link removed"
+    }
+  ],
+  "allOtherApplicableRules": "pass",
+  "expectedScore": null
+}

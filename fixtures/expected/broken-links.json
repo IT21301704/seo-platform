@@ -1,0 +1,31 @@
+{
+  "fixture": "broken-links",
+  "rulesetVersion": "1.0.0",
+  "description": "Link faults: a broken internal link, an orphan page, and a two-hop redirect chain linked from the home page.",
+  "changedFiles": [
+    "_fixture.json",
+    "blog/care-guide/index.html",
+    "index.html",
+    "products/travel-mug/index.html",
+    "sitemap.xml"
+  ],
+  "expectedFailures": [
+    {
+      "ruleId": "LNK-002",
+      "url": "https://example-store.com/blog/care-guide/",
+      "note": "links to /blog/old-post/, which returns 404"
+    },
+    {
+      "ruleId": "IDX-004",
+      "url": "https://example-store.com/products/travel-mug/",
+      "note": "listed in sitemap.xml but no page links to it"
+    },
+    {
+      "ruleId": "TEC-004",
+      "url": "https://example-store.com/mugs/",
+      "note": "redirect chain /mugs/ → /shop/ → /collections/mugs/ (2 hops)"
+    }
+  ],
+  "allOtherApplicableRules": "pass",
+  "expectedScore": null
+}

@@ -1,0 +1,26 @@
+packages:
+  - apps/*
+  - packages/*
+  - fixtures
+
+# One version per dependency across the monorepo.
+catalog:
+  "@electric-sql/pglite": 0.5.8
+  "@eslint/js": 10.0.1
+  "@prisma/adapter-pg": 7.10.0
+  "@prisma/client": 7.10.0
+  "@types/node": 24.10.1
+  cheerio: 1.2.0
+  eslint: 10.11.0
+  globals: 17.12.0
+  prettier: 3.9.9
+  prisma: 7.10.0
+  turbo: 2.11.4
+  typescript: 6.0.3
+  typescript-eslint: 8.70.1
+  vitest: 5.0.2
+  zod: 4.6.5
+
+onlyBuiltDependencies:
+  - "@prisma/engines"
+  - prisma

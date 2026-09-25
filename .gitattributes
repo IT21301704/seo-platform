@@ -1,0 +1,9 @@
+# LF everywhere so content hashes are identical on Windows, macOS, Linux and CI.
+* text=auto eol=lf
+
+# Fixtures are hashed byte-for-byte: always LF, never converted.
+fixtures/** text eol=lf
+
+*.png binary
+*.jpg binary
+*.webp binary
