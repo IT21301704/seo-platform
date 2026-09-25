@@ -29,6 +29,8 @@ import { gzip, htmlKey, snapshotKey, uploadKey } from "./storage";
 import type { BlobStore } from "./storage";
 
 export const DEFAULT_LLM_BUDGET = 30;
+
+class CancelledError extends Error {}
 const FIXTURES_DIR = fileURLToPath(new URL("../../../fixtures", import.meta.url));
 
 export interface PipelineDeps {
@@ -98,8 +100,12 @@ export async function runPipeline(crawlId: string, deps: PipelineDeps): Promise<
   const project = crawl.project;
   const report = (msg: string, status: number | null = null) => deps.progress?.log(msg, status);
   const stage = (...args: Parameters<ProgressReporter["stage"]>) => deps.progress?.stage(...args);
-  const setStatus = (status: "discovering" | "crawling" | "rendering" | "performance" | "checking" | "explaining") =>
-    db.crawl.update({ where: { id: crawlId }, data: { status } });
+  // Stage boundary: stop if the user cancelled, otherwise record the new status.
+  const setStatus = async (status: "crawling" | "rendering" | "performance" | "checking" | "explaining") => {
+    const current = await db.crawl.findUniqueOrThrow({ where: { id: crawlId }, select: { status: true } });
+    if (current.status === "cancelled") throw new CancelledError("Audit cancelled");
+    await db.crawl.update({ where: { id: crawlId }, data: { status } });
+  };
 
   await db.crawl.update({ where: { id: crawlId }, data: { status: "discovering", startedAt: deps.now(), error: null } });
   const source = await sourceFor(crawl, project, deps);
@@ -186,12 +192,16 @@ export async function runPipeline(crawlId: string, deps: PipelineDeps): Promise<
 
     // 6 · Explain (failed checks only; never changes the score)
     await setStatus("explaining");
-    await explainFailures(deps, site, auditReport);
+    await explainFailures(deps, project.id, site, auditReport);
 
     await db.crawl.update({ where: { id: crawlId }, data: { status: "completed", finishedAt: deps.now() } });
     await report("Audit complete");
     return auditReport;
   } catch (error) {
+    if (error instanceof CancelledError) {
+      await report("Audit cancelled");
+      throw error;
+    }
     await db.crawl.update({
       where: { id: crawlId },
       data: { status: "failed", finishedAt: deps.now(), error: (error as Error).message.slice(0, 1000) },
@@ -244,7 +254,7 @@ async function findCachedReport(
   return { crawlId: previous.id, report, reportHash: previous.report.reportHash };
 }
 
-async function explainFailures(deps: PipelineDeps, site: SiteFacts, report: AuditReport): Promise<void> {
+async function explainFailures(deps: PipelineDeps, projectId: string, site: SiteFacts, report: AuditReport): Promise<void> {
   const failing = report.rules
     .filter((r) => r.status === "fail")
     .sort((a, b) => b.priority.priority - a.priority.priority || a.ruleId.localeCompare(b.ruleId));
@@ -263,7 +273,8 @@ async function explainFailures(deps: PipelineDeps, site: SiteFacts, report: Audi
         ? { url: firstUrl, title: facts.title, headings: facts.headings.slice(0, 20).map((h) => h.text), text: facts.mainText.split(" ").slice(0, 2000).join(" ") }
         : null;
     // Over budget: the template explanation is used (no API call).
-    await explainIssue({ rule, items, excerpt }, { llm: index < budget ? deps.llm : null, cache });
+    const result = await explainIssue({ rule, items, excerpt }, { llm: index < budget ? deps.llm : null, cache });
+    await deps.db.issue.updateMany({ where: { projectId, ruleId: rule.id }, data: { explanationKey: result.cacheKey } });
     done += 1;
     await deps.progress?.stage("explain", { state: "running", detail: `${done} of ${failing.length} issues explained`, done, total: failing.length });
   }

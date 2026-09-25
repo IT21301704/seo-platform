@@ -6,20 +6,26 @@ export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs));
 }
 
-const dateFmt = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
-const dateTimeFmt = new Intl.DateTimeFormat("en-GB", {
-  day: "numeric",
-  month: "short",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-  timeZone: "UTC",
-});
-const shortFmt = new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", timeZone: "UTC" });
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const pad = (n: number): string => String(n).padStart(2, "0");
 
-export const formatDate = (d: Date | string): string => dateFmt.format(new Date(d));
-export const formatDateTime = (d: Date | string): string => `${dateTimeFmt.format(new Date(d))} UTC`;
-export const formatShortDate = (d: Date | string): string => shortFmt.format(new Date(d));
+/** "24 Sep" — fixed English month names in UTC, so server and browser render identically. */
+export const formatShortDate = (d: Date | string): string => {
+  const date = new Date(d);
+  return `${date.getUTCDate()} ${MONTHS[date.getUTCMonth()]}`;
+};
+/** "24 Sep 2026" */
+export const formatDate = (d: Date | string): string => `${formatShortDate(d)} ${new Date(d).getUTCFullYear()}`;
+/** "24 Sep 2026, 10:42 UTC" */
+export const formatDateTime = (d: Date | string): string => {
+  const date = new Date(d);
+  return `${formatDate(date)}, ${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())} UTC`;
+};
+/** "10:42:05" */
+export const formatTime = (d: Date | string): string => {
+  const date = new Date(d);
+  return `${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}:${pad(date.getUTCSeconds())}`;
+};
 export const formatNumber = (n: number): string => n.toLocaleString("en-US");
 
 /** "https://example-store.com/about/" → "/about/" for display. */

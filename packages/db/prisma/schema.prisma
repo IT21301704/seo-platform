@@ -398,6 +398,8 @@ model Issue {
   /// Computed by the rule engine / scoring package, never by the LLM.
   priority       Decimal     @default(0) @db.Decimal(6, 2)
   lastCrawlId    String?
+  /// llm_outputs.cacheKey of the explanation shown on the issue detail page.
+  explanationKey String?
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
 
