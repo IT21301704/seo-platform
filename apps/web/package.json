@@ -31,6 +31,7 @@
     "playwright": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "server-only": "catalog:",
     "recharts": "catalog:",
     "tailwind-merge": "catalog:",
     "zod": "catalog:"

@@ -42,6 +42,7 @@ catalog:
   recharts: 3.10.1
   robots-parser: 3.0.1
   tailwind-merge: 3.7.0
+  server-only: 0.0.1
   tailwindcss: 4.3.3
   tsx: 4.23.15
   turbo: 2.11.4
