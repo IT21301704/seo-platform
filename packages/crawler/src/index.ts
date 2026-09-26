@@ -12,3 +12,4 @@ export * from "./crawl";
 export * from "./render";
 export * from "./performance";
 export * from "./site-facts";
+export * from "./detect";

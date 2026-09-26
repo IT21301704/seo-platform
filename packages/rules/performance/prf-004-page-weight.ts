@@ -15,7 +15,10 @@ export const PRF_004 = defineRule(
     effort: 3,
     explanation: {
       why: "Very large HTML takes longer to download and parse, especially on mobile, and often means inline data or duplicated markup.",
-      fix: ["Remove inline images (base64), large inline scripts/styles and unused markup.", "Paginate very long lists."],
+      fix: [
+        "Remove inline images (base64), large inline scripts/styles and unused markup.",
+        "Paginate very long lists.",
+      ],
     },
   },
   (site) =>

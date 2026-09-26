@@ -76,7 +76,10 @@ export function buildSiteFacts(
   snapshot: CrawlSnapshot,
   options: BuildSiteFactsOptions = {},
 ): SiteFacts {
-  const robotsParsed = parseRobots(snapshot.robots.url, snapshot.robots.status === 200 ? snapshot.robots.body : null);
+  const robotsParsed = parseRobots(
+    snapshot.robots.url,
+    snapshot.robots.status === 200 ? snapshot.robots.body : null,
+  );
   const isAllowedForGooglebot = (url: string) => robotsParsed.isAllowed(url, GOOGLEBOT);
 
   const pages = snapshot.pages.map((record) => basePage(record, isAllowedForGooglebot));
@@ -124,9 +127,12 @@ export function buildSiteFacts(
 }
 
 function basePage(record: PageRecord, allowed: (url: string) => boolean): SitePage {
-  const raw = record.rawHtml !== null ? extractPageFacts(record.rawHtml, record.url, record.headers) : null;
+  const raw =
+    record.rawHtml !== null ? extractPageFacts(record.rawHtml, record.url, record.headers) : null;
   const rendered =
-    record.renderedHtml !== null ? extractPageFacts(record.renderedHtml, record.url, record.headers) : null;
+    record.renderedHtml !== null
+      ? extractPageFacts(record.renderedHtml, record.url, record.headers)
+      : null;
   const facts = rendered ?? raw;
   const isHtml200 = record.status === 200 && record.chain.length === 0 && raw !== null;
   const noindex = facts?.robotsDirectives.some((d) => d === "noindex" || d === "none") ?? false;
@@ -146,7 +152,12 @@ function basePage(record: PageRecord, allowed: (url: string) => boolean): SitePa
 }
 
 /** Fills depth (BFS over <a> links from the root) and inboundFrom. */
-function linkGraph(pages: SitePage[], byUrl: Map<string, SitePage>, origin: string, root: string): void {
+function linkGraph(
+  pages: SitePage[],
+  byUrl: Map<string, SitePage>,
+  origin: string,
+  root: string,
+): void {
   const inbound = new Map<string, Set<string>>();
   const outbound = new Map<string, string[]>();
   for (const page of pages) {

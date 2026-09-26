@@ -22,7 +22,8 @@ for (const fixture of ["golden-site", ...brokenSiteNames()]) {
   const path = reportPath(fixture);
   if (existsSync(path)) {
     const current = readFileSync(path, "utf8");
-    const version = (JSON.parse(current) as { versions: { rulesetVersion: string } }).versions.rulesetVersion;
+    const version = (JSON.parse(current) as { versions: { rulesetVersion: string } }).versions
+      .rulesetVersion;
     if (current !== next && version === RULESET_VERSION) {
       blocked.push(fixture);
       continue;
@@ -35,7 +36,9 @@ for (const fixture of ["golden-site", ...brokenSiteNames()]) {
   expected["expectedScore"] = result.report.score.health;
   expected["rulesetVersion"] = RULESET_VERSION;
   writeFileSync(expectedPath, `${JSON.stringify(expected, null, 2)}\n`);
-  console.log(`${fixture.padEnd(18)} health ${result.report.score.health}  hash ${result.reportHash.slice(0, 12)}`);
+  console.log(
+    `${fixture.padEnd(18)} health ${result.report.score.health}  hash ${result.reportHash.slice(0, 12)}`,
+  );
 }
 await Promise.all(renderers.map((r) => r.close()));
 

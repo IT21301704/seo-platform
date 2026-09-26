@@ -6,7 +6,12 @@ const store = {
   "@type": "Store",
   name: "Example Store",
   telephone: "+94 91 222 0142",
-  address: { "@type": "PostalAddress", streetAddress: "24 Lighthouse St", addressLocality: "Galle", addressCountry: "LK" },
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: "24 Lighthouse St",
+    addressLocality: "Galle",
+    addressCountry: "LK",
+  },
 };
 
 describe("SD-003 LocalBusiness", () => {
@@ -16,7 +21,10 @@ describe("SD-003 LocalBusiness", () => {
   });
 
   it("fails without telephone", async () => {
-    const pages = { ...defaultPages(), "/about/": page("/about/", { jsonLd: [{ ...store, telephone: undefined }] }) };
+    const pages = {
+      ...defaultPages(),
+      "/about/": page("/about/", { jsonLd: [{ ...store, telephone: undefined }] }),
+    };
     const outcomes = await check(SD_003, { pages });
     expect(summary(outcomes)).toEqual(["fail /about/"]);
     expect(outcomes[0]?.evidence["missing"]).toEqual(["telephone"]);

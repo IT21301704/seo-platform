@@ -15,7 +15,8 @@ export const formatShortDate = (d: Date | string): string => {
   return `${date.getUTCDate()} ${MONTHS[date.getUTCMonth()]}`;
 };
 /** "24 Sep 2026" */
-export const formatDate = (d: Date | string): string => `${formatShortDate(d)} ${new Date(d).getUTCFullYear()}`;
+export const formatDate = (d: Date | string): string =>
+  `${formatShortDate(d)} ${new Date(d).getUTCFullYear()}`;
 /** "24 Sep 2026, 10:42 UTC" */
 export const formatDateTime = (d: Date | string): string => {
   const date = new Date(d);
@@ -46,3 +47,7 @@ export function hostOf(url: string): string {
     return url;
   }
 }
+
+/** "1 page", "3 pages". */
+export const plural = (n: number, word: string, many = `${word}s`): string =>
+  `${formatNumber(n)} ${n === 1 ? word : many}`;

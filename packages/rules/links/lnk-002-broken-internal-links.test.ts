@@ -8,9 +8,14 @@ describe("LNK-002 broken internal links", () => {
   });
 
   it("fails for a link to a 404", async () => {
-    const pages = { ...defaultPages(), "/about/": page("/about/", { body: '<p><a href="/old-post/">Old</a></p>' }) };
+    const pages = {
+      ...defaultPages(),
+      "/about/": page("/about/", { body: '<p><a href="/old-post/">Old</a></p>' }),
+    };
     const outcomes = await check(LNK_002, { pages });
     expect(summary(outcomes)).toEqual(["pass /", "fail /about/"]);
-    expect(outcomes[1]?.evidence["brokenLinks"]).toEqual([{ url: "https://example-store.com/old-post/", status: 404 }]);
+    expect(outcomes[1]?.evidence["brokenLinks"]).toEqual([
+      { url: "https://example-store.com/old-post/", status: 404 },
+    ]);
   });
 });

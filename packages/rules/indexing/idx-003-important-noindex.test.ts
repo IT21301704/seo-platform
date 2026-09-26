@@ -14,7 +14,10 @@ describe("IDX-003 important pages noindex", () => {
 
   it("ignores noindex on pages that are only linked from the footer", async () => {
     const pages = {
-      "/": page("/", { nav: ["/about/"] }).replace("<footer>", '<footer><a href="/terms/">Terms</a>'),
+      "/": page("/", { nav: ["/about/"] }).replace(
+        "<footer>",
+        '<footer><a href="/terms/">Terms</a>',
+      ),
       "/about/": page("/about/"),
       "/terms/": page("/terms/", { robots: "noindex" }),
     };

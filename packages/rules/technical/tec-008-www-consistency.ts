@@ -14,7 +14,10 @@ export const TEC_008 = defineRule(
     effort: 2,
     explanation: {
       why: "If both example.com and www.example.com show the site, search engines see two copies of every page and split signals between them.",
-      fix: ["Pick one host as the main address.", "301-redirect the other host to it at your DNS/host/CDN."],
+      fix: [
+        "Pick one host as the main address.",
+        "301-redirect the other host to it at your DNS/host/CDN.",
+      ],
     },
   },
   (site) => {
@@ -25,7 +28,8 @@ export const TEC_008 = defineRule(
     if (!probe || probe.status === null) return [na(url, "Other host version does not exist")];
     const target = probe.chain[0]?.location ?? null;
     const evidence = { status: probe.status, location: target };
-    const redirectsHome = probe.status >= 300 && probe.status < 400 && target !== null && new URL(target).host === host;
+    const redirectsHome =
+      probe.status >= 300 && probe.status < 400 && target !== null && new URL(target).host === host;
     return [redirectsHome ? pass(url, evidence) : fail(url, evidence)];
   },
 );

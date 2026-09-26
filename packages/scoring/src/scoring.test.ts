@@ -3,7 +3,11 @@ import { describe, expect, it } from "vitest";
 import { pagesFactor, priorityOf } from "./priority";
 import { buildReport, healthScore, weightedScore } from "./report";
 
-const rule = (id: string, severity: RuleDefinition["severity"], scoreCategory: RuleDefinition["scoreCategory"]): RuleDefinition => ({
+const rule = (
+  id: string,
+  severity: RuleDefinition["severity"],
+  scoreCategory: RuleDefinition["scoreCategory"],
+): RuleDefinition => ({
   id,
   version: "1.0.0",
   category: scoreCategory,
@@ -21,15 +25,32 @@ const rule = (id: string, severity: RuleDefinition["severity"], scoreCategory: R
   evaluate: () => [],
 });
 const outcomes = (pass: number, fail: number, na = 0): RuleOutcome[] => [
-  ...Array.from({ length: pass }, (_, i) => ({ url: `https://a.com/p${i}`, result: "pass" as const, evidence: {} })),
-  ...Array.from({ length: fail }, (_, i) => ({ url: `https://a.com/f${i}`, result: "fail" as const, evidence: {} })),
-  ...Array.from({ length: na }, (_, i) => ({ url: `https://a.com/n${i}`, result: "na" as const, evidence: {} })),
+  ...Array.from({ length: pass }, (_, i) => ({
+    url: `https://a.com/p${i}`,
+    result: "pass" as const,
+    evidence: {},
+  })),
+  ...Array.from({ length: fail }, (_, i) => ({
+    url: `https://a.com/f${i}`,
+    result: "fail" as const,
+    evidence: {},
+  })),
+  ...Array.from({ length: na }, (_, i) => ({
+    url: `https://a.com/n${i}`,
+    result: "na" as const,
+    evidence: {},
+  })),
 ];
 
 function report(results: RuleResult[]) {
   return buildReport({
     results,
-    versions: { crawlerVersion: "1.0.0", rulesetVersion: "1.0.0", weightsVersion: "v1", snapshotSetHash: "x" },
+    versions: {
+      crawlerVersion: "1.0.0",
+      rulesetVersion: "1.0.0",
+      weightsVersion: "v1",
+      snapshotSetHash: "x",
+    },
     inputType: "url",
     rootUrl: "https://a.com/",
     crawledAt: "2026-09-25T00:00:00Z",
@@ -58,7 +79,7 @@ describe("scores", () => {
       { rule: rule("A-1", "critical", "onpage"), outcomes: outcomes(1, 1) }, // 10 × 0.5
       { rule: rule("A-2", "low", "onpage"), outcomes: outcomes(2, 0) }, // 1 × 1
     ]).rules;
-    expect(weightedScore(reports)).toBeCloseTo((5 + 1) / 11 * 100, 10);
+    expect(weightedScore(reports)).toBeCloseTo(((5 + 1) / 11) * 100, 10);
   });
 
   it("leaves not-applicable rules and categories out of the denominator", () => {
@@ -72,7 +93,15 @@ describe("scores", () => {
   });
 
   it("combines category scores with the v1 weights", () => {
-    const categories = { technical: 100, indexing: 50, onpage: 100, performance: null, links: 100, schema: 100, ai: 100 };
+    const categories = {
+      technical: 100,
+      indexing: 50,
+      onpage: 100,
+      performance: null,
+      links: 100,
+      schema: 100,
+      ai: 100,
+    };
     // (20·100 + 15·50 + 20·100 + 10·100·3) / 85
     expect(healthScore(categories)).toBe(Math.round((2000 + 750 + 2000 + 3000) / 85));
   });
@@ -82,6 +111,13 @@ describe("scores", () => {
       { rule: rule("A-1", "critical", "onpage"), outcomes: outcomes(2, 3) },
       { rule: rule("A-2", "medium", "links"), outcomes: outcomes(4, 1) },
     ]);
-    expect(r.counts).toEqual({ critical: 3, high: 0, medium: 1, low: 0, passed: 6, notApplicable: 0 });
+    expect(r.counts).toEqual({
+      critical: 3,
+      high: 0,
+      medium: 1,
+      low: 0,
+      passed: 6,
+      notApplicable: 0,
+    });
   });
 });

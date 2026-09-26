@@ -16,7 +16,9 @@ export const SMP_011 = defineRule(
     effort: 1,
     explanation: {
       why: "Google uses lastmod to decide what to re-crawl, but only if it is accurate. Invalid or future dates make Google ignore it.",
-      fix: ["Let your CMS fill lastmod from each page's real 'last modified' date instead of a fixed or current date."],
+      fix: [
+        "Let your CMS fill lastmod from each page's real 'last modified' date instead of a fixed or current date.",
+      ],
     },
   },
   (site) => {
@@ -26,7 +28,8 @@ export const SMP_011 = defineRule(
       .map((e) => {
         const lastmod = e.lastmod ?? "";
         if (!isW3cDate(lastmod)) return fail(e.loc, { lastmod, problem: "not a W3C date" });
-        if (lastmod.slice(0, 10) > crawlDate) return fail(e.loc, { lastmod, problem: "in the future", crawlDate });
+        if (lastmod.slice(0, 10) > crawlDate)
+          return fail(e.loc, { lastmod, problem: "in the future", crawlDate });
         return pass(e.loc, { lastmod });
       });
   },

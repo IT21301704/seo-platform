@@ -30,7 +30,8 @@ function hashOf(value: unknown): string {
 export function templateExplanation(rule: RuleDefinition): Explanation {
   return {
     whyItMatters: rule.explanation.why,
-    seoImpact: "Fixing this removes a known obstacle for search engines and AI assistants. It does not guarantee rankings.",
+    seoImpact:
+      "Fixing this removes a known obstacle for search engines and AI assistants. It does not guarantee rankings.",
     fixSteps: rule.explanation.fix,
     developerInstructions: rule.passCondition,
     contentSuggestion: "",
@@ -66,20 +67,24 @@ export async function explainIssue(
   const cached = await deps.cache.get(key);
   if (cached) {
     const parsed = ExplanationSchema.safeParse(cached.output);
-    if (parsed.success) return { ...base, output: parsed.data, source: cached.isFallback ? "template" : "cache" };
+    if (parsed.success)
+      return { ...base, output: parsed.data, source: cached.isFallback ? "template" : "cache" };
   }
 
   if (deps.llm) {
     const prompt = explainPrompt(input.rule, items, input.excerpt);
     for (let attempt = 0; attempt < 2; attempt++) {
-      let output: Explanation | null = null;
+      let output: Explanation | null;
       try {
         output = await deps.llm.generate({ prompt, schema: ExplanationSchema });
       } catch {
         output = null; // network/API errors: the SDK already retried; fall through to template
       }
       if (output) {
-        await deps.cache.set(key, parts, { output: output as unknown as JsonValue, isFallback: false });
+        await deps.cache.set(key, parts, {
+          output: output as unknown as JsonValue,
+          isFallback: false,
+        });
         return { ...base, output, source: "llm" };
       }
     }
@@ -88,14 +93,15 @@ export async function explainIssue(
   const output = templateExplanation(input.rule);
   // Template results are only cached under the template model id, so a later run with an
   // API key still asks Claude.
-  if (!deps.llm) await deps.cache.set(key, parts, { output: output as unknown as JsonValue, isFallback: true });
+  if (!deps.llm)
+    await deps.cache.set(key, parts, { output: output as unknown as JsonValue, isFallback: true });
   return { ...base, output, source: "template" };
 }
 
 /** Drafts meta descriptions for pages (ONP-004 preview). Returns null without an LLM. */
 export async function draftDescriptions(
   pages: PageExcerpt[],
-  deps: { llm: LlmClient | null; cache: LlmCache },
+  deps: { llm: LlmClient | null; cache: LlmCache; cachedOnly?: boolean },
 ): Promise<LlmResult<DescriptionDrafts> | null> {
   if (!deps.llm) return null;
   const parts = {
@@ -109,16 +115,24 @@ export async function draftDescriptions(
   const cached = await deps.cache.get(key);
   const parsedCache = cached ? DescriptionDraftsSchema.safeParse(cached.output) : null;
   if (parsedCache?.success) return { ...base, output: parsedCache.data, source: "cache" };
+  if (deps.cachedOnly) return null;
 
   for (let attempt = 0; attempt < 2; attempt++) {
-    let output: DescriptionDrafts | null = null;
+    let output: DescriptionDrafts | null;
     try {
-      output = await deps.llm.generate({ prompt: descriptionDraftPrompt(pages), schema: DescriptionDraftsSchema, maxTokens: 8000 });
+      output = await deps.llm.generate({
+        prompt: descriptionDraftPrompt(pages),
+        schema: DescriptionDraftsSchema,
+        maxTokens: 8000,
+      });
     } catch {
       output = null;
     }
     if (output) {
-      await deps.cache.set(key, parts, { output: output as unknown as JsonValue, isFallback: false });
+      await deps.cache.set(key, parts, {
+        output: output as unknown as JsonValue,
+        isFallback: false,
+      });
       return { ...base, output, source: "llm" };
     }
   }

@@ -15,7 +15,15 @@ export const CATEGORY_LABEL: Record<Category, string> = {
 };
 
 /** Dashboard order (wireframe 03: two columns). */
-export const CATEGORY_ORDER: ScoredCategory[] = ["technical", "indexing", "onpage", "performance", "links", "schema", "ai"];
+export const CATEGORY_ORDER: ScoredCategory[] = [
+  "technical",
+  "indexing",
+  "onpage",
+  "performance",
+  "links",
+  "schema",
+  "ai",
+];
 
 export const SEVERITY_LABEL: Record<Severity, string> = {
   critical: "Critical",

@@ -14,7 +14,10 @@ export const PRF_006 = defineRule(
     effort: 1,
     explanation: {
       why: "Lazy-loading below-the-fold images saves bandwidth; lazy-loading the first image delays the largest paint.",
-      fix: ['Add loading="lazy" to images further down the page.', 'Remove it from the first (hero) image and add fetchpriority="high".'],
+      fix: [
+        'Add loading="lazy" to images further down the page.',
+        'Remove it from the first (hero) image and add fetchpriority="high".',
+      ],
     },
   },
   (site) =>
@@ -23,7 +26,8 @@ export const PRF_006 = defineRule(
       if (images.length === 0) return null;
       const problems: string[] = [];
       if (images[0]?.loading === "lazy") problems.push(`first image is lazy: ${images[0].src}`);
-      for (const img of images.slice(1)) if (img.loading !== "lazy") problems.push(`not lazy: ${img.src}`);
+      for (const img of images.slice(1))
+        if (img.loading !== "lazy") problems.push(`not lazy: ${img.src}`);
       return problems.length ? fail(p.url, { problems }) : pass(p.url);
     }),
 );

@@ -1,11 +1,7 @@
 import { promisify } from "node:util";
 import { brotliDecompress, gunzip, inflate } from "node:zlib";
 import { Agent, request } from "undici";
-import {
-  CRAWLER_USER_AGENT,
-  CRAWL_REQUESTS_PER_SECOND,
-  MAX_PAGE_SIZE_BYTES,
-} from "@seo/shared";
+import { CRAWLER_USER_AGENT, CRAWL_REQUESTS_PER_SECOND, MAX_PAGE_SIZE_BYTES } from "@seo/shared";
 import { assertSafeUrl, guardedLookup } from "./ssrf";
 import { FetchError } from "./types";
 import type { FetchRequest, FetchResponse, Fetcher } from "./types";
@@ -82,7 +78,8 @@ export class HttpFetcher implements Fetcher {
     let size = 0;
     for await (const chunk of body) {
       size += chunk.length;
-      if (size > this.maxBytes) throw new FetchError("too-large", `Body over ${this.maxBytes} bytes`);
+      if (size > this.maxBytes)
+        throw new FetchError("too-large", `Body over ${this.maxBytes} bytes`);
       chunks.push(chunk);
     }
     return Buffer.concat(chunks);
@@ -96,11 +93,14 @@ export class HttpFetcher implements Fetcher {
   }
 }
 
-function normalizeHeaders(raw: Record<string, string | string[] | undefined>): Record<string, string> {
+function normalizeHeaders(
+  raw: Record<string, string | string[] | undefined>,
+): Record<string, string> {
   const out: Record<string, string> = {};
   for (const key of Object.keys(raw).sort()) {
     const value = raw[key];
-    if (value !== undefined) out[key.toLowerCase()] = Array.isArray(value) ? value.join(", ") : value;
+    if (value !== undefined)
+      out[key.toLowerCase()] = Array.isArray(value) ? value.join(", ") : value;
   }
   return out;
 }

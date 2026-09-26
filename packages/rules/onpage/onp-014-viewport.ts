@@ -13,7 +13,9 @@ export const ONP_014 = defineRule(
     effort: 1,
     explanation: {
       why: "Google indexes the mobile version of pages. Without a viewport tag, phones show a zoomed-out desktop layout.",
-      fix: ['Add <meta name="viewport" content="width=device-width, initial-scale=1"> in the theme header.'],
+      fix: [
+        'Add <meta name="viewport" content="width=device-width, initial-scale=1"> in the theme header.',
+      ],
     },
   },
   (site) =>

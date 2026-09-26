@@ -10,7 +10,8 @@ export const SMP_005 = defineRule(
     scoreCategory: "technical",
     severity: "critical",
     title: "Sitemap exceeds 50,000 URLs or 50 MB",
-    passCondition: "Passes when each sitemap file has at most 50,000 URLs and is at most 50 MB uncompressed.",
+    passCondition:
+      "Passes when each sitemap file has at most 50,000 URLs and is at most 50 MB uncompressed.",
     appliesTo: "both",
     autoFixable: true,
     riskLevel: "high",
@@ -27,6 +28,8 @@ export const SMP_005 = defineRule(
         const urls = parsed?.entries.length ?? 0;
         const bytes = Buffer.byteLength(record.body ?? "", "utf8");
         const evidence = { urls, bytes };
-        return urls > MAX_SITEMAP_URLS || bytes > MAX_SITEMAP_BYTES ? fail(record.url, evidence) : pass(record.url, evidence);
+        return urls > MAX_SITEMAP_URLS || bytes > MAX_SITEMAP_BYTES
+          ? fail(record.url, evidence)
+          : pass(record.url, evidence);
       }),
 );

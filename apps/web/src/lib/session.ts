@@ -21,7 +21,13 @@ export async function requireUser(): Promise<{ user: CurrentUser; db: ScopedPris
   const user = await prisma.user.findUnique({ where: { id } });
   if (!user) redirect("/signin");
   return {
-    user: { id: user.id, email: user.email, name: user.name, role: user.role, organizationId: user.organizationId },
+    user: {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      organizationId: user.organizationId,
+    },
     db: forOrganization(prisma, user.organizationId),
   };
 }
@@ -44,7 +50,13 @@ export async function requireProject(db: ScopedPrisma, projectId: string) {
 export async function logAction(
   db: ScopedPrisma,
   user: CurrentUser,
-  entry: { action: string; entityType: string; entityId: string; before?: Prisma.InputJsonValue; after?: Prisma.InputJsonValue },
+  entry: {
+    action: string;
+    entityType: string;
+    entityId: string;
+    before?: Prisma.InputJsonValue;
+    after?: Prisma.InputJsonValue;
+  },
 ): Promise<void> {
   await db.auditLog.create({
     data: {

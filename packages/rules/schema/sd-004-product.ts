@@ -11,7 +11,8 @@ function productProblems(product: JsonLdNode): string[] {
   for (const offer of offers) {
     if (!str(offer["price"]) && !str(offer["lowPrice"])) problems.push("offers.price");
     if (!str(offer["priceCurrency"])) problems.push("offers.priceCurrency");
-    if (!str(offer["availability"]) && !str(offer["offerCount"])) problems.push("offers.availability");
+    if (!str(offer["availability"]) && !str(offer["offerCount"]))
+      problems.push("offers.availability");
   }
   return [...new Set(problems)];
 }
@@ -22,7 +23,8 @@ export const SD_004 = defineRule(
     category: "schema",
     severity: "high",
     title: 'Product schema missing "offers" or required fields',
-    passCondition: "Passes when every Product item has name, image and offers with price, priceCurrency and availability.",
+    passCondition:
+      "Passes when every Product item has name, image and offers with price, priceCurrency and availability.",
     appliesTo: "both",
     autoFixable: true,
     riskLevel: "high",

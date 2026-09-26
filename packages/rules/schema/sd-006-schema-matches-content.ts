@@ -3,7 +3,10 @@ import { list, nodesOfType, normalizeText, obj, str } from "../src/helpers";
 
 /** "4500.00" → "4500"; used to find the price among the page's digits. */
 function priceDigits(price: string): string {
-  return price.replace(/[^\d.]/g, "").replace(/\.0+$/, "").replace(".", "");
+  return price
+    .replace(/[^\d.]/g, "")
+    .replace(/\.0+$/, "")
+    .replace(".", "");
 }
 
 export const SD_006 = defineRule(
@@ -40,7 +43,8 @@ export const SD_006 = defineRule(
         for (const q of list(faq["mainEntity"])) {
           const question = str(q["name"]);
           const answer = str(obj(q["acceptedAnswer"])?.["text"]);
-          if (question && !body.includes(normalizeText(question))) mismatches.push(`question not on page: ${question}`);
+          if (question && !body.includes(normalizeText(question)))
+            mismatches.push(`question not on page: ${question}`);
           if (answer && !body.includes(normalizeText(answer.replace(/<[^>]+>/g, " ")))) {
             mismatches.push(`answer not on page: ${question ?? answer.slice(0, 40)}`);
           }
@@ -48,10 +52,12 @@ export const SD_006 = defineRule(
       }
       for (const product of products) {
         const name = str(product["name"]);
-        if (name && !body.includes(normalizeText(name))) mismatches.push(`product name not on page: ${name}`);
+        if (name && !body.includes(normalizeText(name)))
+          mismatches.push(`product name not on page: ${name}`);
         for (const offer of list(product["offers"])) {
           const price = str(offer["price"]);
-          if (price && !bodyDigits.includes(priceDigits(price))) mismatches.push(`price not on page: ${price}`);
+          if (price && !bodyDigits.includes(priceDigits(price)))
+            mismatches.push(`price not on page: ${price}`);
         }
       }
       return mismatches.length ? fail(p.url, { mismatches }) : pass(p.url);

@@ -13,7 +13,10 @@ export const LNK_001 = defineRule(
     effort: 2,
     explanation: {
       why: "Search engines only follow real URLs in href. Links that work only through JavaScript hide pages from crawlers.",
-      fix: ["Give every link a real URL in its href.", "Use a <button> for actions that are not navigation."],
+      fix: [
+        "Give every link a real URL in its href.",
+        "Use a <button> for actions that are not navigation.",
+      ],
     },
   },
   (site) =>

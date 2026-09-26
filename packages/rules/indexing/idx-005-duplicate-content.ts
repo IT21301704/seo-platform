@@ -26,7 +26,11 @@ export const IDX_005 = defineRule(
     const dupes = duplicates(pages, (p) => normalizeText(p.facts?.mainText ?? "") || null);
     const duplicateOf = new Map<string, string[]>();
     for (const group of dupes.values()) {
-      for (const p of group) duplicateOf.set(p.url, group.filter((o) => o !== p).map((o) => o.url));
+      for (const p of group)
+        duplicateOf.set(
+          p.url,
+          group.filter((o) => o !== p).map((o) => o.url),
+        );
     }
     return forPages(site, indexable, (p) => {
       const others = duplicateOf.get(p.url);

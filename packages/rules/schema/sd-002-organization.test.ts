@@ -2,7 +2,12 @@ import { describe, expect, it } from "vitest";
 import { ORIGIN, check, defaultPages, page, summary } from "../src/testing";
 import { SD_002 } from "./sd-002-organization";
 
-const org = { "@type": "Organization", name: "Example Store", url: `${ORIGIN}/`, logo: `${ORIGIN}/logo.svg` };
+const org = {
+  "@type": "Organization",
+  name: "Example Store",
+  url: `${ORIGIN}/`,
+  logo: `${ORIGIN}/logo.svg`,
+};
 
 describe("SD-002 Organization", () => {
   it("passes with a complete Organization on the home page", async () => {

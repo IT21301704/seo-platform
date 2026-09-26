@@ -17,7 +17,9 @@ export const AI_004 = defineRule(
     effort: 2,
     explanation: {
       why: "Search engines and AI assistants cross-check your name, address and phone. Conflicting versions make them less confident about which is correct.",
-      fix: ["Use one exact spelling of the name, address and phone everywhere, matching your Google Business Profile."],
+      fix: [
+        "Use one exact spelling of the name, address and phone everywhere, matching your Google Business Profile.",
+      ],
     },
   },
   (site) => {
@@ -41,7 +43,8 @@ export const AI_004 = defineRule(
         if (street) streets.add(street.toLowerCase());
       }
     }
-    if (names.size + phones.size + streets.size === 0) return [na(null, "No business name, phone or address found")];
+    if (names.size + phones.size + streets.size === 0)
+      return [na(null, "No business name, phone or address found")];
     const conflicts: Record<string, string[]> = {};
     if (names.size > 1) conflicts["names"] = [...names].sort();
     if (phones.size > 1) conflicts["phones"] = [...phones].sort();

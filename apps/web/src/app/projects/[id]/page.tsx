@@ -2,9 +2,30 @@ import Link from "next/link";
 import { CATEGORY_WEIGHTS_V1 } from "@seo/shared";
 import { PageBody, PageHeader } from "@/components/page-header";
 import { ScoreTrend } from "@/components/score-trend";
-import { Bar, Button, ButtonLink, Card, CardLabel, EmptyState, Mono, Pill, ScoreDonut, SeverityPill, Table, Td, Th } from "@/components/ui";
+import {
+  Bar,
+  Button,
+  ButtonLink,
+  Card,
+  CardLabel,
+  EmptyState,
+  Mono,
+  Pill,
+  ScoreDonut,
+  SeverityPill,
+  Table,
+  Td,
+  Th,
+} from "@/components/ui";
 import { CATEGORY_LABEL, CATEGORY_ORDER, NO_GUARANTEE } from "@/lib/labels";
-import { activeCrawl, failingRules, itemTagCounts, latestCompletedCrawl, previousCompletedCrawl, scoreTrend } from "@/lib/queries";
+import {
+  activeCrawl,
+  failingRules,
+  itemTagCounts,
+  latestCompletedCrawl,
+  previousCompletedCrawl,
+  scoreTrend,
+} from "@/lib/queries";
 import { canEdit, requireProject, requireUser } from "@/lib/session";
 import { formatDateTime, formatNumber, hostOf } from "@/lib/utils";
 import { startAudit } from "./actions";
@@ -26,12 +47,25 @@ export default async function DashboardPage({ params }: { params: Promise<{ id: 
         <>
           {latest && <Pill tone="gray">Last audit: {formatDateTime(latest.crawl.createdAt)}</Pill>}
           {latest && (
-            <a className="inline-flex h-10 items-center rounded-lg border border-[#CFCFC8] bg-white px-4 text-sm font-semibold text-ink no-underline hover:bg-canvas hover:text-ink" href={`/projects/${project.id}/report/pdf`}>
+            <a
+              className="inline-flex h-10 items-center rounded-lg border border-[#CFCFC8] bg-white px-4 text-sm font-semibold text-ink no-underline hover:bg-canvas hover:text-ink"
+              href={`/projects/${project.id}/report/pdf`}
+            >
               Export PDF
             </a>
           )}
+          {latest && (
+            <a
+              className="inline-flex h-10 items-center rounded-lg border border-[#CFCFC8] bg-white px-4 text-sm font-semibold text-ink no-underline hover:bg-canvas hover:text-ink"
+              href={`/projects/${project.id}/report/xlsx`}
+            >
+              Excel
+            </a>
+          )}
           {running ? (
-            <ButtonLink href={`/projects/${project.id}/audits/${running.id}`}>View running audit</ButtonLink>
+            <ButtonLink href={`/projects/${project.id}/audits/${running.id}`}>
+              View running audit
+            </ButtonLink>
           ) : (
             editable && (
               <form action={runAudit}>
@@ -51,7 +85,9 @@ export default async function DashboardPage({ params }: { params: Promise<{ id: 
         <PageBody>
           <EmptyState title={running ? "Your first audit is running" : "No audit yet"}>
             <p className="m-0 text-muted">
-              {running ? "Results appear here as soon as it finishes." : "Run an audit to see the SEO Health Score and what to fix first."}
+              {running
+                ? "Results appear here as soon as it finishes."
+                : "Run an audit to see the SEO Health Score and what to fix first."}
             </p>
           </EmptyState>
         </PageBody>
@@ -61,18 +97,46 @@ export default async function DashboardPage({ params }: { params: Promise<{ id: 
 
   const { crawl, report } = latest;
   const previous = await previousCompletedCrawl(db, project.id, crawl.id, crawl.createdAt);
-  const delta = previous?.healthScore != null && report.score.health !== null ? report.score.health - previous.healthScore : null;
+  const delta =
+    previous?.healthScore != null && report.score.health !== null
+      ? report.score.health - previous.healthScore
+      : null;
   const trend = await scoreTrend(db, project.id);
   const failing = failingRules(report);
-  const totalIssues = report.counts.critical + report.counts.high + report.counts.medium + report.counts.low;
+  const totalIssues =
+    report.counts.critical + report.counts.high + report.counts.medium + report.counts.low;
   const tags = await itemTagCounts(db, project.id);
   const newPages = previous ? report.pages.crawled - previous.pagesCrawled : 0;
 
   const tiles = [
-    { tone: "crit" as const, label: "Critical", value: report.counts.critical, note: "Fix these first", sev: "critical" },
-    { tone: "high" as const, label: "High", value: report.counts.high, note: "Large impact", sev: "high" },
-    { tone: "med" as const, label: "Medium", value: report.counts.medium + report.counts.low, note: "Plan to fix", sev: "medium" },
-    { tone: "pass" as const, label: "Passed", value: report.counts.passed, note: "Checks passing", sev: null },
+    {
+      tone: "crit" as const,
+      label: "Critical",
+      value: report.counts.critical,
+      note: "Fix these first",
+      sev: "critical",
+    },
+    {
+      tone: "high" as const,
+      label: "High",
+      value: report.counts.high,
+      note: "Large impact",
+      sev: "high",
+    },
+    {
+      tone: "med" as const,
+      label: "Medium",
+      value: report.counts.medium + report.counts.low,
+      note: "Plan to fix",
+      sev: "medium",
+    },
+    {
+      tone: "pass" as const,
+      label: "Passed",
+      value: report.counts.passed,
+      note: "Checks passing",
+      sev: null,
+    },
   ];
 
   return (
@@ -85,7 +149,8 @@ export default async function DashboardPage({ params }: { params: Promise<{ id: 
             <ScoreDonut score={report.score.health} />
             {delta !== null && (
               <Pill tone={delta < 0 ? "crit" : delta > 0 ? "pass" : "gray"}>
-                {delta > 0 ? `+${delta}` : delta < 0 ? `−${Math.abs(delta)}` : "±0"} since last audit
+                {delta > 0 ? `+${delta}` : delta < 0 ? `−${Math.abs(delta)}` : "±0"} since last
+                audit
               </Pill>
             )}
             <p className="m-0 text-center text-xs leading-normal text-muted">
@@ -103,11 +168,16 @@ export default async function DashboardPage({ params }: { params: Promise<{ id: 
                     {t.label}
                   </Pill>
                   {t.sev ? (
-                    <Link href={`/projects/${project.id}/issues?severity=${t.sev}`} className="text-[32px] font-bold leading-none text-ink no-underline hover:text-primary">
+                    <Link
+                      href={`/projects/${project.id}/issues?severity=${t.sev}`}
+                      className="text-[32px] font-bold leading-none text-ink no-underline hover:text-primary"
+                    >
                       {formatNumber(t.value)}
                     </Link>
                   ) : (
-                    <span className="text-[32px] font-bold leading-none">{formatNumber(t.value)}</span>
+                    <span className="text-[32px] font-bold leading-none">
+                      {formatNumber(t.value)}
+                    </span>
                   )}
                   <span className="text-[13px] text-muted">{t.note}</span>
                 </Card>
@@ -117,7 +187,9 @@ export default async function DashboardPage({ params }: { params: Promise<{ id: 
             <Card className="p-5">
               <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
                 <CardLabel>Score by category</CardLabel>
-                <span className="text-xs text-muted">Weight in overall score shown in brackets</span>
+                <span className="text-xs text-muted">
+                  Weight in overall score shown in brackets
+                </span>
               </div>
               <div className="grid grid-cols-1 gap-x-10 gap-y-2.5 md:grid-cols-2">
                 {CATEGORY_ORDER.map((c) => {
@@ -132,7 +204,9 @@ export default async function DashboardPage({ params }: { params: Promise<{ id: 
                     </div>
                   );
                 })}
-                <span className="text-[13px] text-muted">Authority (off-page) is tracked separately (Phase 4)</span>
+                <span className="text-[13px] text-muted">
+                  Authority (off-page) is tracked separately (Phase 4)
+                </span>
               </div>
             </Card>
           </div>
@@ -147,7 +221,9 @@ export default async function DashboardPage({ params }: { params: Promise<{ id: 
               </Link>
             </div>
             {failing.length === 0 ? (
-              <p className="m-0 py-6 text-sm text-muted">No failing checks. Every applicable rule passes.</p>
+              <p className="m-0 py-6 text-sm text-muted">
+                No failing checks. Every applicable rule passes.
+              </p>
             ) : (
               <div className="overflow-x-auto">
                 <Table>
@@ -181,7 +257,10 @@ export default async function DashboardPage({ params }: { params: Promise<{ id: 
                           <Mono>{r.priority.priority.toFixed(1)}</Mono>
                         </Td>
                         <Td className="text-right">
-                          <Link href={`/projects/${project.id}/issues/${r.ruleId}`} className="font-semibold">
+                          <Link
+                            href={`/projects/${project.id}/issues/${r.ruleId}`}
+                            className="font-semibold"
+                          >
                             {r.autoFixable ? "Auto-fix" : "View"}
                           </Link>
                         </Td>
@@ -223,7 +302,9 @@ export default async function DashboardPage({ params }: { params: Promise<{ id: 
                   <li className="flex items-start gap-2.5">
                     <Pill tone="gray">Info</Pill>
                     <span>
-                      {newPages === 0 ? "Same number of pages crawled" : `${newPages > 0 ? newPages : Math.abs(newPages)} ${newPages > 0 ? "more" : "fewer"} pages crawled`}
+                      {newPages === 0
+                        ? "Same number of pages crawled"
+                        : `${newPages > 0 ? newPages : Math.abs(newPages)} ${newPages > 0 ? "more" : "fewer"} pages crawled`}
                     </span>
                   </li>
                 </ul>
@@ -236,8 +317,11 @@ export default async function DashboardPage({ params }: { params: Promise<{ id: 
         </div>
 
         <footer className="text-xs leading-relaxed text-muted">
-          {NO_GUARANTEE} Data as of {formatDateTime(report.crawledAt)} · snapshot <Mono>{report.versions.snapshotSetHash.slice(0, 12)}</Mono> · crawler v
-          {report.versions.crawlerVersion} · ruleset v{report.versions.rulesetVersion} · weights {report.versions.weightsVersion} · AI model {crawl.llmModelId} / prompt {crawl.promptVersion}
+          {NO_GUARANTEE} Data as of {formatDateTime(report.crawledAt)} · snapshot{" "}
+          <Mono>{report.versions.snapshotSetHash.slice(0, 12)}</Mono> · crawler v
+          {report.versions.crawlerVersion} · ruleset v{report.versions.rulesetVersion} · weights{" "}
+          {report.versions.weightsVersion} · AI model {crawl.llmModelId} / prompt{" "}
+          {crawl.promptVersion}
         </footer>
       </PageBody>
     </>

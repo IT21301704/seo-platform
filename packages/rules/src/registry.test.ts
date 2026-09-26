@@ -32,10 +32,20 @@ describe("rule registry", () => {
       const dir = `${root}/${category}`;
       if (!existsSync(dir)) continue;
       const files = readdirSync(dir);
-      for (const file of files.filter((f) => /^[a-z]+-\d{3}-.+\.ts$/.test(f) && !f.endsWith(".test.ts"))) {
+      for (const file of files.filter(
+        (f) => /^[a-z]+-\d{3}-.+\.ts$/.test(f) && !f.endsWith(".test.ts"),
+      )) {
         const id = file.slice(0, file.indexOf("-", file.indexOf("-") + 1));
-        const tested = files.some((f) => f.endsWith(".test.ts") && (f.startsWith(file.replace(".ts", "")) || f.includes(id)));
-        const sharedTest = files.some((f) => f.endsWith(".test.ts") && f.startsWith(`${id.split("-")[0]}-`) && f.includes("web-vitals"));
+        const tested = files.some(
+          (f) =>
+            f.endsWith(".test.ts") && (f.startsWith(file.replace(".ts", "")) || f.includes(id)),
+        );
+        const sharedTest = files.some(
+          (f) =>
+            f.endsWith(".test.ts") &&
+            f.startsWith(`${id.split("-")[0]}-`) &&
+            f.includes("web-vitals"),
+        );
         expect(tested || sharedTest, `${category}/${file}`).toBe(true);
       }
     }

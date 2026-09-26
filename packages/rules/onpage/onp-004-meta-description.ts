@@ -29,7 +29,11 @@ export const ONP_004 = defineRule(
     const dupes = duplicates(pages, (p) => p.facts?.metaDescription?.toLowerCase() ?? null);
     const shared = new Map<string, string[]>();
     for (const group of dupes.values()) {
-      for (const p of group) shared.set(p.url, group.filter((o) => o !== p).map((o) => o.url));
+      for (const p of group)
+        shared.set(
+          p.url,
+          group.filter((o) => o !== p).map((o) => o.url),
+        );
     }
     return forPages(site, indexable, (p) => {
       const description = p.facts?.metaDescription ?? "";
@@ -50,7 +54,10 @@ export type DescriptionCheck = "pass" | "missing" | "too short" | "too long" | "
  * Rule-engine re-check for a proposed description (used before any AI draft can be approved).
  * `others` are the descriptions of the site's other pages.
  */
-export function recheckDescription(description: string, others: readonly string[]): DescriptionCheck {
+export function recheckDescription(
+  description: string,
+  others: readonly string[],
+): DescriptionCheck {
   const text = description.trim();
   if (text === "") return "missing";
   if (text.length < DESCRIPTION_MIN) return "too short";

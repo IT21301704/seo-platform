@@ -10,13 +10,17 @@ describe("SMP-004 valid sitemap XML", () => {
 
   it("passes for a valid gzipped sitemap", async () => {
     const robots = `User-agent: *\nAllow: /\nSitemap: ${ORIGIN}/sitemap.xml.gz\n`;
-    const files = { "/robots.txt": robots, "/sitemap.xml": null, "/sitemap.xml.gz": gzipSync(sitemapXml(["/", "/about/"])) };
+    const files = {
+      "/robots.txt": robots,
+      "/sitemap.xml": null,
+      "/sitemap.xml.gz": gzipSync(sitemapXml(["/", "/about/"])),
+    };
     expect(summary(await check(SMP_004, { files }))).toEqual(["pass /sitemap.xml.gz"]);
   });
 
   it("fails for malformed XML", async () => {
-    expect(summary(await check(SMP_004, { files: { "/sitemap.xml": "<urlset><url><loc>x</loc>" } }))).toEqual([
-      "fail /sitemap.xml",
-    ]);
+    expect(
+      summary(await check(SMP_004, { files: { "/sitemap.xml": "<urlset><url><loc>x</loc>" } })),
+    ).toEqual(["fail /sitemap.xml"]);
   });
 });

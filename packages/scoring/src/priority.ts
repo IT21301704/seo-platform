@@ -27,7 +27,8 @@ export function pagesFactor(outcomes: RuleOutcome[]): number {
 export function priorityOf(rule: RuleDefinition, outcomes: RuleOutcome[]): PriorityBreakdown {
   const factor = pagesFactor(outcomes);
   const failingItems = outcomes.filter((o) => o.result === "fail").length;
-  const priority = failingItems === 0 ? 0 : round((rule.impact * rule.confidence * factor) / rule.effort, 1);
+  const priority =
+    failingItems === 0 ? 0 : round((rule.impact * rule.confidence * factor) / rule.effort, 1);
   return {
     impact: rule.impact,
     confidence: rule.confidence,

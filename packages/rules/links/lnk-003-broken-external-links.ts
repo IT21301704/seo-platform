@@ -1,7 +1,8 @@
 import { defineRule, fail, forPages, html200, pass } from "../src/define";
 
 /** Statuses that clearly mean "gone". 401/403/405/429 are inconclusive (bot blocking). */
-const isBroken = (status: number | null): boolean => status === 404 || status === 410 || (status ?? 0) >= 500;
+const isBroken = (status: number | null): boolean =>
+  status === 404 || status === 410 || (status ?? 0) >= 500;
 
 export const LNK_003 = defineRule(
   {
@@ -28,7 +29,11 @@ export const LNK_003 = defineRule(
         .map((u) => site.externalLinks.get(u))
         .filter((r) => r !== undefined);
       if (checked.length === 0) return null;
-      const broken = checked.filter((r) => isBroken(r.status)).map((r) => ({ url: r.url, status: r.status }));
-      return broken.length ? fail(p.url, { brokenLinks: broken }) : pass(p.url, { checked: checked.length });
+      const broken = checked
+        .filter((r) => isBroken(r.status))
+        .map((r) => ({ url: r.url, status: r.status }));
+      return broken.length
+        ? fail(p.url, { brokenLinks: broken })
+        : pass(p.url, { checked: checked.length });
     }),
 );

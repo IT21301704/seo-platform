@@ -6,7 +6,9 @@ import type { CrawlSnapshot } from "./types";
 export const FIXTURES_DIR = fileURLToPath(new URL("../../../fixtures", import.meta.url));
 
 export function fixtureDir(name: string): string {
-  return name === "golden-site" ? `${FIXTURES_DIR}/golden-site` : `${FIXTURES_DIR}/broken-sites/${name}`;
+  return name === "golden-site"
+    ? `${FIXTURES_DIR}/golden-site`
+    : `${FIXTURES_DIR}/broken-sites/${name}`;
 }
 
 export async function crawlFixture(name: string, pageLimit = 1000): Promise<CrawlSnapshot> {

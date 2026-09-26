@@ -1,7 +1,15 @@
 import type { ReactNode } from "react";
 
 /** Top bar: site name + page title left, actions right (REQUIREMENTS Part G). */
-export function PageHeader({ eyebrow, title, actions }: { eyebrow: ReactNode; title: string; actions?: ReactNode }) {
+export function PageHeader({
+  eyebrow,
+  title,
+  actions,
+}: {
+  eyebrow: ReactNode;
+  title: string;
+  actions?: ReactNode;
+}) {
   return (
     <header className="flex min-h-16 flex-wrap items-center justify-between gap-3 border-b border-line bg-white px-4 py-3 max-lg:pl-24 sm:px-8">
       <div className="flex min-w-0 flex-col">

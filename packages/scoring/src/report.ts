@@ -6,7 +6,15 @@ import {
   SEVERITY_WEIGHTS,
   WEIGHTS_VERSION,
 } from "@seo/shared";
-import type { AppliesTo, Category, CheckResult, InputType, RiskLevel, ScoredCategory, Severity } from "@seo/shared";
+import type {
+  AppliesTo,
+  Category,
+  CheckResult,
+  InputType,
+  RiskLevel,
+  ScoredCategory,
+  Severity,
+} from "@seo/shared";
 import { priorityOf, round } from "./priority";
 import type { PriorityBreakdown } from "./priority";
 
@@ -50,7 +58,14 @@ export interface AuditReport {
     sitemap: number | null;
   };
   /** Failing checks (rule × page) per severity, and passing checks. */
-  counts: { critical: number; high: number; medium: number; low: number; passed: number; notApplicable: number };
+  counts: {
+    critical: number;
+    high: number;
+    medium: number;
+    low: number;
+    passed: number;
+    notApplicable: number;
+  };
   pages: { crawled: number; indexable: number; rendered: number };
   rules: RuleReport[];
 }

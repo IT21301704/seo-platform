@@ -12,7 +12,8 @@ const ALLOWED = /\.(html?|xml|txt|css|js|json|svg|png|jpe?g|webp|avif|gif|gz)$/i
 
 /** Extracts a ZIP into a path → bytes map. Rejects path traversal and oversized entries. */
 export function readZip(zip: Buffer): Promise<Map<string, Buffer>> {
-  if (zip.length > MAX_UPLOAD_BYTES) return Promise.reject(new Error("Upload is larger than 100 MB"));
+  if (zip.length > MAX_UPLOAD_BYTES)
+    return Promise.reject(new Error("Upload is larger than 100 MB"));
   return new Promise((resolve, reject) => {
     yauzl.fromBuffer(zip, { lazyEntries: true, strictFileNames: true }, (err, archive) => {
       if (err || !archive) return reject(err ?? new Error("Invalid ZIP"));
@@ -20,8 +21,10 @@ export function readZip(zip: Buffer): Promise<Map<string, Buffer>> {
       let count = 0;
       archive.on("entry", (entry: yauzl.Entry) => {
         const name = posix.normalize(entry.fileName);
-        if (name.endsWith("/") || !ALLOWED.test(name) || name.includes("__MACOSX")) return archive.readEntry();
-        if (name.startsWith("..") || posix.isAbsolute(name)) return reject(new Error(`Unsafe path in ZIP: ${entry.fileName}`));
+        if (name.endsWith("/") || !ALLOWED.test(name) || name.includes("__MACOSX"))
+          return archive.readEntry();
+        if (name.startsWith("..") || posix.isAbsolute(name))
+          return reject(new Error(`Unsafe path in ZIP: ${entry.fileName}`));
         if (++count > MAX_FILES) return reject(new Error("Too many files in ZIP"));
         if (entry.uncompressedSize > MAX_FILE_BYTES) return archive.readEntry();
         archive.openReadStream(entry, (streamErr, stream) => {
@@ -46,7 +49,12 @@ export function readZip(zip: Buffer): Promise<Map<string, Buffer>> {
 function stripCommonRoot(files: Map<string, Buffer>): Map<string, Buffer> {
   const paths = [...files.keys()];
   const first = paths[0]?.split("/")[1];
-  if (!first || paths.some((p) => p.split("/")[1] !== first) || paths.some((p) => p.split("/").length < 3)) return files;
+  if (
+    !first ||
+    paths.some((p) => p.split("/")[1] !== first) ||
+    paths.some((p) => p.split("/").length < 3)
+  )
+    return files;
   if (files.has(`/${first}`)) return files;
   return new Map([...files].map(([p, b]) => [p.slice(first.length + 1), b]));
 }

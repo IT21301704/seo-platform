@@ -27,19 +27,18 @@ afterAll(async () => {
 describe.each(FIXTURES)("%s", (fixture) => {
   const expectation = readExpectation(fixture);
 
-  it(
-    `is deterministic: ${RUNS} runs give byte-identical reports`,
-    async () => {
-      const hashes = new Set<string>();
-      for (let i = 0; i < RUNS; i++) hashes.add((await auditFixture(fixture, makeRenderer)).reportHash);
-      expect(hashes.size).toBe(1);
-    },
-    120_000,
-  );
+  it(`is deterministic: ${RUNS} runs give byte-identical reports`, async () => {
+    const hashes = new Set<string>();
+    for (let i = 0; i < RUNS; i++)
+      hashes.add((await auditFixture(fixture, makeRenderer)).reportHash);
+    expect(hashes.size).toBe(1);
+  }, 120_000);
 
   it("fails exactly the expected rules on the expected URLs", async () => {
     const result = await auditFixture(fixture, makeRenderer);
-    const expected = expectation.expectedFailures.map((f) => `${f.ruleId} ${f.url ?? "site"}`).sort();
+    const expected = expectation.expectedFailures
+      .map((f) => `${f.ruleId} ${f.url ?? "site"}`)
+      .sort();
     expect(failures(result)).toEqual(expected);
   }, 60_000);
 
@@ -54,7 +53,8 @@ describe.each(FIXTURES)("%s", (fixture) => {
     expect(existsSync(path), `missing ${path}: run pnpm fixtures:update`).toBe(true);
     const committed = readFileSync(path, "utf8");
     const current = serializeReport((await auditFixture(fixture, makeRenderer)).report);
-    const committedVersion = (JSON.parse(committed) as { versions: { rulesetVersion: string } }).versions.rulesetVersion;
+    const committedVersion = (JSON.parse(committed) as { versions: { rulesetVersion: string } })
+      .versions.rulesetVersion;
     if (current !== committed) {
       const hint =
         committedVersion === RULESET_VERSION

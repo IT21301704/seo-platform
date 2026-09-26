@@ -13,8 +13,18 @@ import { bulkUpdate } from "./actions";
 import { itemWhere, parseFilters, toQuery } from "./filters";
 import type { IssueFilters } from "./filters";
 
-const TAG_TONE: Record<keyof typeof TAG_LABEL, Tone> = { new: "crit", still_open: "gray", regressed: "high", resolved: "pass" };
-const FIX_TONE = { "auto-low": "pass", "auto-approve": "high", manual: "gray", guide: "gray" } as const;
+const TAG_TONE: Record<keyof typeof TAG_LABEL, Tone> = {
+  new: "crit",
+  still_open: "gray",
+  regressed: "high",
+  resolved: "pass",
+};
+const FIX_TONE = {
+  "auto-low": "pass",
+  "auto-approve": "high",
+  manual: "gray",
+  guide: "gray",
+} as const;
 const control = "h-10 rounded-lg border border-[#CFCFC8] bg-white px-3 text-sm";
 const ITEMS_PER_GROUP = 5;
 
@@ -31,7 +41,10 @@ export default async function IssuesPage({
   const project = await requireProject(db, id);
   const latest = await latestCompletedCrawl(db, project.id);
   const tags = await itemTagCounts(db, project.id);
-  const users = (await db.user.findMany({ orderBy: { email: "asc" } })).map((u) => ({ id: u.id, name: u.name ?? u.email }));
+  const users = (await db.user.findMany({ orderBy: { email: "asc" } })).map((u) => ({
+    id: u.id,
+    name: u.name ?? u.email,
+  }));
   const userName = new Map(users.map((u) => [u.id, u.name]));
   const base = `/projects/${project.id}/issues`;
   const where = itemWhere(project.id, filters);
@@ -68,7 +81,11 @@ export default async function IssuesPage({
           <span className="text-[15px] font-semibold">
             {formatNumber(tags.resolved)} of {formatNumber(tags.total)} resolved
           </span>
-          <Bar value={tags.total ? (tags.resolved / tags.total) * 100 : 0} tone="pass" className="min-w-40 flex-1" />
+          <Bar
+            value={tags.total ? (tags.resolved / tags.total) * 100 : 0}
+            tone="pass"
+            className="min-w-40 flex-1"
+          />
           <Pill tone="crit">{tags.new} new</Pill>
           <Pill tone="gray">{tags.still_open} still open</Pill>
           <Pill tone="high">{tags.regressed} regressed</Pill>
@@ -82,13 +99,20 @@ export default async function IssuesPage({
                 key={v}
                 href={`${base}${toQuery(filters, { view: v })}`}
                 aria-current={filters.view === v ? "page" : undefined}
-                className={cn("rounded-lg px-4 py-2 text-sm font-semibold no-underline", filters.view === v ? "bg-white text-ink shadow-sm" : "text-muted hover:text-ink")}
+                className={cn(
+                  "rounded-lg px-4 py-2 text-sm font-semibold no-underline",
+                  filters.view === v ? "bg-white text-ink shadow-sm" : "text-muted hover:text-ink",
+                )}
               >
                 {v === "grouped" ? "Grouped" : "Flat list"}
               </Link>
             ))}
             {["By page", "Board", "By source"].map((v) => (
-              <span key={v} className="cursor-not-allowed px-4 py-2 text-sm font-semibold text-[#9A9DA2]" title="Available in Phase 2">
+              <span
+                key={v}
+                className="cursor-not-allowed px-4 py-2 text-sm font-semibold text-[#9A9DA2]"
+                title="Available in Phase 2"
+              >
                 {v}
               </span>
             ))}
@@ -100,7 +124,13 @@ export default async function IssuesPage({
           <label className="sr-only" htmlFor="q">
             Search
           </label>
-          <input id="q" name="q" defaultValue={filters.q} placeholder="Search rule, page or folder, e.g. /products" className={`${control} min-w-64 flex-1`} />
+          <input
+            id="q"
+            name="q"
+            defaultValue={filters.q}
+            placeholder="Search rule, page or folder, e.g. /products"
+            className={`${control} min-w-64 flex-1`}
+          />
           <label className="sr-only" htmlFor="severity">
             Severity
           </label>
@@ -121,16 +151,38 @@ export default async function IssuesPage({
             <option value="ignored">Status: Ignored</option>
             <option value="all">Status: All</option>
           </select>
-          <button type="submit" className="h-10 rounded-lg border border-[#CFCFC8] bg-white px-4 text-sm font-semibold">
+          <button
+            type="submit"
+            className="h-10 rounded-lg border border-[#CFCFC8] bg-white px-4 text-sm font-semibold"
+          >
             Apply
           </button>
         </form>
 
-        <BulkForm action={bulkUpdate.bind(null, project.id)} users={users} exportHref={exportHref} editable={canEdit(user.role)}>
+        <BulkForm
+          action={bulkUpdate.bind(null, project.id)}
+          users={users}
+          exportHref={exportHref}
+          editable={canEdit(user.role)}
+        >
           {filters.view === "grouped" ? (
-            <GroupedView projectId={project.id} filters={filters} where={where} db={db} userName={userName} base={base} />
+            <GroupedView
+              projectId={project.id}
+              filters={filters}
+              where={where}
+              db={db}
+              userName={userName}
+              base={base}
+            />
           ) : (
-            <FlatView projectId={project.id} filters={filters} where={where} db={db} userName={userName} base={base} />
+            <FlatView
+              projectId={project.id}
+              filters={filters}
+              where={where}
+              db={db}
+              userName={userName}
+              base={base}
+            />
           )}
         </BulkForm>
       </PageBody>
@@ -185,17 +237,31 @@ async function GroupedView({ projectId, filters, where, db, userName, base }: Vi
           const fix = rule ? fixType(rule) : "guide";
           const rows = byIssue.get(issue.id) ?? [];
           const assignees = [...new Set(rows.map((r) => r.assigneeId))];
-          const assignee = assignees.length === 1 ? (assignees[0] ? (userName.get(assignees[0]) ?? "—") : "Unassigned") : "Several";
+          const assignee =
+            assignees.length === 1
+              ? assignees[0]
+                ? (userName.get(assignees[0]) ?? "—")
+                : "Unassigned"
+              : "Several";
           return (
             <tbody key={issue.id} className="group">
               <tr>
                 <Td>
-                  <input type="checkbox" name="selection" value={`issue:${issue.id}`} aria-label={`Select all open items of ${issue.title}`} className="h-4 w-4" />
+                  <input
+                    type="checkbox"
+                    name="selection"
+                    value={`issue:${issue.id}`}
+                    aria-label={`Select all open items of ${issue.title}`}
+                    className="h-4 w-4"
+                  />
                 </Td>
                 <Td>
                   <details className="[&_summary::-webkit-details-marker]:hidden">
                     <summary className="flex cursor-pointer list-none items-start gap-2">
-                      <span aria-hidden="true" className="mt-0.5 text-muted group-has-[details[open]]:rotate-90">
+                      <span
+                        aria-hidden="true"
+                        className="mt-0.5 text-muted group-has-[details[open]]:rotate-90"
+                      >
                         ▸
                       </span>
                       <span>
@@ -208,12 +274,22 @@ async function GroupedView({ projectId, filters, where, db, userName, base }: Vi
                     <ul className="m-0 mt-3 flex list-none flex-col gap-2 p-0 pl-5">
                       {rows.slice(0, ITEMS_PER_GROUP).map((item) => (
                         <li key={item.id} className="flex flex-wrap items-center gap-3 text-sm">
-                          <input type="checkbox" name="selection" value={`item:${item.id}`} aria-label={`Select ${pathOf(item.url)}`} className="h-4 w-4" />
+                          <input
+                            type="checkbox"
+                            name="selection"
+                            value={`item:${item.id}`}
+                            aria-label={`Select ${pathOf(item.url)}`}
+                            className="h-4 w-4"
+                          />
                           <Mono className="min-w-48 flex-1">{pathOf(item.url)}</Mono>
                           <Pill tone={TAG_TONE[item.auditTag]}>{TAG_LABEL[item.auditTag]}</Pill>
                           <span className="w-24">{STATUS_LABEL[item.status]}</span>
-                          <span className="w-28 text-muted">{item.assigneeId ? userName.get(item.assigneeId) : "Unassigned"}</span>
-                          <span className="text-muted">since {formatShortDate(item.firstSeen)}</span>
+                          <span className="w-28 text-muted">
+                            {item.assigneeId ? userName.get(item.assigneeId) : "Unassigned"}
+                          </span>
+                          <span className="text-muted">
+                            since {formatShortDate(item.firstSeen)}
+                          </span>
                         </li>
                       ))}
                       {rows.length > ITEMS_PER_GROUP && (
@@ -249,7 +325,10 @@ async function GroupedView({ projectId, filters, where, db, userName, base }: Vi
           Showing {issues.length} of {matchCount.size} issue types · sorted by priority
         </span>
         {matchCount.size > issues.length && (
-          <Link href={`${base}${toQuery(filters, { limit: filters.limit + 20 })}`} className="font-semibold">
+          <Link
+            href={`${base}${toQuery(filters, { limit: filters.limit + 20 })}`}
+            className="font-semibold"
+          >
             Load more
           </Link>
         )}
@@ -290,7 +369,13 @@ async function FlatView({ filters, where, db, userName, base }: ViewProps) {
           {items.map((item) => (
             <tr key={item.id}>
               <Td>
-                <input type="checkbox" name="selection" value={`item:${item.id}`} aria-label={`Select ${pathOf(item.url)}`} className="h-4 w-4" />
+                <input
+                  type="checkbox"
+                  name="selection"
+                  value={`item:${item.id}`}
+                  aria-label={`Select ${pathOf(item.url)}`}
+                  className="h-4 w-4"
+                />
               </Td>
               <Td>
                 <Mono>{pathOf(item.url)}</Mono>
@@ -308,7 +393,9 @@ async function FlatView({ filters, where, db, userName, base }: ViewProps) {
                 <Pill tone={TAG_TONE[item.auditTag]}>{TAG_LABEL[item.auditTag]}</Pill>
               </Td>
               <Td>{STATUS_LABEL[item.status]}</Td>
-              <Td className="text-muted">{item.assigneeId ? userName.get(item.assigneeId) : "Unassigned"}</Td>
+              <Td className="text-muted">
+                {item.assigneeId ? userName.get(item.assigneeId) : "Unassigned"}
+              </Td>
               <Td className="text-muted">{formatShortDate(item.firstSeen)}</Td>
             </tr>
           ))}
@@ -319,7 +406,10 @@ async function FlatView({ filters, where, db, userName, base }: ViewProps) {
           Showing {items.length} of {total} items · sorted by priority
         </span>
         {total > items.length && (
-          <Link href={`${base}${toQuery(filters, { limit: filters.limit + 20 })}`} className="font-semibold">
+          <Link
+            href={`${base}${toQuery(filters, { limit: filters.limit + 20 })}`}
+            className="font-semibold"
+          >
             Load more
           </Link>
         )}

@@ -23,18 +23,29 @@ export const IDX_002 = defineRule(
   (site) =>
     forPages(
       site,
-      (p) => p.isHtml200 && !p.noindex && site.isAllowedForGooglebot(p.url) && p.facts?.canonical !== null,
+      (p) =>
+        p.isHtml200 &&
+        !p.noindex &&
+        site.isAllowedForGooglebot(p.url) &&
+        p.facts?.canonical !== null,
       (p) => {
         const canonical = p.facts?.canonical ?? "";
-        if ((p.facts?.canonicalCount ?? 0) > 1) return fail(p.url, { canonical, problem: "multiple canonical tags" });
+        if ((p.facts?.canonicalCount ?? 0) > 1)
+          return fail(p.url, { canonical, problem: "multiple canonical tags" });
         if (canonical === p.url) return pass(p.url, { canonical });
-        if (new URL(canonical).origin !== site.origin) return fail(p.url, { canonical, problem: "other site" });
-        if (!site.isAllowedForGooglebot(canonical)) return fail(p.url, { canonical, problem: "blocked by robots.txt" });
+        if (new URL(canonical).origin !== site.origin)
+          return fail(p.url, { canonical, problem: "other site" });
+        if (!site.isAllowedForGooglebot(canonical))
+          return fail(p.url, { canonical, problem: "blocked by robots.txt" });
         const target = site.pageByUrl.get(canonical);
         if (!target) return pass(p.url, { canonical, note: "target not crawled" });
-        if (target.record.chain.length > 0) return fail(p.url, { canonical, problem: "target redirects" });
+        if (target.record.chain.length > 0)
+          return fail(p.url, { canonical, problem: "target redirects" });
         if (target.record.status !== 200) {
-          return fail(p.url, { canonical, problem: `target returns ${target.record.status ?? "error"}` });
+          return fail(p.url, {
+            canonical,
+            problem: `target returns ${target.record.status ?? "error"}`,
+          });
         }
         if (target.noindex) return fail(p.url, { canonical, problem: "target is noindex" });
         return pass(p.url, { canonical });

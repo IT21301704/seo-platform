@@ -9,7 +9,9 @@ describe("AI-007 llms.txt", () => {
 
   it("passes for a well-formed file", async () => {
     const llms = `# Example Store\n\n> Handmade mugs.\n\n- [About](${ORIGIN}/about/): our story\n`;
-    expect(summary(await check(AI_007, { files: { "/llms.txt": llms } }))).toEqual(["pass /llms.txt"]);
+    expect(summary(await check(AI_007, { files: { "/llms.txt": llms } }))).toEqual([
+      "pass /llms.txt",
+    ]);
   });
 
   it("fails without a title and with a broken link", async () => {

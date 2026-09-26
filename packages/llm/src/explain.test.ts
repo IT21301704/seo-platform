@@ -62,7 +62,10 @@ describe("explainIssue", () => {
   });
 
   it("falls back to the template on API errors", async () => {
-    const result = await explainIssue(input, { llm: new FakeLlm([new Error("503")]), cache: new MemoryLlmCache() });
+    const result = await explainIssue(input, {
+      llm: new FakeLlm([new Error("503")]),
+      cache: new MemoryLlmCache(),
+    });
     expect(result.source).toBe("template");
   });
 
@@ -73,11 +76,19 @@ describe("explainIssue", () => {
   });
 
   it("keys the cache on rule, content, prompt version and model", async () => {
-    const result = await explainIssue(input, { llm: new FakeLlm([good], "model-a"), cache: new MemoryLlmCache() });
-    const other = await explainIssue(input, { llm: new FakeLlm([good], "model-b"), cache: new MemoryLlmCache() });
+    const result = await explainIssue(input, {
+      llm: new FakeLlm([good], "model-a"),
+      cache: new MemoryLlmCache(),
+    });
+    const other = await explainIssue(input, {
+      llm: new FakeLlm([good], "model-b"),
+      cache: new MemoryLlmCache(),
+    });
     expect(result.cacheKey).not.toBe(other.cacheKey);
     expect(result.promptVersion).toBe(PROMPT_VERSION);
-    expect(cacheKey({ ruleId: "A", contentHash: "h", promptVersion: "v1.0", modelId: "m" })).toMatch(/^[a-f0-9]{64}$/);
+    expect(
+      cacheKey({ ruleId: "A", contentHash: "h", promptVersion: "v1.0", modelId: "m" }),
+    ).toMatch(/^[a-f0-9]{64}$/);
   });
 });
 

@@ -38,7 +38,8 @@ export interface PageOptions {
 export function page(path: string, options: PageOptions = {}): string {
   const url = `${ORIGIN}${path}`;
   const name = path === "/" ? "Home" : path.split("/").filter(Boolean).join(" ");
-  const title = options.title === undefined ? `${name} page for mini test site | Example Store` : options.title;
+  const title =
+    options.title === undefined ? `${name} page for mini test site | Example Store` : options.title;
   const description =
     options.description === undefined
       ? `This is the ${name} page of a mini test site used to check one SEO rule at a time.`
@@ -64,13 +65,15 @@ export function page(path: string, options: PageOptions = {}): string {
           `<meta name="twitter:card" content="summary_large_image">`,
         ].join(""),
     ...(options.jsonLd ?? []).map(
-      (j) => `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", ...j })}</script>`,
+      (j) =>
+        `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", ...j })}</script>`,
     ),
     options.head ?? "",
   ].join("\n");
   const lang = options.lang === null ? "" : ` lang="${options.lang ?? "en"}"`;
   const nav = (options.nav ?? []).map((href) => `<a href="${href}">Nav ${href}</a>`).join(" ");
-  const crumbs = path === "/" ? "" : `<nav aria-label="Breadcrumb"><a href="/">Home</a> / ${name}</nav>`;
+  const crumbs =
+    path === "/" ? "" : `<nav aria-label="Breadcrumb"><a href="/">Home</a> / ${name}</nav>`;
   return `<!doctype html>
 <html${lang}>
 <head>
@@ -90,7 +93,9 @@ ${options.body ?? `<p>${FILLER}</p>`}
 `;
 }
 
-export function sitemapXml(entries: (string | { path: string; lastmod?: string; extra?: string })[]): string {
+export function sitemapXml(
+  entries: (string | { path: string; lastmod?: string; extra?: string })[],
+): string {
   const urls = entries
     .map((e) => (typeof e === "string" ? { path: e } : e))
     .map(
@@ -141,7 +146,8 @@ export async function miniSite(options: MiniSiteOptions = {}): Promise<SiteFacts
   const defaults: Record<string, string> = {
     "/robots.txt": DEFAULT_ROBOTS,
     "/sitemap.xml": sitemapXml(Object.keys(pages).filter((p) => p.endsWith("/"))),
-    "/404.html": "<!doctype html><html lang=\"en\"><head><title>Not found</title><meta name=\"robots\" content=\"noindex\"></head><body><h1>Not found</h1></body></html>",
+    "/404.html":
+      '<!doctype html><html lang="en"><head><title>Not found</title><meta name="robots" content="noindex"></head><body><h1>Not found</h1></body></html>',
   };
   for (const [path, content] of Object.entries({ ...defaults, ...options.files })) {
     if (content === null) files.delete(path);
@@ -150,7 +156,11 @@ export async function miniSite(options: MiniSiteOptions = {}): Promise<SiteFacts
   const server: FixtureServer = {
     origin: ORIGIN,
     crawledAt: CRAWLED_AT,
-    alternateOrigins: ["http://example-store.com", "http://www.example-store.com", "https://www.example-store.com"],
+    alternateOrigins: [
+      "http://example-store.com",
+      "http://www.example-store.com",
+      "https://www.example-store.com",
+    ],
     statusOverrides: {},
     redirects: [],
     notFoundFile: "404.html",
@@ -177,7 +187,10 @@ export async function miniSite(options: MiniSiteOptions = {}): Promise<SiteFacts
 }
 
 /** Evaluates one rule on a mini-site. */
-export async function check(rule: RuleDefinition, options: MiniSiteOptions = {}): Promise<RuleOutcome[]> {
+export async function check(
+  rule: RuleDefinition,
+  options: MiniSiteOptions = {},
+): Promise<RuleOutcome[]> {
   return evaluateRule(rule, await miniSite(options));
 }
 

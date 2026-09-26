@@ -67,7 +67,11 @@ export class PsiPerformance implements PerformanceSource {
       const page = await this.measurePage(url);
       if (page) pages.push(page);
     }
-    return { source: "psi", pages, note: pages.length === 0 ? "PageSpeed Insights returned no data" : null };
+    return {
+      source: "psi",
+      pages,
+      note: pages.length === 0 ? "PageSpeed Insights returned no data" : null,
+    };
   }
 
   private async measurePage(url: string): Promise<PerformancePage | null> {
@@ -92,7 +96,11 @@ export class PsiPerformance implements PerformanceSource {
       if (run) runs.push(run);
     }
     const lab = (audit: string) =>
-      median(runs.map((r) => r.lighthouseResult?.audits?.[audit]?.numericValue).filter((v): v is number => v !== undefined));
+      median(
+        runs
+          .map((r) => r.lighthouseResult?.audits?.[audit]?.numericValue)
+          .filter((v): v is number => v !== undefined),
+      );
     const lcp = lab("largest-contentful-paint");
     const cls = lab("cumulative-layout-shift");
     return {
@@ -105,7 +113,12 @@ export class PsiPerformance implements PerformanceSource {
   }
 
   private async run(url: string): Promise<PsiResponse | null> {
-    const query = new URLSearchParams({ url, strategy: "mobile", key: this.apiKey, category: "performance" });
+    const query = new URLSearchParams({
+      url,
+      strategy: "mobile",
+      key: this.apiKey,
+      category: "performance",
+    });
     try {
       const res = await this.fetcher.fetch({ url: `${PSI_ENDPOINT}?${query.toString()}` });
       if (res.status !== 200) return null;
@@ -120,7 +133,9 @@ export function median(values: number[]): number | null {
   if (values.length === 0) return null;
   const sorted = [...values].sort((a, b) => a - b);
   const mid = Math.floor(sorted.length / 2);
-  return sorted.length % 2 ? (sorted[mid] ?? null) : ((sorted[mid - 1] ?? 0) + (sorted[mid] ?? 0)) / 2;
+  return sorted.length % 2
+    ? (sorted[mid] ?? null)
+    : ((sorted[mid - 1] ?? 0) + (sorted[mid] ?? 0)) / 2;
 }
 
 /**
@@ -131,9 +146,11 @@ export function performanceSample(snapshot: CrawlSnapshot, size: number): string
   const candidates = snapshot.pages
     .filter((p) => p.status === 200 && p.chain.length === 0 && p.rawHtml !== null)
     .map((p) => p.url);
-  const rest = candidates.filter((u) => u !== snapshot.rootUrl).sort((a, b) => {
-    const depth = (u: string) => new URL(u).pathname.split("/").filter(Boolean).length;
-    return depth(a) - depth(b) || a.localeCompare(b);
-  });
+  const rest = candidates
+    .filter((u) => u !== snapshot.rootUrl)
+    .sort((a, b) => {
+      const depth = (u: string) => new URL(u).pathname.split("/").filter(Boolean).length;
+      return depth(a) - depth(b) || a.localeCompare(b);
+    });
   return [snapshot.rootUrl, ...rest].slice(0, Math.max(1, size));
 }

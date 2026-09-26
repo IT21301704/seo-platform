@@ -15,12 +15,20 @@ export const LNK_006 = defineRule(
     effort: 2,
     explanation: {
       why: "Breadcrumbs show visitors and search engines where a page sits in the site, and Google can show them in results instead of the raw URL.",
-      fix: ["Turn on breadcrumbs in your theme or SEO plugin.", "Add BreadcrumbList structured data that matches them."],
+      fix: [
+        "Turn on breadcrumbs in your theme or SEO plugin.",
+        "Add BreadcrumbList structured data that matches them.",
+      ],
     },
   },
   (site) =>
-    forPages(site, (p) => p.isIndexable && p.url !== site.rootUrl, (p) => {
-      const hasSchema = (p.facts && (nodesOfType(p.facts, "BreadcrumbList") ?? []).length > 0) ?? false;
-      return p.facts?.hasBreadcrumbNav || hasSchema ? pass(p.url) : fail(p.url);
-    }),
+    forPages(
+      site,
+      (p) => p.isIndexable && p.url !== site.rootUrl,
+      (p) => {
+        const hasSchema =
+          (p.facts && (nodesOfType(p.facts, "BreadcrumbList") ?? []).length > 0) ?? false;
+        return p.facts?.hasBreadcrumbNav || hasSchema ? pass(p.url) : fail(p.url);
+      },
+    ),
 );

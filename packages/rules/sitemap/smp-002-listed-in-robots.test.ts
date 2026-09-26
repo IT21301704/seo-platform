@@ -8,6 +8,8 @@ describe("SMP-002 sitemap in robots.txt", () => {
   });
 
   it("fails without one", async () => {
-    expect(summary(await check(SMP_002, { files: { "/robots.txt": "User-agent: *\nAllow: /\n" } }))).toEqual(["fail site"]);
+    expect(
+      summary(await check(SMP_002, { files: { "/robots.txt": "User-agent: *\nAllow: /\n" } })),
+    ).toEqual(["fail site"]);
   });
 });

@@ -4,7 +4,11 @@ import { PRF_001 } from "./prf-001-lcp";
 import { PRF_002 } from "./prf-002-inp";
 import { PRF_003 } from "./prf-003-cls";
 
-const perf = (lcp: "good" | "poor", inp: "good" | "needs-improvement" | null, cls: "good" | "poor") => ({
+const perf = (
+  lcp: "good" | "poor",
+  inp: "good" | "needs-improvement" | null,
+  cls: "good" | "poor",
+) => ({
   performance: {
     source: "psi" as const,
     pages: [{ url: `${ORIGIN}/`, lcp, inp, cls, basis: "field" as const }],

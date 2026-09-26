@@ -8,7 +8,8 @@ export const PRF_008 = defineRule(
     category: "performance",
     severity: "medium",
     title: "HTML is not compressed",
-    passCondition: "Passes when HTML responses use Brotli, gzip, deflate or zstd compression (Content-Encoding).",
+    passCondition:
+      "Passes when HTML responses use Brotli, gzip, deflate or zstd compression (Content-Encoding).",
     appliesTo: "url",
     autoFixable: false,
     riskLevel: "low",
@@ -21,6 +22,8 @@ export const PRF_008 = defineRule(
   (site) =>
     forPages(site, indexable, (p) => {
       const encoding = (p.record.headers["content-encoding"] ?? "").toLowerCase().trim();
-      return COMPRESSED.has(encoding) ? pass(p.url, { encoding }) : fail(p.url, { encoding: encoding || null });
+      return COMPRESSED.has(encoding)
+        ? pass(p.url, { encoding })
+        : fail(p.url, { encoding: encoding || null });
     }),
 );

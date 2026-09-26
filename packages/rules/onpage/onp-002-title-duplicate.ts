@@ -22,11 +22,21 @@ export const ONP_002 = defineRule(
     const dupes = duplicates(pages, (p) => p.facts?.title?.toLowerCase() ?? null);
     const sharedWith = new Map<string, string[]>();
     for (const group of dupes.values()) {
-      for (const p of group) sharedWith.set(p.url, group.filter((o) => o !== p).map((o) => o.url));
+      for (const p of group)
+        sharedWith.set(
+          p.url,
+          group.filter((o) => o !== p).map((o) => o.url),
+        );
     }
-    return forPages(site, (p) => indexable(p) && Boolean(p.facts?.title), (p) => {
-      const others = sharedWith.get(p.url);
-      return others ? fail(p.url, { title: p.facts?.title ?? null, sameTitleAs: others }) : pass(p.url);
-    });
+    return forPages(
+      site,
+      (p) => indexable(p) && Boolean(p.facts?.title),
+      (p) => {
+        const others = sharedWith.get(p.url);
+        return others
+          ? fail(p.url, { title: p.facts?.title ?? null, sameTitleAs: others })
+          : pass(p.url);
+      },
+    );
   },
 );

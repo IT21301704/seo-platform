@@ -20,5 +20,7 @@ export const SMP_009 = defineRule(
   (site) =>
     [...site.sitemapEntries.keys()]
       .filter((url) => url.startsWith(`${site.origin}/`))
-      .map((url) => (site.isAllowedForGooglebot(url) ? pass(url) : fail(url, { blockedFor: "Googlebot" }))),
+      .map((url) =>
+        site.isAllowedForGooglebot(url) ? pass(url) : fail(url, { blockedFor: "Googlebot" }),
+      ),
 );

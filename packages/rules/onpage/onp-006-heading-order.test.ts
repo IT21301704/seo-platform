@@ -4,7 +4,10 @@ import { ONP_006 } from "./onp-006-heading-order";
 
 describe("ONP-006 heading order", () => {
   it("passes for H1 → H2 → H3", async () => {
-    const pages = { ...defaultPages(), "/about/": page("/about/", { body: "<h2>Story</h2><h3>Kiln</h3><h2>Team</h2>" }) };
+    const pages = {
+      ...defaultPages(),
+      "/about/": page("/about/", { body: "<h2>Story</h2><h3>Kiln</h3><h2>Team</h2>" }),
+    };
     expect(summary(await check(ONP_006, { pages }))).toEqual(["pass /", "pass /about/"]);
   });
 

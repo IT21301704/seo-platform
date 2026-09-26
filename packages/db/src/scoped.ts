@@ -14,7 +14,11 @@ const UNIQUE_OPS = new Set(["findUnique", "findUniqueOrThrow", "update", "delete
 /** Models without an organizationId column (Organization itself and Auth.js identity tables). */
 const UNSCOPED_MODELS = new Set(["Organization", "Account", "Session", "VerificationToken"]);
 
-type Args = Record<string, unknown> & { where?: Record<string, unknown>; data?: unknown; create?: unknown };
+type Args = Record<string, unknown> & {
+  where?: Record<string, unknown>;
+  data?: unknown;
+  create?: unknown;
+};
 
 function withOrg(data: unknown, organizationId: string): unknown {
   if (Array.isArray(data)) return data.map((d) => withOrg(d, organizationId));
@@ -38,7 +42,11 @@ export function forOrganization(prisma: PrismaClient, organizationId: string) {
           if (READS.has(operation) || UNIQUE_OPS.has(operation)) {
             a.where = { ...(a.where ?? {}), organizationId };
           }
-          if (operation === "create" || operation === "createMany" || operation === "createManyAndReturn") {
+          if (
+            operation === "create" ||
+            operation === "createMany" ||
+            operation === "createManyAndReturn"
+          ) {
             a.data = withOrg(a.data, organizationId);
           }
           if (operation === "upsert") a.create = withOrg(a.create, organizationId);

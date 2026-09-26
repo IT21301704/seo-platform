@@ -24,7 +24,12 @@ describe("TEC-006 HTTPS", () => {
       performance: { lcp: "good", inp: "good", cls: "good" },
       ownerIntent: { aiCrawlers: "allow" },
     });
-    const snapshot = await crawlSite({ rootUrl: "http://plain.test", fetcher, pageLimit: 5, crawledAt: CRAWLED_AT });
+    const snapshot = await crawlSite({
+      rootUrl: "http://plain.test",
+      fetcher,
+      pageLimit: 5,
+      crawledAt: CRAWLED_AT,
+    });
     const outcomes = evaluateRule(TEC_006, buildSiteFacts(snapshot));
     expect(outcomes.map((o) => o.result)).toEqual(["fail"]);
   });

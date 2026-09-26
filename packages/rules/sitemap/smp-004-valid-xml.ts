@@ -15,7 +15,10 @@ export const SMP_004 = defineRule(
     effort: 1,
     explanation: {
       why: "Search engines reject a sitemap that is not valid, so none of its URLs are used.",
-      fix: ["Regenerate the sitemap with your CMS or plugin instead of editing it by hand.", "Check that nothing (e.g. a PHP warning) is printed before the XML."],
+      fix: [
+        "Regenerate the sitemap with your CMS or plugin instead of editing it by hand.",
+        "Check that nothing (e.g. a PHP warning) is printed before the XML.",
+      ],
     },
   },
   (site) =>
@@ -26,7 +29,10 @@ export const SMP_004 = defineRule(
         if (record.decodeError) problems.push(record.decodeError);
         if (parsed) problems.push(...parsed.errors);
         const declared = /<\?xml[^>]*encoding=["']([^"']+)["']/i.exec(record.body ?? "")?.[1];
-        if (declared && declared.toLowerCase() !== "utf-8") problems.push(`encoding is ${declared}, not UTF-8`);
-        return problems.length ? fail(record.url, { problems }) : pass(record.url, { kind: parsed?.kind ?? null });
+        if (declared && declared.toLowerCase() !== "utf-8")
+          problems.push(`encoding is ${declared}, not UTF-8`);
+        return problems.length
+          ? fail(record.url, { problems })
+          : pass(record.url, { kind: parsed?.kind ?? null });
       }),
 );

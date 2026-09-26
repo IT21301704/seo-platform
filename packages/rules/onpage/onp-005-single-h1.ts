@@ -13,7 +13,10 @@ export const ONP_005 = defineRule(
     effort: 1,
     explanation: {
       why: "The H1 is the page's main heading. None leaves the topic unclear; several make it ambiguous for search engines and screen readers.",
-      fix: ["Keep one H1 that states the page topic.", "Turn other H1s into H2 or H3 sub-headings."],
+      fix: [
+        "Keep one H1 that states the page topic.",
+        "Turn other H1s into H2 or H3 sub-headings.",
+      ],
     },
   },
   (site) =>

@@ -13,8 +13,11 @@ export interface IssueFilters {
   limit: number;
 }
 
-const pick = <T extends string>(value: string | undefined, allowed: readonly T[], fallback: T): T =>
-  allowed.includes(value as T) ? (value as T) : fallback;
+const pick = <T extends string>(
+  value: string | undefined,
+  allowed: readonly T[],
+  fallback: T,
+): T => (allowed.includes(value as T) ? (value as T) : fallback);
 
 export function parseFilters(sp: Record<string, string | string[] | undefined>): IssueFilters {
   const one = (k: string) => (Array.isArray(sp[k]) ? sp[k][0] : sp[k]);
@@ -43,7 +46,10 @@ export function toQuery(f: IssueFilters, overrides: Partial<IssueFilters> = {}):
 export function itemWhere(projectId: string, f: IssueFilters): Prisma.IssueItemWhereInput {
   const status: Prisma.IssueItemWhereInput =
     f.status === "open"
-      ? { auditTag: { not: "resolved" }, status: { in: ["open", "in_progress", "reopened", "fixed"] } }
+      ? {
+          auditTag: { not: "resolved" },
+          status: { in: ["open", "in_progress", "reopened", "fixed"] },
+        }
       : f.status === "resolved"
         ? { auditTag: "resolved" }
         : f.status === "ignored"
@@ -58,6 +64,7 @@ export function itemWhere(projectId: string, f: IssueFilters): Prisma.IssueItemW
         ],
       }
     : {};
-  const severity: Prisma.IssueItemWhereInput = f.severity === "all" ? {} : { issue: { severity: f.severity } };
+  const severity: Prisma.IssueItemWhereInput =
+    f.severity === "all" ? {} : { issue: { severity: f.severity } };
   return { projectId, ...status, ...search, ...severity };
 }

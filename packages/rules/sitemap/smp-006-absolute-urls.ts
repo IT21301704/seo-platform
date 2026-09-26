@@ -24,15 +24,17 @@ export const SMP_006 = defineRule(
       for (const entry of parsed?.entries ?? []) {
         if (seen.has(entry.loc)) continue;
         seen.add(entry.loc);
-        let url: URL | null = null;
+        let url: URL | null;
         try {
           url = new URL(entry.loc);
         } catch {
           url = null;
         }
         if (!url) outcomes.push(fail(entry.loc, { problem: "not an absolute URL" }));
-        else if (url.protocol !== "https:") outcomes.push(fail(entry.loc, { problem: "not https" }));
-        else if (url.origin !== site.origin) outcomes.push(fail(entry.loc, { problem: "other host" }));
+        else if (url.protocol !== "https:")
+          outcomes.push(fail(entry.loc, { problem: "not https" }));
+        else if (url.origin !== site.origin)
+          outcomes.push(fail(entry.loc, { problem: "other host" }));
         else outcomes.push(pass(entry.loc));
       }
     }

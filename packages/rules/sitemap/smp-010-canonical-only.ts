@@ -14,7 +14,9 @@ export const SMP_010 = defineRule(
     effort: 1,
     explanation: {
       why: "A page whose canonical points elsewhere tells search engines 'index the other URL', so listing it in the sitemap sends a mixed signal.",
-      fix: ["List the canonical URL in the sitemap instead, or fix the page's canonical if it is wrong."],
+      fix: [
+        "List the canonical URL in the sitemap instead, or fix the page's canonical if it is wrong.",
+      ],
     },
   },
   (site) =>

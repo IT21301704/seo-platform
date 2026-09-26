@@ -8,7 +8,11 @@ const footer = (tel: string) => `<p><a href="tel:${tel}">Call us</a></p>`;
 describe("AI-004 consistent NAP", () => {
   it("passes when the phone is the same everywhere (formatting ignored)", async () => {
     const pages = {
-      "/": page("/", { nav: ["/about/"], jsonLd: [store("+94 91 222 0142")], body: footer("+94912220142") }),
+      "/": page("/", {
+        nav: ["/about/"],
+        jsonLd: [store("+94 91 222 0142")],
+        body: footer("+94912220142"),
+      }),
       "/about/": page("/about/", { body: footer("+94912220142") }),
     };
     expect(summary(await check(AI_004, { pages }))).toEqual(["pass site"]);

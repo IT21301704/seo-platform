@@ -14,13 +14,17 @@ export const SMP_008 = defineRule(
     effort: 1,
     explanation: {
       why: "Listing a page in the sitemap says 'index this', while noindex says the opposite. Mixed signals make the sitemap less trusted.",
-      fix: ["Either remove noindex from the page, or exclude the page from the sitemap in your SEO plugin."],
+      fix: [
+        "Either remove noindex from the page, or exclude the page from the sitemap in your SEO plugin.",
+      ],
     },
   },
   (site) =>
     [...site.sitemapEntries.keys()].flatMap((url) => {
       const page = site.pageByUrl.get(url);
       if (!page?.isHtml200) return [];
-      return page.noindex ? [fail(url, { directives: page.facts?.robotsDirectives ?? [] })] : [pass(url)];
+      return page.noindex
+        ? [fail(url, { directives: page.facts?.robotsDirectives ?? [] })]
+        : [pass(url)];
     }),
 );

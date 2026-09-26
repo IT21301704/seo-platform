@@ -67,12 +67,7 @@ export function list(value: unknown): JsonLdNode[] {
 
 /** Lower-case, collapse whitespace, unify quotes: for "does the page show this text" checks. */
 export function normalizeText(s: string): string {
-  return s
-    .toLowerCase()
-    .replace(/[‘’]/g, "'")
-    .replace(/[“”]/g, '"')
-    .replace(/\s+/g, " ")
-    .trim();
+  return s.toLowerCase().replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/\s+/g, " ").trim();
 }
 
 /** Final HTTP status we observed for an internal URL (redirects followed), or null if unknown. */

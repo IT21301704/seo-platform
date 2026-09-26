@@ -123,11 +123,20 @@ export async function persistAudit(db: ScopedPrisma, args: PersistArgs): Promise
         { category: "sitemap" as const, value: report.score.sitemap },
       ].filter((s): s is { category: (typeof s)["category"]; value: number } => s.value !== null);
       await tx.score.createMany({
-        data: scoreRows.map((s) => ({ crawlId, category: s.category, value: s.value, weightsVersion: report.versions.weightsVersion })) as Prisma.ScoreCreateManyInput[],
+        data: scoreRows.map((s) => ({
+          crawlId,
+          category: s.category,
+          value: s.value,
+          weightsVersion: report.versions.weightsVersion,
+        })) as Prisma.ScoreCreateManyInput[],
       });
 
       await tx.report.create({
-        data: { crawlId, reportHash: args.reportHash, reportJson: report as unknown as Prisma.InputJsonValue } as Prisma.ReportUncheckedCreateInput,
+        data: {
+          crawlId,
+          reportHash: args.reportHash,
+          reportJson: report as unknown as Prisma.InputJsonValue,
+        } as Prisma.ReportUncheckedCreateInput,
       });
 
       await syncIssues(tx, { projectId: args.projectId, crawlId, report, now: args.now });

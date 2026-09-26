@@ -8,9 +8,8 @@ describe("SMP-012 indexable pages missing from sitemap", () => {
   });
 
   it("fails for a page that is not listed", async () => {
-    expect(summary(await check(SMP_012, { files: { "/sitemap.xml": sitemapXml(["/"]) } }))).toEqual([
-      "pass /",
-      "fail /about/",
-    ]);
+    expect(summary(await check(SMP_012, { files: { "/sitemap.xml": sitemapXml(["/"]) } }))).toEqual(
+      ["pass /", "fail /about/"],
+    );
   });
 });

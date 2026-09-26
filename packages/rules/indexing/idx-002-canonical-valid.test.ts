@@ -13,7 +13,10 @@ describe("IDX-002 canonical valid", () => {
   });
 
   it("fails for a canonical that returns 404", async () => {
-    const pages = { ...defaultPages(), "/about/": page("/about/", { canonical: `${ORIGIN}/gone/` }) };
+    const pages = {
+      ...defaultPages(),
+      "/about/": page("/about/", { canonical: `${ORIGIN}/gone/` }),
+    };
     const outcomes = await check(IDX_002, { pages });
     expect(summary(outcomes)).toEqual(["pass /", "fail /about/"]);
     expect(outcomes[1]?.evidence["problem"]).toBe("target returns 404");

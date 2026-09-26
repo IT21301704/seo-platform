@@ -23,6 +23,8 @@ export const TEC_003 = defineRule(
   (site) =>
     site.pages.map(({ url, record }) => {
       if (record.status === null) return fail(url, { error: record.error });
-      return record.status >= 500 ? fail(url, { status: record.status }) : pass(url, { status: record.status });
+      return record.status >= 500
+        ? fail(url, { status: record.status })
+        : pass(url, { status: record.status });
     }),
 );

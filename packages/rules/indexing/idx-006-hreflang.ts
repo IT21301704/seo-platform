@@ -34,7 +34,8 @@ export const IDX_006 = defineRule(
       for (const { href } of tags) {
         const target = site.pageByUrl.get(href);
         if (!target || href === p.url || !target.facts) continue;
-        if (!target.facts.hreflang.some((t) => t.href === p.url)) problems.push(`no return link from ${href}`);
+        if (!target.facts.hreflang.some((t) => t.href === p.url))
+          problems.push(`no return link from ${href}`);
       }
       return problems.length ? fail(p.url, { problems }) : pass(p.url);
     }),

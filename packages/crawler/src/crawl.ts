@@ -27,6 +27,8 @@ const MAX_SITEMAP_BYTES = 50 * 1024 * 1024;
 const MAX_IMAGES = 500;
 const MAX_EXTERNAL_LINKS = 100;
 
+const count = (n: number, word: string): string => `${n} ${word}${n === 1 ? "" : "s"}`;
+
 export interface CrawlOptions {
   rootUrl: string;
   fetcher: Fetcher;
@@ -64,7 +66,7 @@ export async function crawlSite(options: CrawlOptions): Promise<CrawlSnapshot> {
   );
   emit({
     stage: "discover",
-    message: `robots.txt ${robots.status === 200 ? "read" : "not found"}, ${sitemaps.filter((s) => s.status === 200).length} sitemaps found, ${sitemapUrls.length} URLs in sitemaps`,
+    message: `robots.txt ${robots.status === 200 ? "read" : "not found"}, ${count(sitemaps.filter((s) => s.status === 200).length, "sitemap")} found, ${count(sitemapUrls.length, "URL")} in sitemaps`,
   });
 
   // ── Crawl pages ──
@@ -115,10 +117,12 @@ export async function crawlSite(options: CrawlOptions): Promise<CrawlSnapshot> {
   const notFound = (await fetchWithRedirects(fetcher, `${origin}${NOT_FOUND_PROBE_PATH}`)).record;
   const alternateOrigins: ResourceRecord[] = [];
   for (const alt of alternateOriginsFor(origin)) {
-    alternateOrigins.push((await fetchNoFollow(fetcher, `${alt}/`)));
+    alternateOrigins.push(await fetchNoFollow(fetcher, `${alt}/`));
   }
   const images: ResourceRecord[] = [];
-  for (const url of sortedUnique(state.images).filter((u) => isSameOrigin(u, origin)).slice(0, MAX_IMAGES)) {
+  for (const url of sortedUnique(state.images)
+    .filter((u) => isSameOrigin(u, origin))
+    .slice(0, MAX_IMAGES)) {
     images.push((await fetchWithRedirects(fetcher, url, "HEAD")).record);
   }
   const externalLinks: ResourceRecord[] = [];
@@ -166,7 +170,14 @@ interface CrawledPage {
 
 async function crawlPage(fetcher: Fetcher, url: string, via: DiscoveredVia): Promise<CrawledPage> {
   const { record, response } = await fetchWithRedirects(fetcher, url);
-  const page: PageRecord = { ...record, discoveredVia: via, rawHtml: null, rawHash: null, renderedHtml: null, renderedHash: null };
+  const page: PageRecord = {
+    ...record,
+    discoveredVia: via,
+    rawHtml: null,
+    rawHash: null,
+    renderedHtml: null,
+    renderedHash: null,
+  };
   const result: CrawledPage = { record: page, discovered: [], external: [], images: [] };
 
   // A redirect: the target is crawled as its own URL; this record keeps the chain only.
@@ -216,14 +227,17 @@ async function fetchText(fetcher: Fetcher, url: string): Promise<TextResource> {
   };
 }
 
-async function discoverSitemaps(
+export async function discoverSitemaps(
   fetcher: Fetcher,
   origin: string,
   fromRobots: string[],
 ): Promise<SitemapRecord[]> {
   const queue: [string, SitemapRecord["discoveredVia"]][] = [
     ...fromRobots.map((u): [string, SitemapRecord["discoveredVia"]] => [u, "robots"]),
-    ...COMMON_SITEMAP_PATHS.map((p): [string, SitemapRecord["discoveredVia"]] => [`${origin}${p}`, "common-path"]),
+    ...COMMON_SITEMAP_PATHS.map((p): [string, SitemapRecord["discoveredVia"]] => [
+      `${origin}${p}`,
+      "common-path",
+    ]),
   ];
   const seen = new Set<string>();
   const found: SitemapRecord[] = [];
@@ -254,7 +268,10 @@ async function discoverSitemaps(
 }
 
 function looksLikeSitemap(body: string | null): boolean {
-  return body !== null && /^\s*(<\?xml[^>]*>\s*)?(<!--[\s\S]*?-->\s*)*<(urlset|sitemapindex)\b/i.test(body);
+  return (
+    body !== null &&
+    /^\s*(<\?xml[^>]*>\s*)?(<!--[\s\S]*?-->\s*)*<(urlset|sitemapindex)\b/i.test(body)
+  );
 }
 
 function decodeSitemap(
@@ -262,10 +279,13 @@ function decodeSitemap(
   response: FetchResponse,
 ): { body: string | null; gzipped: boolean; error: string | null } {
   const gzipped =
-    url.endsWith(".gz") || /gzip/i.test(response.headers["content-type"] ?? "") ||
+    url.endsWith(".gz") ||
+    /gzip/i.test(response.headers["content-type"] ?? "") ||
     (response.body[0] === 0x1f && response.body[1] === 0x8b);
   try {
-    const bytes = gzipped ? gunzipSync(response.body, { maxOutputLength: MAX_SITEMAP_BYTES }) : response.body;
+    const bytes = gzipped
+      ? gunzipSync(response.body, { maxOutputLength: MAX_SITEMAP_BYTES })
+      : response.body;
     return { body: bytes.toString("utf8"), gzipped, error: null };
   } catch (error) {
     return { body: null, gzipped, error: `Invalid gzip: ${(error as Error).message}` };
@@ -287,7 +307,10 @@ async function fetchNoFollow(fetcher: Fetcher, url: string): Promise<ResourceRec
     const next = location ? normalizeUrl(location, url) : null;
     return {
       url,
-      chain: next && res.status >= 300 && res.status < 400 ? [{ url, status: res.status, location: next }] : [],
+      chain:
+        next && res.status >= 300 && res.status < 400
+          ? [{ url, status: res.status, location: next }]
+          : [],
       finalUrl: next ?? url,
       status: res.status,
       headers: res.headers,

@@ -6,7 +6,8 @@ export const IDX_004 = defineRule(
     category: "indexing",
     severity: "medium",
     title: "Orphan pages (in the sitemap but not linked)",
-    passCondition: "Passes when every indexable page listed in a sitemap has at least one internal link pointing to it.",
+    passCondition:
+      "Passes when every indexable page listed in a sitemap has at least one internal link pointing to it.",
     appliesTo: "url",
     autoFixable: false,
     riskLevel: "low",
@@ -24,6 +25,8 @@ export const IDX_004 = defineRule(
     [...site.sitemapEntries.keys()].flatMap((url) => {
       const page = site.pageByUrl.get(url);
       if (!page?.isIndexable || url === site.rootUrl) return [];
-      return page.inboundFrom.length === 0 ? [fail(url)] : [pass(url, { inboundLinks: page.inboundFrom.length })];
+      return page.inboundFrom.length === 0
+        ? [fail(url)]
+        : [pass(url, { inboundLinks: page.inboundFrom.length })];
     }),
 );

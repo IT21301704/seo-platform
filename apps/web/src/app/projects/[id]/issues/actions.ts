@@ -25,7 +25,11 @@ export interface BulkResult {
  * open items of an issue type). Workflow limits: Verified is set only by a passing re-check,
  * and Ignored requires a reason (REQUIREMENTS M19).
  */
-export async function bulkUpdate(projectId: string, _prev: BulkResult | null, formData: FormData): Promise<BulkResult> {
+export async function bulkUpdate(
+  projectId: string,
+  _prev: BulkResult | null,
+  formData: FormData,
+): Promise<BulkResult> {
   const { user, db } = await requireUser();
   assertCanEdit(user);
   await requireProject(db, projectId);
@@ -36,7 +40,8 @@ export async function bulkUpdate(projectId: string, _prev: BulkResult | null, fo
     assigneeId: formData.get("assigneeId") || undefined,
     selection: formData.getAll("selection").map(String),
   });
-  if (!parsed.success) return { ok: false, message: parsed.error.issues[0]?.message ?? "Invalid request" };
+  if (!parsed.success)
+    return { ok: false, message: parsed.error.issues[0]?.message ?? "Invalid request" };
   const { action, selection } = parsed.data;
 
   const itemIds = selection.filter((s) => s.startsWith("item:")).map((s) => s.slice(5));
@@ -56,8 +61,10 @@ export async function bulkUpdate(projectId: string, _prev: BulkResult | null, fo
     if (status === "ignored") return { ok: false, message: "Use Ignore… and give a reason" };
     data = { status, ignoredReason: null };
   } else {
-    const assigneeId = parsed.data.assigneeId && parsed.data.assigneeId !== "none" ? parsed.data.assigneeId : null;
-    if (assigneeId && !(await db.user.findUnique({ where: { id: assigneeId } }))) return { ok: false, message: "Unknown user" };
+    const assigneeId =
+      parsed.data.assigneeId && parsed.data.assigneeId !== "none" ? parsed.data.assigneeId : null;
+    if (assigneeId && !(await db.user.findUnique({ where: { id: assigneeId } })))
+      return { ok: false, message: "Unknown user" };
     data = { assigneeId };
   }
 

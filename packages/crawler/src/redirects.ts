@@ -24,7 +24,8 @@ export async function fetchWithRedirects(
   let current = url;
 
   for (let hop = 0; hop <= MAX_REDIRECT_HOPS; hop++) {
-    if (visited.has(current)) return { record: failure(url, chain, current, null, true), response: null };
+    if (visited.has(current))
+      return { record: failure(url, chain, current, null, true), response: null };
     visited.add(current);
 
     let response: FetchResponse;
@@ -32,7 +33,10 @@ export async function fetchWithRedirects(
       response = await fetcher.fetch({ url: current, method });
     } catch (error) {
       const err = error instanceof FetchError ? error : new FetchError("network", String(error));
-      return { record: failure(url, chain, current, `${err.code}: ${err.message}`, false), response: null };
+      return {
+        record: failure(url, chain, current, `${err.code}: ${err.message}`, false),
+        response: null,
+      };
     }
 
     const location = response.headers["location"];
@@ -40,7 +44,10 @@ export async function fetchWithRedirects(
       const next = normalizeUrl(location, current);
       chain.push({ url: current, status: response.status, location: next ?? location });
       if (!next) {
-        return { record: failure(url, chain, current, "invalid-url: bad Location header", false), response: null };
+        return {
+          record: failure(url, chain, current, "invalid-url: bad Location header", false),
+          response: null,
+        };
       }
       current = next;
       continue;
@@ -62,7 +69,13 @@ export async function fetchWithRedirects(
     };
   }
   return {
-    record: failure(url, chain, current, `network: more than ${MAX_REDIRECT_HOPS} redirects`, false),
+    record: failure(
+      url,
+      chain,
+      current,
+      `network: more than ${MAX_REDIRECT_HOPS} redirects`,
+      false,
+    ),
     response: null,
   };
 }

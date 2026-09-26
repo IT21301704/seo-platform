@@ -7,7 +7,10 @@ import { LNK_003 } from "./lnk-003-broken-external-links";
 const EXTERNAL = "https://other.example/article";
 
 async function siteWithExternal(status: number | null): Promise<SiteFacts> {
-  const pages = { ...defaultPages(), "/about/": page("/about/", { body: `<p><a href="${EXTERNAL}">Source</a></p>` }) };
+  const pages = {
+    ...defaultPages(),
+    "/about/": page("/about/", { body: `<p><a href="${EXTERNAL}">Source</a></p>` }),
+  };
   const site = await miniSite({ pages });
   // The mini-site fetcher cannot reach other hosts, so set the checked result directly.
   site.externalLinks.set(EXTERNAL, {

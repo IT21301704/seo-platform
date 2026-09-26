@@ -6,7 +6,8 @@ export const TEC_009 = defineRule(
     category: "technical",
     severity: "high",
     title: "Missing pages do not return a 404 status",
-    passCondition: "Passes when a URL that does not exist returns HTTP 404 or 410 (not 200, and not a redirect).",
+    passCondition:
+      "Passes when a URL that does not exist returns HTTP 404 or 410 (not 200, and not a redirect).",
     appliesTo: "url",
     autoFixable: false,
     riskLevel: "medium",
@@ -22,7 +23,11 @@ export const TEC_009 = defineRule(
   (site) => {
     const probe = site.probes.notFound;
     if (!probe || probe.status === null) return [na(null, "404 probe did not respond")];
-    const evidence = { probeUrl: probe.url, status: probe.status, redirected: probe.chain.length > 0 };
+    const evidence = {
+      probeUrl: probe.url,
+      status: probe.status,
+      redirected: probe.chain.length > 0,
+    };
     const ok = (probe.status === 404 || probe.status === 410) && probe.chain.length === 0;
     return [ok ? pass(null, evidence) : fail(null, evidence)];
   },

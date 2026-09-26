@@ -7,7 +7,8 @@ export const LNK_002 = defineRule(
     category: "links",
     severity: "high",
     title: "Broken internal links",
-    passCondition: "Passes when every internal link on the page leads to a URL that returns a status below 400.",
+    passCondition:
+      "Passes when every internal link on the page leads to a URL that returns a status below 400.",
     appliesTo: "both",
     autoFixable: true,
     riskLevel: "low",
@@ -31,7 +32,9 @@ export const LNK_002 = defineRule(
         ),
       ].sort();
       return broken.length
-        ? fail(p.url, { brokenLinks: broken.map((u) => ({ url: u, status: knownStatus(site, u) })) })
+        ? fail(p.url, {
+            brokenLinks: broken.map((u) => ({ url: u, status: knownStatus(site, u) })),
+          })
         : pass(p.url);
     }),
 );

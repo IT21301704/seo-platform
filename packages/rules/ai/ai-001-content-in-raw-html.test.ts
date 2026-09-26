@@ -15,7 +15,11 @@ describe("AI-001 content in raw HTML", () => {
     if (!about?.raw) throw new Error("missing page");
     // Simulate the rendered result (the Playwright renderer is covered by crawler tests).
     const words = Array.from({ length: 120 }, (_, i) => `word${i}`).join(" ");
-    about.rendered = { ...about.raw, wordCount: about.raw.wordCount + 120, mainText: `${about.raw.mainText} ${words}` };
+    about.rendered = {
+      ...about.raw,
+      wordCount: about.raw.wordCount + 120,
+      mainText: `${about.raw.mainText} ${words}`,
+    };
     about.facts = about.rendered;
     expect(summary(evaluateRule(AI_001, site))).toEqual(["pass /", "fail /about/"]);
   });

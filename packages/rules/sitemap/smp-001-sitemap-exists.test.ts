@@ -14,6 +14,8 @@ describe("SMP-001 sitemap exists", () => {
 
   it("fails when robots.txt lists a sitemap that 404s", async () => {
     const robots = `User-agent: *\nAllow: /\n\nSitemap: ${ORIGIN}/sitemap-products.xml\n`;
-    expect(summary(await check(SMP_001, { files: { "/robots.txt": robots } }))).toEqual(["fail site"]);
+    expect(summary(await check(SMP_001, { files: { "/robots.txt": robots } }))).toEqual([
+      "fail site",
+    ]);
   });
 });

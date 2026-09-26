@@ -27,8 +27,7 @@ const parser = new XMLParser({
   ignoreAttributes: false,
   attributeNamePrefix: "@",
   removeNSPrefix: false,
-  isArray: (name) =>
-    ["url", "sitemap", "xhtml:link", "image:image", "video:video"].includes(name),
+  isArray: (name) => ["url", "sitemap", "xhtml:link", "image:image", "video:video"].includes(name),
   parseTagValue: false,
   trimValues: true,
 });

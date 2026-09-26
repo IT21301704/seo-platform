@@ -6,14 +6,17 @@ export const ONP_012 = defineRule(
     category: "onpage",
     severity: "low",
     title: "Missing Twitter/X card tags",
-    passCondition: "Passes when the page has twitter:card, plus a title and image (twitter:* or the Open Graph fallback).",
+    passCondition:
+      "Passes when the page has twitter:card, plus a title and image (twitter:* or the Open Graph fallback).",
     appliesTo: "both",
     autoFixable: false,
     riskLevel: "low",
     effort: 1,
     explanation: {
       why: "Card tags make links shared on X/Twitter show a title and image instead of a bare URL.",
-      fix: ['Add <meta name="twitter:card" content="summary_large_image"> through your SEO plugin\'s social settings.'],
+      fix: [
+        'Add <meta name="twitter:card" content="summary_large_image"> through your SEO plugin\'s social settings.',
+      ],
     },
   },
   (site) =>

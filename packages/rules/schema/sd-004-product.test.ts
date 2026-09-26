@@ -6,7 +6,12 @@ const product = {
   "@type": "Product",
   name: "Blue mug",
   image: "https://example-store.com/images/blue-mug.svg",
-  offers: { "@type": "Offer", price: "4500", priceCurrency: "LKR", availability: "https://schema.org/InStock" },
+  offers: {
+    "@type": "Offer",
+    price: "4500",
+    priceCurrency: "LKR",
+    availability: "https://schema.org/InStock",
+  },
 };
 
 describe("SD-004 Product", () => {
@@ -16,7 +21,10 @@ describe("SD-004 Product", () => {
   });
 
   it("fails without offers", async () => {
-    const pages = { ...defaultPages(), "/about/": page("/about/", { jsonLd: [{ ...product, offers: undefined }] }) };
+    const pages = {
+      ...defaultPages(),
+      "/about/": page("/about/", { jsonLd: [{ ...product, offers: undefined }] }),
+    };
     const outcomes = await check(SD_004, { pages });
     expect(summary(outcomes)).toEqual(["fail /about/"]);
     expect(outcomes[0]?.evidence["missing"]).toEqual(["offers"]);

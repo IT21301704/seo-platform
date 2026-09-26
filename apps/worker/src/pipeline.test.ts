@@ -53,7 +53,11 @@ describe.skipIf(!available)("audit pipeline (Postgres)", () => {
     const db = forOrganization(client, orgId);
     const crawl = await createCrawl(db, { projectId, inputType: "url" });
     const report = await runPipeline(crawl.id, deps(fixture));
-    return { crawlId: crawl.id, report, crawl: await db.crawl.findUniqueOrThrow({ where: { id: crawl.id } }) };
+    return {
+      crawlId: crawl.id,
+      report,
+      crawl: await db.crawl.findUniqueOrThrow({ where: { id: crawl.id } }),
+    };
   }
 
   beforeAll(async () => {
@@ -64,7 +68,14 @@ describe.skipIf(!available)("audit pipeline (Postgres)", () => {
     const db = forOrganization(client, orgId);
     projectId = (
       await db.project.create({
-        data: { name: "t", rootUrl: "https://example-store.com/", country: "LK", language: "en", pageLimit: 1000, verificationToken: "x" } as Parameters<typeof db.project.create>[0]["data"],
+        data: {
+          name: "t",
+          rootUrl: "https://example-store.com/",
+          country: "LK",
+          language: "en",
+          pageLimit: 1000,
+          verificationToken: "x",
+        } as Parameters<typeof db.project.create>[0]["data"],
       })
     ).id;
   });
@@ -78,7 +89,12 @@ describe.skipIf(!available)("audit pipeline (Postgres)", () => {
   it("audits the golden site: 100, versions stored, no issues", async () => {
     const { report, crawl } = await audit("golden-site");
     expect(report.score.health).toBe(100);
-    expect(crawl).toMatchObject({ status: "completed", healthScore: 100, rulesetVersion: "1.0.0", llmModelId: "template" });
+    expect(crawl).toMatchObject({
+      status: "completed",
+      healthScore: 100,
+      rulesetVersion: "1.0.0",
+      llmModelId: "template",
+    });
     expect(crawl.snapshotSetHash).toMatch(/^[a-f0-9]{64}$/);
     const db = forOrganization(client, orgId);
     expect(await db.issue.count({ where: { projectId } })).toBe(0);
@@ -89,7 +105,10 @@ describe.skipIf(!available)("audit pipeline (Postgres)", () => {
     const db = forOrganization(client, orgId);
     const broken = await audit("broken-onpage");
     expect(broken.report.score.health).toBe(99);
-    const items = await db.issueItem.findMany({ where: { projectId }, orderBy: { stableKey: "asc" } });
+    const items = await db.issueItem.findMany({
+      where: { projectId },
+      orderBy: { stableKey: "asc" },
+    });
     expect(items.map((i) => [i.stableKey, i.auditTag, i.status])).toEqual([
       ["ONP-002|https://example-store.com/products/blue-ceramic-mug/", "new", "open"],
       ["ONP-002|https://example-store.com/products/speckled-stoneware-mug/", "new", "open"],
@@ -103,11 +122,16 @@ describe.skipIf(!available)("audit pipeline (Postgres)", () => {
     await audit("golden-site");
     const after = await db.issueItem.findMany({ where: { projectId } });
     expect(after.every((i) => i.auditTag === "resolved" && i.status === "verified")).toBe(true);
-    expect((await db.issue.findMany({ where: { projectId } })).every((i) => i.openCount === 0)).toBe(true);
+    expect(
+      (await db.issue.findMany({ where: { projectId } })).every((i) => i.openCount === 0),
+    ).toBe(true);
   }, 180_000);
 
   it("reuses the earlier report when the site and versions are unchanged", async () => {
-    const first = await client.crawl.findFirstOrThrow({ where: { projectId, healthScore: 100 }, orderBy: { createdAt: "asc" } });
+    const first = await client.crawl.findFirstOrThrow({
+      where: { projectId, healthScore: 100 },
+      orderBy: { createdAt: "asc" },
+    });
     const again = await audit("golden-site");
     expect(again.crawl.reusedFromCrawlId).not.toBeNull();
     expect(again.crawl.reportHash).toBe(first.reportHash);

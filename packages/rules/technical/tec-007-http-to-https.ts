@@ -8,7 +8,8 @@ export const TEC_007 = defineRule(
     category: "technical",
     severity: "high",
     title: "HTTP does not redirect to HTTPS",
-    passCondition: "Passes when http://<your domain>/ permanently redirects (301/308) to the https:// site.",
+    passCondition:
+      "Passes when http://<your domain>/ permanently redirects (301/308) to the https:// site.",
     appliesTo: "url",
     autoFixable: false,
     riskLevel: "high",
@@ -22,7 +23,8 @@ export const TEC_007 = defineRule(
     },
   },
   (site) => {
-    if (!site.origin.startsWith("https://")) return [na(null, "Site is not on HTTPS (see TEC-006)")];
+    if (!site.origin.startsWith("https://"))
+      return [na(null, "Site is not on HTTPS (see TEC-006)")];
     const httpUrl = `${site.origin.replace("https://", "http://")}/`;
     const probe = site.probes.alternateOrigins.find((p) => p.url === httpUrl);
     if (!probe || probe.status === null) return [na(httpUrl, "http:// version did not respond")];

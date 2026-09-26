@@ -19,7 +19,10 @@ export const LNK_007 = defineRule(
   (site) =>
     forPages(site, html200, (p) => {
       const nofollow = (p.facts?.links ?? [])
-        .filter((l) => l.url !== null && new URL(l.url).origin === site.origin && l.rel.includes("nofollow"))
+        .filter(
+          (l) =>
+            l.url !== null && new URL(l.url).origin === site.origin && l.rel.includes("nofollow"),
+        )
         .map((l) => l.href);
       return nofollow.length ? fail(p.url, { hrefs: [...new Set(nofollow)].sort() }) : pass(p.url);
     }),

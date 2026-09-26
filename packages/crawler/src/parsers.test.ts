@@ -21,7 +21,9 @@ describe("parseRobots", () => {
   });
 
   it("allows everything without a robots.txt", () => {
-    expect(parseRobots("https://a.com/robots.txt", null).isAllowed("https://a.com/x", "GPTBot")).toBe(true);
+    expect(
+      parseRobots("https://a.com/robots.txt", null).isAllowed("https://a.com/x", "GPTBot"),
+    ).toBe(true);
   });
 });
 
@@ -47,7 +49,9 @@ describe("parseSitemap", () => {
 
   it("reports malformed XML and a wrong namespace", () => {
     expect(parseSitemap("<urlset><url>").wellFormed).toBe(false);
-    const wrongNs = parseSitemap(`<urlset xmlns="http://example.com/"><url><loc>https://a.com/</loc></url></urlset>`);
+    const wrongNs = parseSitemap(
+      `<urlset xmlns="http://example.com/"><url><loc>https://a.com/</loc></url></urlset>`,
+    );
     expect(wrongNs.namespaceOk).toBe(false);
   });
 
@@ -68,7 +72,9 @@ describe("extractPageFacts", () => {
   </head><body><header><a href="/nav/">Nav</a></header>
     <main><h1>Hello</h1><h3>Skip</h3><p>One two three</p><img src="/a.png" alt="A" loading="lazy"><a href="/in/" rel="nofollow">In</a></main>
     <footer><a href="mailto:x@a.com">Mail</a></footer></body></html>`;
-  const facts = extractPageFacts(html, "https://a.com/page/", { "x-robots-tag": "otherbot: noindex, max-snippet:0" });
+  const facts = extractPageFacts(html, "https://a.com/page/", {
+    "x-robots-tag": "otherbot: noindex, max-snippet:0",
+  });
 
   it("reads head tags", () => {
     expect(facts.title).toBe("A title");

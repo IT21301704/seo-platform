@@ -11,8 +11,14 @@ describe("IDX-005 duplicate content", () => {
     const same = { h1: "Same heading", body: "<p>Exactly the same words on both pages.</p>" };
     const pages = {
       "/": page("/", { nav: ["/a/", "/b/"] }),
-      "/a/": page("/a/", same).replace('<nav aria-label="Breadcrumb"><a href="/">Home</a> / a</nav>', ""),
-      "/b/": page("/b/", same).replace('<nav aria-label="Breadcrumb"><a href="/">Home</a> / b</nav>', ""),
+      "/a/": page("/a/", same).replace(
+        '<nav aria-label="Breadcrumb"><a href="/">Home</a> / a</nav>',
+        "",
+      ),
+      "/b/": page("/b/", same).replace(
+        '<nav aria-label="Breadcrumb"><a href="/">Home</a> / b</nav>',
+        "",
+      ),
     };
     expect(summary(await check(IDX_005, { pages }))).toEqual(["pass /", "fail /a/", "fail /b/"]);
   });

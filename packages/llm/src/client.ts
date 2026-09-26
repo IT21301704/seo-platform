@@ -10,7 +10,8 @@ export const DEFAULT_MODEL_ID = "claude-opus-5";
  * Opus 4.7+) reject `temperature` with a 400, so for them reproducibility comes from the
  * output cache (ruleId + contentHash + promptVersion + modelId), not from temperature 0.
  */
-const SAMPLING_MODELS = /^claude-(haiku-4-5|sonnet-4-6|opus-4-6|sonnet-4-5|opus-4-5|opus-4-1|opus-4-0|sonnet-4-0)/;
+const SAMPLING_MODELS =
+  /^claude-(haiku-4-5|sonnet-4-6|opus-4-6|sonnet-4-5|opus-4-5|opus-4-1|opus-4-0|sonnet-4-0)/;
 
 export function supportsTemperature(modelId: string): boolean {
   return SAMPLING_MODELS.test(modelId);
@@ -39,7 +40,11 @@ export class AnthropicLlmClient implements LlmClient {
     this.client = new Anthropic(apiKey ? { apiKey } : {});
   }
 
-  async generate<S extends z.ZodType>({ prompt, schema, maxTokens = 4000 }: GenerateRequest<S>): Promise<z.infer<S> | null> {
+  async generate<S extends z.ZodType>({
+    prompt,
+    schema,
+    maxTokens = 4000,
+  }: GenerateRequest<S>): Promise<z.infer<S> | null> {
     const response = await this.client.messages.parse({
       model: this.modelId,
       max_tokens: maxTokens,

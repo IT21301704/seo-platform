@@ -103,7 +103,9 @@ export class MemoryFetcher implements Fetcher {
     if (this.server.compression !== "none" && status === 200) {
       headers["content-encoding"] = this.server.compression;
     }
-    const sorted = Object.fromEntries(Object.entries(headers).sort(([a], [b]) => a.localeCompare(b)));
+    const sorted = Object.fromEntries(
+      Object.entries(headers).sort(([a], [b]) => a.localeCompare(b)),
+    );
     return {
       url: target.toString(),
       status,

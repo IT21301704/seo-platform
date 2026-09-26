@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { ORIGIN, check, page, summary } from "../src/testing";
 import { IDX_006 } from "./idx-006-hreflang";
 
-const alt = (lang: string, path: string) => `<link rel="alternate" hreflang="${lang}" href="${ORIGIN}${path}">`;
+const alt = (lang: string, path: string) =>
+  `<link rel="alternate" hreflang="${lang}" href="${ORIGIN}${path}">`;
 
 describe("IDX-006 hreflang", () => {
   it("passes for reciprocal hreflang pairs", async () => {

@@ -4,7 +4,12 @@ import { SMP_016 } from "./smp-016-image-video-entries";
 
 describe("SMP-016 image/video sitemap entries", () => {
   it("passes for absolute image URLs", async () => {
-    const xml = sitemapXml([{ path: "/", extra: `<image:image><image:loc>${ORIGIN}/images/mug.webp</image:loc></image:image>` }]);
+    const xml = sitemapXml([
+      {
+        path: "/",
+        extra: `<image:image><image:loc>${ORIGIN}/images/mug.webp</image:loc></image:image>`,
+      },
+    ]);
     expect(summary(await check(SMP_016, { files: { "/sitemap.xml": xml } }))).toEqual(["pass /"]);
   });
 

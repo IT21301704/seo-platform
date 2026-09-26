@@ -17,7 +17,9 @@ export const AI_006 = defineRule(
     effort: 2,
     explanation: {
       why: "AI assistants extract answers most reliably when each question is a heading followed directly by its answer.",
-      fix: ["Write each question as an H2 or H3 ending in '?', with the answer in the paragraph right after it."],
+      fix: [
+        "Write each question as an H2 or H3 ending in '?', with the answer in the paragraph right after it.",
+      ],
     },
   },
   (site) =>
@@ -25,9 +27,12 @@ export const AI_006 = defineRule(
       site,
       (p) =>
         indexable(p) &&
-        (/\/faqs?\b/i.test(new URL(p.url).pathname) || (p.facts ? (nodesOfType(p.facts, "FAQPage")?.length ?? 0) > 0 : false)),
+        (/\/faqs?\b/i.test(new URL(p.url).pathname) ||
+          (p.facts ? (nodesOfType(p.facts, "FAQPage")?.length ?? 0) > 0 : false)),
       (p) => {
-        const questions = (p.facts?.headings ?? []).filter((h) => h.level >= 2 && h.text.trim().endsWith("?"));
+        const questions = (p.facts?.headings ?? []).filter(
+          (h) => h.level >= 2 && h.text.trim().endsWith("?"),
+        );
         return questions.length >= MIN_QUESTIONS
           ? pass(p.url, { questions: questions.length })
           : fail(p.url, { questions: questions.length });

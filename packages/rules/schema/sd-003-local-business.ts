@@ -15,7 +15,9 @@ export const SD_003 = defineRule(
     effort: 2,
     explanation: {
       why: "Complete business details help Google and AI assistants show your address, phone and opening hours for local searches.",
-      fix: ["Add the missing fields in your SEO plugin's local business settings, matching your Google Business Profile."],
+      fix: [
+        "Add the missing fields in your SEO plugin's local business settings, matching your Google Business Profile.",
+      ],
     },
   },
   (site) =>

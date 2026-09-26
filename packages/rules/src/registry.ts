@@ -154,4 +154,6 @@ export const RULES: readonly RuleDefinition[] = [
   TEC_009,
 ].sort((a, b) => a.id.localeCompare(b.id));
 
-export const RULES_BY_ID: ReadonlyMap<string, RuleDefinition> = new Map(RULES.map((r) => [r.id, r]));
+export const RULES_BY_ID: ReadonlyMap<string, RuleDefinition> = new Map(
+  RULES.map((r) => [r.id, r]),
+);

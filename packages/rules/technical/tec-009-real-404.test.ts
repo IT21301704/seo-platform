@@ -8,6 +8,8 @@ describe("TEC-009 real 404", () => {
   });
 
   it("fails for a soft 404 (200)", async () => {
-    expect(summary(await check(TEC_009, { server: { notFoundStatus: 200 } }))).toEqual(["fail site"]);
+    expect(summary(await check(TEC_009, { server: { notFoundStatus: 200 } }))).toEqual([
+      "fail site",
+    ]);
   });
 });

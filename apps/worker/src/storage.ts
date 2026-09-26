@@ -39,7 +39,9 @@ export class S3BlobStore implements BlobStore {
 
   async put(key: string, body: Buffer, contentType: string): Promise<void> {
     await this.ensureBucket();
-    await this.client.send(new PutObjectCommand({ Bucket: this.bucket, Key: key, Body: body, ContentType: contentType }));
+    await this.client.send(
+      new PutObjectCommand({ Bucket: this.bucket, Key: key, Body: body, ContentType: contentType }),
+    );
   }
 
   async get(key: string): Promise<Buffer | null> {
@@ -84,10 +86,12 @@ export class MemoryBlobStore implements BlobStore {
 }
 
 /** Content-addressed: identical HTML is stored once per organization. */
-export const htmlKey = (organizationId: string, hash: string): string => `orgs/${organizationId}/html/${hash}.html.gz`;
+export const htmlKey = (organizationId: string, hash: string): string =>
+  `orgs/${organizationId}/html/${hash}.html.gz`;
 export const snapshotKey = (organizationId: string, crawlId: string): string =>
   `orgs/${organizationId}/crawls/${crawlId}/snapshot.json.gz`;
-export const uploadKey = (organizationId: string, crawlId: string): string => `orgs/${organizationId}/uploads/${crawlId}.zip`;
+export const uploadKey = (organizationId: string, crawlId: string): string =>
+  `orgs/${organizationId}/uploads/${crawlId}.zip`;
 
 export const gzip = (text: string): Buffer => gzipSync(Buffer.from(text, "utf8"));
 export const gunzip = (buf: Buffer): string => gunzipSync(buf).toString("utf8");

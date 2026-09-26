@@ -15,7 +15,9 @@ export const SMP_016 = defineRule(
     effort: 1,
     explanation: {
       why: "Invalid image or video entries are ignored, so the media is less likely to appear in image and video search.",
-      fix: ["Regenerate the sitemap with your plugin; fill in missing video titles and thumbnails."],
+      fix: [
+        "Regenerate the sitemap with your plugin; fill in missing video titles and thumbnails.",
+      ],
     },
   },
   (site) =>
@@ -23,7 +25,8 @@ export const SMP_016 = defineRule(
       .filter((e) => e.images.length + e.videos.length > 0)
       .map((e) => {
         const problems: string[] = [];
-        for (const img of e.images) if (!/^https?:\/\//.test(img)) problems.push(`image not absolute: ${img}`);
+        for (const img of e.images)
+          if (!/^https?:\/\//.test(img)) problems.push(`image not absolute: ${img}`);
         e.videos.forEach((v, i) => {
           if (!v.thumbnail) problems.push(`video ${i + 1}: missing thumbnail_loc`);
           if (!v.title) problems.push(`video ${i + 1}: missing title`);

@@ -11,7 +11,14 @@ import {
   renderSnapshot,
   snapshotSetHash,
 } from "@seo/crawler";
-import type { CrawlEvent, CrawlSnapshot, Fetcher, PerformanceSource, Renderer, SiteFacts } from "@seo/crawler";
+import type {
+  CrawlEvent,
+  CrawlSnapshot,
+  Fetcher,
+  PerformanceSource,
+  Renderer,
+  SiteFacts,
+} from "@seo/crawler";
 import type { PrismaClient, ScopedPrisma } from "@seo/db";
 import { explainIssue } from "@seo/llm";
 import type { LlmClient } from "@seo/llm";
@@ -67,15 +74,24 @@ async function sourceFor(
     if (!zip) throw new Error("Uploaded code not found");
     const files = await readZip(zip);
     // Uploaded code is deleted as soon as the audit has read it (retention).
-    return { fetcher: codeFetcher(files, new URL(project.rootUrl).origin), performance: NO_PERFORMANCE, crawledAt: now, cleanup: () => deps.blobs.delete(key) };
+    return {
+      fetcher: codeFetcher(files, new URL(project.rootUrl).origin),
+      performance: NO_PERFORMANCE,
+      crawledAt: now,
+      cleanup: () => deps.blobs.delete(key),
+    };
   }
   const fixtureName =
     deps.fixture?.name ??
-    (process.env["FIXTURE_SITES"] === "true" && new URL(project.rootUrl).hostname === "example-store.com"
+    (process.env["FIXTURE_SITES"] === "true" &&
+    new URL(project.rootUrl).hostname === "example-store.com"
       ? (process.env["FIXTURE_SITE_NAME"] ?? "golden-site")
       : null);
   if (fixtureName) {
-    const dir = fixtureName === "golden-site" ? `${FIXTURES_DIR}/golden-site` : `${FIXTURES_DIR}/broken-sites/${fixtureName}`;
+    const dir =
+      fixtureName === "golden-site"
+        ? `${FIXTURES_DIR}/golden-site`
+        : `${FIXTURES_DIR}/broken-sites/${fixtureName}`;
     const site = loadFixtureSite(dir);
     return {
       fetcher: site.fetcher,
@@ -88,7 +104,9 @@ async function sourceFor(
   const psiKey = process.env["PSI_API_KEY"];
   return {
     fetcher,
-    performance: psiKey ? new PsiPerformance(psiKey, new HttpFetcher({ requestsPerSecond: 1, timeoutMs: 90_000 })) : NO_PERFORMANCE,
+    performance: psiKey
+      ? new PsiPerformance(psiKey, new HttpFetcher({ requestsPerSecond: 1, timeoutMs: 90_000 }))
+      : NO_PERFORMANCE,
     crawledAt: now,
     cleanup: () => fetcher.close(),
   };
@@ -96,18 +114,29 @@ async function sourceFor(
 
 export async function runPipeline(crawlId: string, deps: PipelineDeps): Promise<AuditReport> {
   const { db } = deps;
-  const crawl = await db.crawl.findUniqueOrThrow({ where: { id: crawlId }, include: { project: true } });
+  const crawl = await db.crawl.findUniqueOrThrow({
+    where: { id: crawlId },
+    include: { project: true },
+  });
   const project = crawl.project;
   const report = (msg: string, status: number | null = null) => deps.progress?.log(msg, status);
   const stage = (...args: Parameters<ProgressReporter["stage"]>) => deps.progress?.stage(...args);
   // Stage boundary: stop if the user cancelled, otherwise record the new status.
-  const setStatus = async (status: "crawling" | "rendering" | "performance" | "checking" | "explaining") => {
-    const current = await db.crawl.findUniqueOrThrow({ where: { id: crawlId }, select: { status: true } });
+  const setStatus = async (
+    status: "crawling" | "rendering" | "performance" | "checking" | "explaining",
+  ) => {
+    const current = await db.crawl.findUniqueOrThrow({
+      where: { id: crawlId },
+      select: { status: true },
+    });
     if (current.status === "cancelled") throw new CancelledError("Audit cancelled");
     await db.crawl.update({ where: { id: crawlId }, data: { status } });
   };
 
-  await db.crawl.update({ where: { id: crawlId }, data: { status: "discovering", startedAt: deps.now(), error: null } });
+  await db.crawl.update({
+    where: { id: crawlId },
+    data: { status: "discovering", startedAt: deps.now(), error: null },
+  });
   const source = await sourceFor(crawl, project, deps);
   try {
     // 1–2 · Discover + crawl
@@ -117,9 +146,15 @@ export async function runPipeline(crawlId: string, deps: PipelineDeps): Promise<
       if (e.stage === "discover") void stage("discover", { state: "done", detail: e.message });
       if (e.stage === "crawl") {
         crawled = e.done ?? crawled;
-        void stage("crawl", { state: "running", detail: "Status codes, redirects, canonicals, meta, headings, links, images", done: crawled, total: project.pageLimit });
+        void stage("crawl", {
+          state: "running",
+          detail: "Status codes, redirects, canonicals, meta, headings, links, images",
+          done: crawled,
+          total: project.pageLimit,
+        });
         void report(e.message, e.status ?? null);
-        if (crawled % 10 === 0) void db.crawl.update({ where: { id: crawlId }, data: { pagesCrawled: crawled } });
+        if (crawled % 10 === 0)
+          void db.crawl.update({ where: { id: crawlId }, data: { pagesCrawled: crawled } });
       }
     };
     await setStatus("crawling");
@@ -131,11 +166,19 @@ export async function runPipeline(crawlId: string, deps: PipelineDeps): Promise<
       inputType: crawl.inputType,
       onProgress,
     });
-    await stage("crawl", { state: "done", detail: `${snapshot.pages.length} URLs crawled`, done: snapshot.pages.length, total: project.pageLimit });
+    await stage("crawl", {
+      state: "done",
+      detail: `${snapshot.pages.length} URLs crawled`,
+      done: snapshot.pages.length,
+      total: project.pageLimit,
+    });
 
     // 3 · Render
     await setStatus("rendering");
-    await stage("render", { state: "running", detail: "Headless browser for pages that need JavaScript" });
+    await stage("render", {
+      state: "running",
+      detail: "Headless browser for pages that need JavaScript",
+    });
     const renderer = deps.makeRenderer(source.fetcher);
     try {
       snapshot = await renderSnapshot(snapshot, renderer, (e) => void report(e.message));
@@ -143,14 +186,28 @@ export async function runPipeline(crawlId: string, deps: PipelineDeps): Promise<
       await renderer.close?.();
     }
     const rendered = snapshot.pages.filter((p) => p.renderedHtml !== null).length;
-    await stage("render", { state: "done", detail: `${rendered} pages rendered`, done: rendered, total: snapshot.pages.length });
+    await stage("render", {
+      state: "done",
+      detail: `${rendered} pages rendered`,
+      done: rendered,
+      total: snapshot.pages.length,
+    });
 
     // 4 · Performance
     await setStatus("performance");
-    await stage("performance", { state: "running", detail: "Real-user Core Web Vitals (CrUX) or median of 5 lab runs" });
+    await stage("performance", {
+      state: "running",
+      detail: "Real-user Core Web Vitals (CrUX) or median of 5 lab runs",
+    });
     const sampleSize = Number(process.env["PERF_SAMPLE_PAGES"] ?? 5);
-    snapshot = { ...snapshot, performance: await source.performance.measure(performanceSample(snapshot, sampleSize)) };
-    await stage("performance", { state: "done", detail: snapshot.performance.note ?? `${snapshot.performance.pages.length} pages measured` });
+    snapshot = {
+      ...snapshot,
+      performance: await source.performance.measure(performanceSample(snapshot, sampleSize)),
+    };
+    await stage("performance", {
+      state: "done",
+      detail: snapshot.performance.note ?? `${snapshot.performance.pages.length} pages measured`,
+    });
 
     // Store snapshots (content-addressed HTML + the full snapshot).
     const snapshotPaths = await storeSnapshots(deps.blobs, crawl.organizationId, crawlId, snapshot);
@@ -158,7 +215,10 @@ export async function runPipeline(crawlId: string, deps: PipelineDeps): Promise<
 
     // 5 · Run checks — or reuse the identical earlier report (same snapshot + same versions).
     await setStatus("checking");
-    await stage("checks", { state: "running", detail: `${RULES_BY_ID.size} rule-based checks. No AI involved in scoring.` });
+    await stage("checks", {
+      state: "running",
+      detail: `${RULES_BY_ID.size} rule-based checks. No AI involved in scoring.`,
+    });
     const ownerIntent = { aiCrawlers: project.aiCrawlerIntent };
     const cached = await findCachedReport(db, project.id, crawlId, setHash);
     let auditReport: AuditReport;
@@ -175,7 +235,15 @@ export async function runPipeline(crawlId: string, deps: PipelineDeps): Promise<
       reportHash = result.reportHash;
       site = result.site;
     }
-    await persistAudit(db, { crawlId, projectId: project.id, site, report: auditReport, reportHash, snapshotPaths, now: deps.now() });
+    await persistAudit(db, {
+      crawlId,
+      projectId: project.id,
+      site,
+      report: auditReport,
+      reportHash,
+      snapshotPaths,
+      now: deps.now(),
+    });
     await db.crawl.update({
       where: { id: crawlId },
       data: {
@@ -183,18 +251,25 @@ export async function runPipeline(crawlId: string, deps: PipelineDeps): Promise<
         healthScore: auditReport.score.health,
         reportHash,
         reusedFromCrawlId: cached?.crawlId ?? null,
-        pagesFound: snapshot.pages.length + snapshot.robotsBlocked.length + snapshot.unfetched.length,
+        pagesFound:
+          snapshot.pages.length + snapshot.robotsBlocked.length + snapshot.unfetched.length,
         pagesCrawled: snapshot.pages.length,
         pagesRendered: rendered,
       },
     });
-    await stage("checks", { state: "done", detail: `Health Score ${auditReport.score.health ?? "—"}` });
+    await stage("checks", {
+      state: "done",
+      detail: `Health Score ${auditReport.score.health ?? "—"}`,
+    });
 
     // 6 · Explain (failed checks only; never changes the score)
     await setStatus("explaining");
     await explainFailures(deps, project.id, site, auditReport);
 
-    await db.crawl.update({ where: { id: crawlId }, data: { status: "completed", finishedAt: deps.now() } });
+    await db.crawl.update({
+      where: { id: crawlId },
+      data: { status: "completed", finishedAt: deps.now() },
+    });
     await report("Audit complete");
     return auditReport;
   } catch (error) {
@@ -204,7 +279,11 @@ export async function runPipeline(crawlId: string, deps: PipelineDeps): Promise<
     }
     await db.crawl.update({
       where: { id: crawlId },
-      data: { status: "failed", finishedAt: deps.now(), error: (error as Error).message.slice(0, 1000) },
+      data: {
+        status: "failed",
+        finishedAt: deps.now(),
+        error: (error as Error).message.slice(0, 1000),
+      },
     });
     await report(`Audit failed: ${(error as Error).message}`);
     throw error;
@@ -213,7 +292,12 @@ export async function runPipeline(crawlId: string, deps: PipelineDeps): Promise<
   }
 }
 
-async function storeSnapshots(blobs: BlobStore, organizationId: string, crawlId: string, snapshot: CrawlSnapshot): Promise<Map<string, string>> {
+async function storeSnapshots(
+  blobs: BlobStore,
+  organizationId: string,
+  crawlId: string,
+  snapshot: CrawlSnapshot,
+): Promise<Map<string, string>> {
   const paths = new Map<string, string>();
   for (const page of snapshot.pages) {
     const html = page.renderedHtml ?? page.rawHtml;
@@ -223,7 +307,11 @@ async function storeSnapshots(blobs: BlobStore, organizationId: string, crawlId:
     await blobs.put(key, gzip(html), "application/gzip");
     paths.set(page.url, key);
   }
-  await blobs.put(snapshotKey(organizationId, crawlId), gzip(stableStringify(snapshot)), "application/gzip");
+  await blobs.put(
+    snapshotKey(organizationId, crawlId),
+    gzip(stableStringify(snapshot)),
+    "application/gzip",
+  );
   return paths;
 }
 
@@ -254,29 +342,62 @@ async function findCachedReport(
   return { crawlId: previous.id, report, reportHash: previous.report.reportHash };
 }
 
-async function explainFailures(deps: PipelineDeps, projectId: string, site: SiteFacts, report: AuditReport): Promise<void> {
+async function explainFailures(
+  deps: PipelineDeps,
+  projectId: string,
+  site: SiteFacts,
+  report: AuditReport,
+): Promise<void> {
   const failing = report.rules
     .filter((r) => r.status === "fail")
     .sort((a, b) => b.priority.priority - a.priority.priority || a.ruleId.localeCompare(b.ruleId));
   const budget = deps.llmBudget ?? DEFAULT_LLM_BUDGET;
   const cache = new DbLlmCache(deps.db);
   let done = 0;
-  await deps.progress?.stage("explain", { state: "running", detail: "AI writes explanations and fix steps for failed checks only", done, total: failing.length });
+  await deps.progress?.stage("explain", {
+    state: "running",
+    detail: "AI writes explanations and fix steps for failed checks only",
+    done,
+    total: failing.length,
+  });
   for (const [index, ruleReport] of failing.entries()) {
     const rule = RULES_BY_ID.get(ruleReport.ruleId);
     if (!rule) continue;
-    const items = ruleReport.outcomes.filter((o) => o.result === "fail").map((o) => ({ url: o.url, evidence: o.evidence }));
+    const items = ruleReport.outcomes
+      .filter((o) => o.result === "fail")
+      .map((o) => ({ url: o.url, evidence: o.evidence }));
     const firstUrl = items.find((i) => i.url !== null)?.url ?? null;
     const facts = firstUrl ? site.pageByUrl.get(firstUrl)?.facts : null;
     const excerpt =
       firstUrl && facts
-        ? { url: firstUrl, title: facts.title, headings: facts.headings.slice(0, 20).map((h) => h.text), text: facts.mainText.split(" ").slice(0, 2000).join(" ") }
+        ? {
+            url: firstUrl,
+            title: facts.title,
+            headings: facts.headings.slice(0, 20).map((h) => h.text),
+            text: facts.mainText.split(" ").slice(0, 2000).join(" "),
+          }
         : null;
     // Over budget: the template explanation is used (no API call).
-    const result = await explainIssue({ rule, items, excerpt }, { llm: index < budget ? deps.llm : null, cache });
-    await deps.db.issue.updateMany({ where: { projectId, ruleId: rule.id }, data: { explanationKey: result.cacheKey } });
+    const result = await explainIssue(
+      { rule, items, excerpt },
+      { llm: index < budget ? deps.llm : null, cache },
+    );
+    await deps.db.issue.updateMany({
+      where: { projectId, ruleId: rule.id },
+      data: { explanationKey: result.cacheKey },
+    });
     done += 1;
-    await deps.progress?.stage("explain", { state: "running", detail: `${done} of ${failing.length} issues explained`, done, total: failing.length });
+    await deps.progress?.stage("explain", {
+      state: "running",
+      detail: `${done} of ${failing.length} issues explained`,
+      done,
+      total: failing.length,
+    });
   }
-  await deps.progress?.stage("explain", { state: "done", detail: `${done} issues explained`, done, total: failing.length });
+  await deps.progress?.stage("explain", {
+    state: "done",
+    detail: `${done} issues explained`,
+    done,
+    total: failing.length,
+  });
 }

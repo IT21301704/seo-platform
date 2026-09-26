@@ -7,7 +7,8 @@ export const ONP_013 = defineRule(
     category: "onpage",
     severity: "medium",
     title: "Missing or invalid lang attribute",
-    passCondition: 'Passes when <html lang="..."> is set to a valid language code (e.g. "en", "en-GB", "si").',
+    passCondition:
+      'Passes when <html lang="..."> is set to a valid language code (e.g. "en", "en-GB", "si").',
     appliesTo: "both",
     autoFixable: false,
     riskLevel: "low",
@@ -20,6 +21,8 @@ export const ONP_013 = defineRule(
   (site) =>
     forPages(site, indexable, (p) => {
       const lang = p.facts?.lang ?? null;
-      return lang && LANG_CODE.test(lang) && lang !== "x-default" ? pass(p.url, { lang }) : fail(p.url, { lang });
+      return lang && LANG_CODE.test(lang) && lang !== "x-default"
+        ? pass(p.url, { lang })
+        : fail(p.url, { lang });
     }),
 );

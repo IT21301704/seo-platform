@@ -6,14 +6,18 @@ export const TEC_005 = defineRule(
     category: "technical",
     severity: "high",
     title: "Redirect loops",
-    passCondition: "Passes when no redirect leads back to a URL already in its chain (and no chain exceeds 10 hops).",
+    passCondition:
+      "Passes when no redirect leads back to a URL already in its chain (and no chain exceeds 10 hops).",
     appliesTo: "url",
     autoFixable: true,
     riskLevel: "high",
     effort: 2,
     explanation: {
       why: "A redirect loop never reaches a page, so neither visitors nor search engines can load it.",
-      fix: ["Find the redirect rules for these URLs and remove the one that points back.", "Re-test the URL in a browser."],
+      fix: [
+        "Find the redirect rules for these URLs and remove the one that points back.",
+        "Re-test the URL in a browser.",
+      ],
     },
   },
   (site) =>

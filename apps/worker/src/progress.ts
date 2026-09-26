@@ -47,7 +47,10 @@ export async function readProgress(redis: Redis, crawlId: string): Promise<Progr
     redis.lrange(logKey(crawlId), -30, -1),
   ]);
   const stages = Object.fromEntries(
-    STAGES.map((s) => [s, rawStages[s] ? (JSON.parse(rawStages[s]) as StageInfo) : { state: "waiting", detail: "" }]),
+    STAGES.map((s) => [
+      s,
+      rawStages[s] ? (JSON.parse(rawStages[s]) as StageInfo) : { state: "waiting", detail: "" },
+    ]),
   ) as Record<Stage, StageInfo>;
   const log = rawLog.map((l) => JSON.parse(l) as ProgressSnapshot["log"][number]);
   return { stages, log };

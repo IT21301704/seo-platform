@@ -14,7 +14,9 @@ export const SMP_002 = defineRule(
     effort: 1,
     explanation: {
       why: "The Sitemap: line in robots.txt lets every search engine and AI crawler find your sitemap, not only the ones you submitted it to.",
-      fix: ["Add 'Sitemap: https://your-domain/sitemap.xml' to robots.txt (most SEO plugins can do this for you)."],
+      fix: [
+        "Add 'Sitemap: https://your-domain/sitemap.xml' to robots.txt (most SEO plugins can do this for you).",
+      ],
     },
   },
   (site) =>

@@ -15,7 +15,9 @@ export const AI_007 = defineRule(
     effort: 1,
     explanation: {
       why: "llms.txt is an emerging, optional convention that gives AI tools a short map of your most useful pages. A broken one is worse than none.",
-      fix: ["Start the file with '# Your business name', then list key pages as '- [Name](https://…): description'."],
+      fix: [
+        "Start the file with '# Your business name', then list key pages as '- [Name](https://…): description'.",
+      ],
     },
   },
   (site) => {

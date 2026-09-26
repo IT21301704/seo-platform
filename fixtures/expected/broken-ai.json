@@ -2,12 +2,7 @@
   "fixture": "broken-ai",
   "rulesetVersion": "1.0.0",
   "description": "AI-discoverability faults: robots.txt blocks GPTBot and ClaudeBot against the owner's intent, FAQ answers only exist after JavaScript runs, and the pricing page has nosnippet.",
-  "changedFiles": [
-    "assets/faq.js",
-    "faq/index.html",
-    "pricing/index.html",
-    "robots.txt"
-  ],
+  "changedFiles": ["assets/faq.js", "faq/index.html", "pricing/index.html", "robots.txt"],
   "expectedFailures": [
     {
       "ruleId": "AI-002",

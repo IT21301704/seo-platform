@@ -29,7 +29,9 @@ await registerRules(prisma);
 await prisma.organization.deleteMany({ where: { name: ORG_NAME } });
 const org = await prisma.organization.create({ data: { name: ORG_NAME } });
 await prisma.user.deleteMany({ where: { email: OWNER_EMAIL } });
-await prisma.user.create({ data: { organizationId: org.id, email: OWNER_EMAIL, name: "Store Owner", role: "owner" } });
+await prisma.user.create({
+  data: { organizationId: org.id, email: OWNER_EMAIL, name: "Store Owner", role: "owner" },
+});
 
 const db = forOrganization(prisma, org.id);
 const project = await db.project.create({
@@ -61,7 +63,9 @@ for (const audit of AUDITS) {
     now: () => new Date(audit.date),
     fixture: { name: audit.fixture, crawledAt: audit.date },
   });
-  console.log(`${audit.date.slice(0, 10)}  ${audit.fixture.padEnd(17)} health ${report.score.health}`);
+  console.log(
+    `${audit.date.slice(0, 10)}  ${audit.fixture.padEnd(17)} health ${report.score.health}`,
+  );
 }
 
 console.log(`\nSeeded organization "${ORG_NAME}", owner ${OWNER_EMAIL}, project ${project.id}`);

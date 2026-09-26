@@ -23,7 +23,10 @@ export interface AuditResult {
  * Same snapshot + same versions = byte-identical report.
  */
 export function runAudit(snapshot: CrawlSnapshot, options: AuditOptions = {}): AuditResult {
-  const site = buildSiteFacts(snapshot, options.ownerIntent ? { ownerIntent: options.ownerIntent } : {});
+  const site = buildSiteFacts(
+    snapshot,
+    options.ownerIntent ? { ownerIntent: options.ownerIntent } : {},
+  );
   const results = runRules(site);
   const report = buildReport({
     results,

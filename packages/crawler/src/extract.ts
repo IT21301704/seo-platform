@@ -125,7 +125,7 @@ export function extractPageFacts(
       .toArray()
       .map((el) => ({
         lang: ($(el).attr("hreflang") ?? "").trim(),
-        href: normalizeUrl($(el).attr("href") ?? "", pageUrl) ?? ($(el).attr("href") ?? ""),
+        href: normalizeUrl($(el).attr("href") ?? "", pageUrl) ?? $(el).attr("href") ?? "",
       })),
     relNext: absoluteAttr($, 'link[rel="next" i]', pageUrl),
     relPrev: absoluteAttr($, 'link[rel="prev" i]', pageUrl),
@@ -163,8 +163,13 @@ function robotsDirectives($: CheerioAPI, xRobotsTag: string | null): string[] {
     for (const part of xRobotsTag.split(/,(?=\s*[a-z-]+\s*:)/i)) {
       const scoped = /^\s*([a-z-]+)\s*:\s*(.*)$/i.exec(part);
       if (!scoped) values.push(part);
-      else if (["googlebot", "all"].includes((scoped[1] ?? "").toLowerCase())) values.push(scoped[2] ?? "");
-      else if (/^(max-snippet|max-image-preview|max-video-preview|unavailable_after)$/i.test(scoped[1] ?? "")) {
+      else if (["googlebot", "all"].includes((scoped[1] ?? "").toLowerCase()))
+        values.push(scoped[2] ?? "");
+      else if (
+        /^(max-snippet|max-image-preview|max-video-preview|unavailable_after)$/i.test(
+          scoped[1] ?? "",
+        )
+      ) {
         values.push(part);
       }
     }
@@ -173,7 +178,12 @@ function robotsDirectives($: CheerioAPI, xRobotsTag: string | null): string[] {
     ...new Set(
       values
         .flatMap((v) => v.split(","))
-        .map((d) => d.trim().toLowerCase().replace(/\s*:\s*/, ":"))
+        .map((d) =>
+          d
+            .trim()
+            .toLowerCase()
+            .replace(/\s*:\s*/, ":"),
+        )
         .filter(Boolean),
     ),
   ].sort();

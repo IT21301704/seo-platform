@@ -8,7 +8,10 @@ describe("ONP-005 exactly one H1", () => {
   });
 
   it("fails for two H1s", async () => {
-    const pages = { ...defaultPages(), "/about/": page("/about/", { h1: ["About us", "Washing"] }) };
+    const pages = {
+      ...defaultPages(),
+      "/about/": page("/about/", { h1: ["About us", "Washing"] }),
+    };
     expect(summary(await check(ONP_005, { pages }))).toEqual(["pass /", "fail /about/"]);
   });
 });

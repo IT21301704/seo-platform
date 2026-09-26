@@ -8,7 +8,10 @@ describe("PRF-004 page weight", () => {
   });
 
   it("fails for HTML over 500 KB", async () => {
-    const pages = { ...defaultPages(), "/about/": page("/about/", { body: `<p>${"x".repeat(520 * 1024)}</p>` }) };
+    const pages = {
+      ...defaultPages(),
+      "/about/": page("/about/", { body: `<p>${"x".repeat(520 * 1024)}</p>` }),
+    };
     expect(summary(await check(PRF_004, { pages }))).toEqual(["pass /", "fail /about/"]);
   });
 });

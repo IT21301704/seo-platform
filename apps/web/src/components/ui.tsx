@@ -24,16 +24,28 @@ export const buttonVariants = cva(
 
 type ButtonVariants = VariantProps<typeof buttonVariants>;
 
-export function Button({ className, variant, size, ...props }: ComponentProps<"button"> & ButtonVariants) {
+export function Button({
+  className,
+  variant,
+  size,
+  ...props
+}: ComponentProps<"button"> & ButtonVariants) {
   return <button className={cn(buttonVariants({ variant, size }), className)} {...props} />;
 }
 
-export function ButtonLink({ className, variant, size, ...props }: ComponentProps<typeof Link> & ButtonVariants) {
+export function ButtonLink({
+  className,
+  variant,
+  size,
+  ...props
+}: ComponentProps<typeof Link> & ButtonVariants) {
   return <Link className={cn(buttonVariants({ variant, size }), className)} {...props} />;
 }
 
 export function Card({ className, ...props }: ComponentProps<"section">) {
-  return <section className={cn("rounded-[10px] border border-line bg-white", className)} {...props} />;
+  return (
+    <section className={cn("rounded-[10px] border border-line bg-white", className)} {...props} />
+  );
 }
 
 export function CardLabel({ children, className }: { children: ReactNode; className?: string }) {
@@ -51,25 +63,55 @@ const TONE: Record<Tone, string> = {
   gray: "bg-gray-bg text-gray",
 };
 
-export function Pill({ tone, children, className }: { tone: Tone; children: ReactNode; className?: string }) {
+export function Pill({
+  tone,
+  children,
+  className,
+}: {
+  tone: Tone;
+  children: ReactNode;
+  className?: string;
+}) {
   return (
-    <span className={cn("inline-flex h-6 items-center whitespace-nowrap rounded-xl px-2.5 text-xs font-semibold", TONE[tone], className)}>
+    <span
+      className={cn(
+        "inline-flex h-6 items-center whitespace-nowrap rounded-xl px-2.5 text-xs font-semibold",
+        TONE[tone],
+        className,
+      )}
+    >
       {children}
     </span>
   );
 }
 
-export const SEVERITY_TONE: Record<Severity, Tone> = { critical: "crit", high: "high", medium: "med", low: "pass" };
+export const SEVERITY_TONE: Record<Severity, Tone> = {
+  critical: "crit",
+  high: "high",
+  medium: "med",
+  low: "pass",
+};
 
 export function SeverityPill({ severity }: { severity: Severity }) {
   return <Pill tone={SEVERITY_TONE[severity]}>{SEVERITY_LABEL[severity]}</Pill>;
 }
 
-export function Bar({ value, className, tone = "primary" }: { value: number; className?: string; tone?: "primary" | "pass" }) {
+export function Bar({
+  value,
+  className,
+  tone = "primary",
+}: {
+  value: number;
+  className?: string;
+  tone?: "primary" | "pass";
+}) {
   const pct = Math.max(0, Math.min(100, value));
   return (
     <div className={cn("h-2 overflow-hidden rounded bg-line-soft", className)} role="presentation">
-      <div className={cn("h-full rounded", tone === "pass" ? "bg-pass" : "bg-primary")} style={{ width: `${pct}%` }} />
+      <div
+        className={cn("h-full rounded", tone === "pass" ? "bg-pass" : "bg-primary")}
+        style={{ width: `${pct}%` }}
+      />
     </div>
   );
 }
@@ -80,7 +122,13 @@ export function ScoreDonut({ score }: { score: number | null }) {
   const circumference = 2 * Math.PI * r;
   const filled = score === null ? 0 : (score / 100) * circumference;
   return (
-    <svg width="160" height="160" viewBox="0 0 160 160" role="img" aria-label={score === null ? "No score yet" : `Health score ${score} out of 100`}>
+    <svg
+      width="160"
+      height="160"
+      viewBox="0 0 160 160"
+      role="img"
+      aria-label={score === null ? "No score yet" : `Health score ${score} out of 100`}
+    >
       <circle cx="80" cy="80" r={r} fill="none" stroke="#EDEDE8" strokeWidth="14" />
       <circle
         cx="80"
@@ -110,14 +158,22 @@ export function Table({ className, ...props }: ComponentProps<"table">) {
 export function Th({ className, ...props }: ComponentProps<"th">) {
   return (
     <th
-      className={cn("border-b border-line px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.04em] text-muted", className)}
+      className={cn(
+        "border-b border-line px-3 py-2.5 text-left text-xs font-semibold uppercase tracking-[0.04em] text-muted",
+        className,
+      )}
       {...props}
     />
   );
 }
 
 export function Td({ className, ...props }: ComponentProps<"td">) {
-  return <td className={cn("border-b border-[#EDEDE8] px-3 py-[11px] align-middle", className)} {...props} />;
+  return (
+    <td
+      className={cn("border-b border-[#EDEDE8] px-3 py-[11px] align-middle", className)}
+      {...props}
+    />
+  );
 }
 
 export function Mono({ className, ...props }: ComponentProps<"span">) {

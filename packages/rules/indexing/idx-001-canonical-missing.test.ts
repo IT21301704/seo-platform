@@ -13,7 +13,10 @@ describe("IDX-001 canonical missing", () => {
   });
 
   it("skips noindex pages", async () => {
-    const pages = { ...defaultPages(), "/about/": page("/about/", { canonical: null, robots: "noindex" }) };
+    const pages = {
+      ...defaultPages(),
+      "/about/": page("/about/", { canonical: null, robots: "noindex" }),
+    };
     expect(summary(await check(IDX_001, { pages }))).toEqual(["pass /"]);
   });
 });

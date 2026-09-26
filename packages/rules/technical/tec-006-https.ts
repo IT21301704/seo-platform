@@ -6,7 +6,8 @@ export const TEC_006 = defineRule(
     category: "technical",
     severity: "critical",
     title: "Site is not served over HTTPS with a valid certificate",
-    passCondition: "Passes when the site's address uses https:// and the home page loads without a TLS error.",
+    passCondition:
+      "Passes when the site's address uses https:// and the home page loads without a TLS error.",
     appliesTo: "url",
     autoFixable: false,
     riskLevel: "high",
@@ -21,9 +22,15 @@ export const TEC_006 = defineRule(
   },
   (site) => {
     const home = site.pageByUrl.get(site.rootUrl);
-    if (!site.origin.startsWith("https://")) return [fail(site.rootUrl, { reason: "Site address uses http://" })];
+    if (!site.origin.startsWith("https://"))
+      return [fail(site.rootUrl, { reason: "Site address uses http://" })];
     if (!home || home.record.status === null) {
-      return [fail(site.rootUrl, { reason: "Home page did not load over HTTPS", error: home?.record.error ?? null })];
+      return [
+        fail(site.rootUrl, {
+          reason: "Home page did not load over HTTPS",
+          error: home?.record.error ?? null,
+        }),
+      ];
     }
     return [pass(site.rootUrl)];
   },

@@ -26,7 +26,11 @@ export const SMP_001 = defineRule(
     const failing = site.sitemaps.filter((s) => s.record.status !== 200);
     if (site.sitemaps.length === 0) return [fail(null, { problem: "No sitemap found" })];
     if (failing.length) {
-      return [fail(null, { failing: failing.map((s) => ({ url: s.record.url, status: s.record.status })) })];
+      return [
+        fail(null, {
+          failing: failing.map((s) => ({ url: s.record.url, status: s.record.status })),
+        }),
+      ];
     }
     return [pass(null, { sitemaps: ok.map((s) => s.record.url) })];
   },

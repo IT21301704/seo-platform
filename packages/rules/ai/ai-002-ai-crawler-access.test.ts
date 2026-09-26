@@ -16,6 +16,8 @@ describe("AI-002 AI crawler access", () => {
   });
 
   it("fails when the owner wants to block AI crawlers but robots.txt allows them", async () => {
-    expect(summary(await check(AI_002, { ownerIntent: { aiCrawlers: "block" } }))).toEqual(["fail site"]);
+    expect(summary(await check(AI_002, { ownerIntent: { aiCrawlers: "block" } }))).toEqual([
+      "fail site",
+    ]);
   });
 });

@@ -8,11 +8,15 @@ describe("TEC-001 robots.txt valid", () => {
   });
 
   it("passes without a robots.txt (404)", async () => {
-    expect(summary(await check(TEC_001, { files: { "/robots.txt": null } }))).toEqual(["pass /robots.txt"]);
+    expect(summary(await check(TEC_001, { files: { "/robots.txt": null } }))).toEqual([
+      "pass /robots.txt",
+    ]);
   });
 
   it("fails on unknown directives", async () => {
-    const outcomes = await check(TEC_001, { files: { "/robots.txt": `${DEFAULT_ROBOTS}Disalow: /private/\n` } });
+    const outcomes = await check(TEC_001, {
+      files: { "/robots.txt": `${DEFAULT_ROBOTS}Disalow: /private/\n` },
+    });
     expect(summary(outcomes)).toEqual(["fail /robots.txt"]);
     expect(outcomes[0]?.evidence["invalidLines"]).toEqual([5]);
   });

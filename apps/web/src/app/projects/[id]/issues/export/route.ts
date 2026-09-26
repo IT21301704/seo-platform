@@ -4,10 +4,15 @@ import { prisma } from "@/lib/db";
 import { itemWhere, parseFilters } from "../filters";
 
 /** CSV export of the issue items matching the current filters (screen 04 → Export). */
-export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }): Promise<Response> {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+): Promise<Response> {
   const { id } = await params;
   const session = await auth();
-  const user = session?.user?.id ? await prisma.user.findUnique({ where: { id: session.user.id } }) : null;
+  const user = session?.user?.id
+    ? await prisma.user.findUnique({ where: { id: session.user.id } })
+    : null;
   if (!user) return new Response("Unauthorized", { status: 401 });
   const db = forOrganization(prisma, user.organizationId);
   const project = await db.project.findUnique({ where: { id } });
@@ -22,7 +27,18 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
   });
   const cell = (v: unknown) => `"${String(v ?? "").replace(/"/g, '""')}"`;
   const rows = [
-    ["rule_id", "issue", "severity", "priority", "url", "status", "audit_tag", "first_seen", "last_seen", "ignored_reason"],
+    [
+      "rule_id",
+      "issue",
+      "severity",
+      "priority",
+      "url",
+      "status",
+      "audit_tag",
+      "first_seen",
+      "last_seen",
+      "ignored_reason",
+    ],
     ...items.map((i) => [
       i.ruleId,
       i.issue.title,

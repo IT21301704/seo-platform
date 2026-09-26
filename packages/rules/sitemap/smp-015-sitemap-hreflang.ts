@@ -16,7 +16,9 @@ export const SMP_015 = defineRule(
     effort: 2,
     explanation: {
       why: "Broken hreflang alternates in the sitemap are ignored, so search engines may show visitors the wrong language version.",
-      fix: ["Regenerate the sitemap from your multilingual plugin; make sure each URL lists all language versions, including itself."],
+      fix: [
+        "Regenerate the sitemap from your multilingual plugin; make sure each URL lists all language versions, including itself.",
+      ],
     },
   },
   (site) =>

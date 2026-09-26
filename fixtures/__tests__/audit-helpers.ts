@@ -24,13 +24,17 @@ export async function auditFixture(
     crawledAt: site.server.crawledAt,
   });
   snapshot = await renderSnapshot(snapshot, makeRenderer(site.fetcher));
-  const performance = await new RecordedPerformance(site.server.performance).measure([snapshot.rootUrl]);
+  const performance = await new RecordedPerformance(site.server.performance).measure([
+    snapshot.rootUrl,
+  ]);
   return runAudit({ ...snapshot, performance }, { ownerIntent: site.server.ownerIntent });
 }
 
 /** "RULE-ID url" for every failing check, sorted. */
 export function failures(result: AuditResult): string[] {
   return result.report.rules
-    .flatMap((r) => r.outcomes.filter((o) => o.result === "fail").map((o) => `${r.ruleId} ${o.url ?? "site"}`))
+    .flatMap((r) =>
+      r.outcomes.filter((o) => o.result === "fail").map((o) => `${r.ruleId} ${o.url ?? "site"}`),
+    )
     .sort();
 }

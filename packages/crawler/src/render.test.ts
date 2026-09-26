@@ -12,10 +12,14 @@ describe("needsRender", () => {
     expect(needsRender("<html><body><p>Hi</p></body></html>")).toBe(false);
   });
   it("renders script pages with little text", () => {
-    expect(needsRender('<html><body><div id="app"></div><script src="/a.js"></script></body></html>')).toBe(true);
+    expect(
+      needsRender('<html><body><div id="app"></div><script src="/a.js"></script></body></html>'),
+    ).toBe(true);
   });
   it("ignores JSON-LD scripts", () => {
-    expect(needsRender('<html><body><script type="application/ld+json">{}</script></body></html>')).toBe(false);
+    expect(
+      needsRender('<html><body><script type="application/ld+json">{}</script></body></html>'),
+    ).toBe(false);
   });
 });
 

@@ -8,7 +8,10 @@ describe("PRF-008 compression", () => {
   });
 
   it("fails without compression", async () => {
-    expect(summary(await check(PRF_008, { server: { compression: "none" } }))).toEqual(["fail /", "fail /about/"]);
+    expect(summary(await check(PRF_008, { server: { compression: "none" } }))).toEqual([
+      "fail /",
+      "fail /about/",
+    ]);
   });
 
   it("is not applicable to code uploads", async () => {

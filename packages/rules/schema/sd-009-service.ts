@@ -7,7 +7,8 @@ export const SD_009 = defineRule(
     category: "schema",
     severity: "low",
     title: "Service structured data is incomplete",
-    passCondition: "Passes when every Service item has a name, a provider and a serviceType or description.",
+    passCondition:
+      "Passes when every Service item has a name, a provider and a serviceType or description.",
     appliesTo: "both",
     autoFixable: true,
     riskLevel: "high",
@@ -25,7 +26,8 @@ export const SD_009 = defineRule(
       for (const s of services) {
         if (!str(s["name"])) problems.add("name");
         if (!s["provider"]) problems.add("provider");
-        if (!str(s["serviceType"]) && !str(s["description"])) problems.add("serviceType or description");
+        if (!str(s["serviceType"]) && !str(s["description"]))
+          problems.add("serviceType or description");
       }
       return problems.size ? fail(p.url, { problems: [...problems].sort() }) : pass(p.url);
     }),

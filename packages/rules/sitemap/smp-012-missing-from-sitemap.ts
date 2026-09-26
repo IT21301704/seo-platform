@@ -7,7 +7,8 @@ export const SMP_012 = defineRule(
     scoreCategory: "indexing",
     severity: "high",
     title: "Indexable pages missing from the sitemap",
-    passCondition: "Passes when every crawled indexable page is listed in a sitemap. Not applicable when there is no sitemap (see SMP-001).",
+    passCondition:
+      "Passes when every crawled indexable page is listed in a sitemap. Not applicable when there is no sitemap (see SMP-001).",
     appliesTo: "url",
     autoFixable: true,
     riskLevel: "high",
@@ -22,6 +23,8 @@ export const SMP_012 = defineRule(
   },
   (site) => {
     if (site.sitemapEntries.size === 0) return [];
-    return forPages(site, indexable, (p) => (site.sitemapEntries.has(p.url) ? pass(p.url) : fail(p.url)));
+    return forPages(site, indexable, (p) =>
+      site.sitemapEntries.has(p.url) ? pass(p.url) : fail(p.url),
+    );
   },
 );

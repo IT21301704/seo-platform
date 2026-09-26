@@ -27,7 +27,11 @@ export interface PageExcerpt {
   text: string;
 }
 
-export function explainPrompt(rule: RuleDefinition, items: FailingItem[], excerpt: PageExcerpt | null): string {
+export function explainPrompt(
+  rule: RuleDefinition,
+  items: FailingItem[],
+  excerpt: PageExcerpt | null,
+): string {
   const input = {
     check: {
       id: rule.id,

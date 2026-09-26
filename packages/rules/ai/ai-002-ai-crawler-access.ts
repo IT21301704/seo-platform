@@ -26,6 +26,8 @@ export const AI_002 = defineRule(
     const intent = site.ownerIntent.aiCrawlers;
     const wrong = intent === "allow" ? blocked : allowed;
     const evidence = { intent, allowed: [...allowed], blocked: [...blocked] };
-    return [wrong.length ? fail(null, { ...evidence, mismatched: [...wrong] }) : pass(null, evidence)];
+    return [
+      wrong.length ? fail(null, { ...evidence, mismatched: [...wrong] }) : pass(null, evidence),
+    ];
   },
 );

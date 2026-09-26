@@ -17,7 +17,9 @@ export const SD_008 = defineRule(
     effort: 1,
     explanation: {
       why: "Complete article markup helps search engines show the date, author and image, and signals who wrote the content.",
-      fix: ["Fill in author and featured image for each post; your SEO plugin then outputs the markup."],
+      fix: [
+        "Fill in author and featured image for each post; your SEO plugin then outputs the markup.",
+      ],
     },
   },
   (site) =>

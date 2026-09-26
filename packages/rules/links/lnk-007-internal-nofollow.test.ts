@@ -8,7 +8,10 @@ describe("LNK-007 internal nofollow", () => {
   });
 
   it("fails for a nofollow internal link", async () => {
-    const pages = { ...defaultPages(), "/about/": page("/about/", { body: '<p><a href="/" rel="nofollow">Home page</a></p>' }) };
+    const pages = {
+      ...defaultPages(),
+      "/about/": page("/about/", { body: '<p><a href="/" rel="nofollow">Home page</a></p>' }),
+    };
     expect(summary(await check(LNK_007, { pages }))).toEqual(["pass /", "fail /about/"]);
   });
 });

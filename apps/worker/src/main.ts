@@ -38,8 +38,12 @@ const worker = new Worker<AuditJobData>(
 );
 
 worker.on("completed", (job) => console.log(`audit ${job.data.crawlId} completed`));
-worker.on("failed", (job, err) => console.error(`audit ${job?.data.crawlId} failed: ${err.message}`));
-console.log(`Worker listening on queue "${AUDIT_QUEUE}" (LLM: ${llm ? llm.modelId : "template explanations only"})`);
+worker.on("failed", (job, err) =>
+  console.error(`audit ${job?.data.crawlId} failed: ${err.message}`),
+);
+console.log(
+  `Worker listening on queue "${AUDIT_QUEUE}" (LLM: ${llm ? llm.modelId : "template explanations only"})`,
+);
 
 const shutdown = async () => {
   await worker.close();

@@ -20,7 +20,10 @@ describe("ONP-004 meta description", () => {
 
   it("fails for duplicates", async () => {
     const description = "The same description on two different pages is not helpful to searchers.";
-    const pages = { "/": page("/", { nav: ["/about/"], description }), "/about/": page("/about/", { description }) };
+    const pages = {
+      "/": page("/", { nav: ["/about/"], description }),
+      "/about/": page("/about/", { description }),
+    };
     expect(summary(await check(ONP_004, { pages }))).toEqual(["fail /", "fail /about/"]);
   });
 });
@@ -29,7 +32,8 @@ describe("recheckDescription", () => {
   it("applies the same limits as ONP-004", async () => {
     const { recheckDescription } = await import("./onp-004-meta-description");
     expect(recheckDescription("Contact us", [])).toBe("too short");
-    const ok = "Browse our full range of ceramic and enamel mugs, from everyday coffee cups to gift sets.";
+    const ok =
+      "Browse our full range of ceramic and enamel mugs, from everyday coffee cups to gift sets.";
     expect(recheckDescription(ok, [])).toBe("pass");
     expect(recheckDescription(ok, [ok.toUpperCase()])).toBe("duplicate");
   });

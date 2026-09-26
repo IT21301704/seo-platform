@@ -8,7 +8,9 @@ describe("TEC-008 www consistency", () => {
   });
 
   it("is not applicable when the www host does not exist", async () => {
-    const outcomes = await check(TEC_008, { server: { alternateOrigins: ["http://example-store.com"] } });
+    const outcomes = await check(TEC_008, {
+      server: { alternateOrigins: ["http://example-store.com"] },
+    });
     expect(outcomes[0]?.result).toBe("na");
   });
 });

@@ -12,7 +12,10 @@ export class DbLlmCache implements LlmCache {
   }
 
   async set(key: string, parts: CacheKeyParts, value: CachedOutput): Promise<void> {
-    const existing = await this.db.llmOutput.findFirst({ where: { cacheKey: key }, select: { id: true } });
+    const existing = await this.db.llmOutput.findFirst({
+      where: { cacheKey: key },
+      select: { id: true },
+    });
     const data = {
       output: value.output as Prisma.InputJsonValue,
       isFallback: value.isFallback,

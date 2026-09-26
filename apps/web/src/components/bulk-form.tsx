@@ -5,7 +5,8 @@ import type { ReactNode } from "react";
 import type { BulkResult } from "@/app/projects/[id]/issues/actions";
 
 const control = "h-9 rounded-lg border border-[#CFCFC8] bg-white px-2 text-sm";
-const button = "inline-flex h-9 items-center rounded-lg border border-[#CFCFC8] bg-white px-3 text-sm font-semibold hover:bg-canvas disabled:opacity-50";
+const button =
+  "inline-flex h-9 items-center rounded-lg border border-[#CFCFC8] bg-white px-3 text-sm font-semibold hover:bg-canvas disabled:opacity-50";
 
 /**
  * Wraps the issue table in one form so the row checkboxes (name="selection") and the bulk
@@ -36,8 +37,14 @@ export function BulkForm({
       }}
       className="flex flex-col gap-4"
     >
-      <div className="flex flex-wrap items-center gap-2 rounded-[10px] border border-[#C9D3F5] bg-primary-soft px-4 py-3" role="group" aria-label="Bulk actions">
-        <span className="mr-auto text-sm font-semibold">{selected === 0 ? "Select issues or pages" : `${selected} selected`}</span>
+      <div
+        className="flex flex-wrap items-center gap-2 rounded-[10px] border border-[#C9D3F5] bg-primary-soft px-4 py-3"
+        role="group"
+        aria-label="Bulk actions"
+      >
+        <span className="mr-auto text-sm font-semibold">
+          {selected === 0 ? "Select issues or pages" : `${selected} selected`}
+        </span>
         <button type="button" disabled className={button} title="Auto-fix arrives in Phase 3">
           Auto-fix
         </button>
@@ -57,7 +64,13 @@ export function BulkForm({
                 </option>
               ))}
             </select>
-            <button type="submit" name="action" value="assign" className={button} disabled={pending || selected === 0}>
+            <button
+              type="submit"
+              name="action"
+              value="assign"
+              className={button}
+              disabled={pending || selected === 0}
+            >
               Assign
             </button>
             <label className="sr-only" htmlFor="bulk-status">
@@ -71,14 +84,31 @@ export function BulkForm({
               <option value="in_progress">In progress</option>
               <option value="fixed">Fixed</option>
             </select>
-            <button type="submit" name="action" value="status" className={button} disabled={pending || selected === 0}>
+            <button
+              type="submit"
+              name="action"
+              value="status"
+              className={button}
+              disabled={pending || selected === 0}
+            >
               Set status
             </button>
             <label className="sr-only" htmlFor="bulk-reason">
               Reason for ignoring
             </label>
-            <input id="bulk-reason" name="reason" placeholder="Reason to ignore" className={`${control} w-40`} />
-            <button type="submit" name="action" value="ignore" className={button} disabled={pending || selected === 0}>
+            <input
+              id="bulk-reason"
+              name="reason"
+              placeholder="Reason to ignore"
+              className={`${control} w-40`}
+            />
+            <button
+              type="submit"
+              name="action"
+              value="ignore"
+              className={button}
+              disabled={pending || selected === 0}
+            >
               Ignore…
             </button>
           </>
@@ -88,7 +118,10 @@ export function BulkForm({
         </a>
       </div>
       {result && (
-        <p role="status" className={`m-0 rounded-lg p-3 text-sm ${result.ok ? "bg-pass-bg text-pass" : "bg-crit-bg text-crit"}`}>
+        <p
+          role="status"
+          className={`m-0 rounded-lg p-3 text-sm ${result.ok ? "bg-pass-bg text-pass" : "bg-crit-bg text-crit"}`}
+        >
           {result.message}
         </p>
       )}

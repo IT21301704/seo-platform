@@ -12,9 +12,19 @@ export async function latestCompletedCrawl(db: ScopedPrisma, projectId: string) 
   return { crawl, report: crawl.report.reportJson as unknown as AuditReport };
 }
 
-export async function previousCompletedCrawl(db: ScopedPrisma, projectId: string, beforeCrawlId: string, before: Date) {
+export async function previousCompletedCrawl(
+  db: ScopedPrisma,
+  projectId: string,
+  beforeCrawlId: string,
+  before: Date,
+) {
   return db.crawl.findFirst({
-    where: { projectId, status: "completed", id: { not: beforeCrawlId }, createdAt: { lt: before } },
+    where: {
+      projectId,
+      status: "completed",
+      id: { not: beforeCrawlId },
+      createdAt: { lt: before },
+    },
     orderBy: { createdAt: "desc" },
   });
 }
@@ -26,7 +36,9 @@ export async function scoreTrend(db: ScopedPrisma, projectId: string, limit = 6)
     take: limit,
     select: { id: true, createdAt: true, healthScore: true },
   });
-  return crawls.reverse().map((c) => ({ date: c.createdAt.toISOString(), score: c.healthScore ?? 0 }));
+  return crawls
+    .reverse()
+    .map((c) => ({ date: c.createdAt.toISOString(), score: c.healthScore ?? 0 }));
 }
 
 export async function activeCrawl(db: ScopedPrisma, projectId: string) {
@@ -45,7 +57,11 @@ export function failingRules(report: AuditReport): RuleReport[] {
 
 /** Counts of issue items by audit tag, for "Since last audit" and the issue manager header. */
 export async function itemTagCounts(db: ScopedPrisma, projectId: string) {
-  const groups = await db.issueItem.groupBy({ by: ["auditTag"], where: { projectId }, _count: { _all: true } });
+  const groups = await db.issueItem.groupBy({
+    by: ["auditTag"],
+    where: { projectId },
+    _count: { _all: true },
+  });
   const counts = { new: 0, still_open: 0, resolved: 0, regressed: 0 };
   for (const g of groups) counts[g.auditTag] = g._count._all;
   return { ...counts, total: counts.new + counts.still_open + counts.resolved + counts.regressed };

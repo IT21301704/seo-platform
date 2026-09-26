@@ -22,7 +22,12 @@ export const LNK_004 = defineRule(
     },
   },
   (site) =>
-    forPages(site, (p) => p.isIndexable && p.depth !== null, (p) =>
-      (p.depth ?? 0) > MAX_CLICK_DEPTH ? fail(p.url, { depth: p.depth }) : pass(p.url, { depth: p.depth }),
+    forPages(
+      site,
+      (p) => p.isIndexable && p.depth !== null,
+      (p) =>
+        (p.depth ?? 0) > MAX_CLICK_DEPTH
+          ? fail(p.url, { depth: p.depth })
+          : pass(p.url, { depth: p.depth }),
     ),
 );

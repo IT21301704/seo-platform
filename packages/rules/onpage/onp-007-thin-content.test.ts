@@ -8,7 +8,10 @@ describe("ONP-007 thin content", () => {
   });
 
   it("fails for a near-empty page", async () => {
-    const pages = { ...defaultPages(), "/about/": page("/about/", { body: "<p>Coming soon.</p>" }) };
+    const pages = {
+      ...defaultPages(),
+      "/about/": page("/about/", { body: "<p>Coming soon.</p>" }),
+    };
     expect(summary(await check(ONP_007, { pages }))).toEqual(["pass /", "fail /about/"]);
   });
 });

@@ -32,7 +32,11 @@ export function webVitalRule(spec: VitalSpec): RuleDefinition {
       site.performance.pages
         .filter((p: PerformancePage) => p[spec.metric] !== null)
         .map((p) => {
-          const evidence = { band: p[spec.metric], basis: p.basis, source: site.performance.source };
+          const evidence = {
+            band: p[spec.metric],
+            basis: p.basis,
+            source: site.performance.source,
+          };
           return p[spec.metric] === "good" ? pass(p.url, evidence) : fail(p.url, evidence);
         }),
   );

@@ -42,9 +42,10 @@ const CATALOG_SQL = `
 describe("migrations", () => {
   const db = new PGlite();
 
+  // PGlite starts a full Postgres in-process; allow time when other test packages run in parallel.
   beforeAll(async () => {
     for (const sql of migrations) await db.exec(sql);
-  });
+  }, 60_000);
 
   afterAll(async () => {
     await db.close();
@@ -62,7 +63,9 @@ describe("migrations", () => {
       `SELECT table_name FROM information_schema.columns
        WHERE table_schema = 'public' AND column_name = 'organizationId' ORDER BY table_name`,
     );
-    expect(rows.map((r) => r.table_name)).toEqual(TABLES.filter((t) => !NOT_TENANT_SCOPED.includes(t)));
+    expect(rows.map((r) => r.table_name)).toEqual(
+      TABLES.filter((t) => !NOT_TENANT_SCOPED.includes(t)),
+    );
   });
 
   it("store every version needed to reproduce a crawl", async () => {
@@ -71,7 +74,14 @@ describe("migrations", () => {
        WHERE table_schema = 'public' AND table_name = 'crawls'`,
     );
     const columns = rows.map((r) => r.column_name);
-    for (const col of ["crawlerVersion", "rulesetVersion", "weightsVersion", "promptVersion", "llmModelId", "snapshotSetHash"]) {
+    for (const col of [
+      "crawlerVersion",
+      "rulesetVersion",
+      "weightsVersion",
+      "promptVersion",
+      "llmModelId",
+      "snapshotSetHash",
+    ]) {
       expect(columns).toContain(col);
     }
   });
@@ -85,14 +95,24 @@ describe("migrations", () => {
         "weightsVersion", "promptVersion", "llmModelId")
         VALUES ('crw_1', 'org_1', 'prj_1', 'url', '1.0.0', '1.0.0', 'v1', 'v1.0', 'test-model');
     `);
-    const { rows } = await db.query<{ status: string }>("SELECT status FROM crawls WHERE id = 'crw_1'");
+    const { rows } = await db.query<{ status: string }>(
+      "SELECT status FROM crawls WHERE id = 'crw_1'",
+    );
     expect(rows).toEqual([{ status: "queued" }]);
   });
 
   it("match a fresh build of schema.prisma (no drift)", async () => {
     const fresh = execFileSync(
       process.execPath,
-      ["node_modules/prisma/build/index.js", "migrate", "diff", "--from-empty", "--to-schema", "prisma/schema.prisma", "--script"],
+      [
+        "node_modules/prisma/build/index.js",
+        "migrate",
+        "diff",
+        "--from-empty",
+        "--to-schema",
+        "prisma/schema.prisma",
+        "--script",
+      ],
       { cwd: pkgRoot, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] },
     );
     const expected = new PGlite();

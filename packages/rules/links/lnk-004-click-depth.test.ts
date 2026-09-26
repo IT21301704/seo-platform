@@ -5,7 +5,13 @@ import { LNK_004 } from "./lnk-004-click-depth";
 function chain(length: number): Record<string, string> {
   const paths = ["/", ...Array.from({ length }, (_, i) => `/level-${i + 1}/`)];
   return Object.fromEntries(
-    paths.map((path, i) => [path, page(path, { nav: [], body: paths[i + 1] ? `<p><a href="${paths[i + 1]}">Next</a></p>` : "<p>End</p>" })]),
+    paths.map((path, i) => [
+      path,
+      page(path, {
+        nav: [],
+        body: paths[i + 1] ? `<p><a href="${paths[i + 1]}">Next</a></p>` : "<p>End</p>",
+      }),
+    ]),
   );
 }
 

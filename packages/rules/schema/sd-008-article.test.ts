@@ -19,7 +19,9 @@ describe("SD-008 Article", () => {
   it("fails for a bad date and no author", async () => {
     const pages = {
       ...defaultPages(),
-      "/about/": page("/about/", { jsonLd: [{ ...post, datePublished: "12 August 2026", author: undefined }] }),
+      "/about/": page("/about/", {
+        jsonLd: [{ ...post, datePublished: "12 August 2026", author: undefined }],
+      }),
     };
     const outcomes = await check(SD_008, { pages });
     expect(outcomes[0]?.evidence["problems"]).toEqual(["author", "datePublished"]);

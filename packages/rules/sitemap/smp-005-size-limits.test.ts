@@ -9,7 +9,10 @@ describe("SMP-005 sitemap size limits", () => {
 
   it("fails for more than 50,000 URLs", async () => {
     const paths = Array.from({ length: 50_001 }, (_, i) => `/p/${i}/`);
-    const outcomes = await check(SMP_005, { files: { "/sitemap.xml": sitemapXml(paths) }, pageLimit: 3 });
+    const outcomes = await check(SMP_005, {
+      files: { "/sitemap.xml": sitemapXml(paths) },
+      pageLimit: 3,
+    });
     expect(summary(outcomes)).toEqual(["fail /sitemap.xml"]);
   }, 60_000);
 });

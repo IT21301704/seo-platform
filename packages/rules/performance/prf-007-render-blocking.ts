@@ -6,14 +6,18 @@ export const PRF_007 = defineRule(
     category: "performance",
     severity: "medium",
     title: "Render-blocking scripts in <head>",
-    passCondition: "Passes when every external script in <head> uses async, defer or type=\"module\".",
+    passCondition:
+      'Passes when every external script in <head> uses async, defer or type="module".',
     appliesTo: "both",
     autoFixable: false,
     riskLevel: "medium",
     effort: 2,
     explanation: {
       why: "A plain <script src> in the head stops the browser from showing anything until the script downloads and runs.",
-      fix: ["Add defer (or async for independent scripts) to scripts in the head.", "Move non-critical scripts to the end of the body."],
+      fix: [
+        "Add defer (or async for independent scripts) to scripts in the head.",
+        "Move non-critical scripts to the end of the body.",
+      ],
     },
   },
   (site) =>

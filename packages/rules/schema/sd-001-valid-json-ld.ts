@@ -31,6 +31,8 @@ export const SD_001 = defineRule(
         if (!/schema\.org/i.test(context)) errors.push("missing schema.org @context");
         if (nodeTypes(node).length === 0) errors.push("missing @type");
       }
-      return errors.length ? fail(p.url, { errors: [...new Set(errors)] }) : pass(p.url, { blocks: blocks.length });
+      return errors.length
+        ? fail(p.url, { errors: [...new Set(errors)] })
+        : pass(p.url, { blocks: blocks.length });
     }),
 );
