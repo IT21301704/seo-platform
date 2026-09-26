@@ -29,6 +29,7 @@ jobs:
       - name: Local services (Postgres, Redis, S3)
         run: |
           cp .env.example .env
+          sed -i "s/^ENCRYPTION_KEY=$/ENCRYPTION_KEY=$(openssl rand -hex 32)/" .env
           docker compose up -d postgres redis s3
 
       - name: Chromium for rendering, PDF export and e2e
