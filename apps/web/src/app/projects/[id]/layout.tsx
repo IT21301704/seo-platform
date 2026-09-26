@@ -14,12 +14,14 @@ export default async function ProjectLayout({
   const { id } = await params;
   const { user, db } = await requireUser();
   const project = await requireProject(db, id);
+  const unread = await db.notification.count({ where: { userId: user.id, readAt: null } });
   return (
     <div className="flex min-h-screen">
       <Sidebar
         groups={projectNav(project.id)}
         projectName={hostOf(project.rootUrl)}
         user={{ name: user.name ?? user.email, role: user.role }}
+        notifications={{ href: `/projects/${project.id}/notifications`, unread }}
       />
       <div className="flex min-w-0 flex-1 flex-col">{children}</div>
     </div>
