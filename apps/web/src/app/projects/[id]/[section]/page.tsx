@@ -5,16 +5,6 @@ import { requireProject, requireUser } from "@/lib/session";
 import { hostOf } from "@/lib/utils";
 
 const SECTIONS: Record<string, { title: string; phase: number; what: string }> = {
-  sitemap: {
-    title: "Sitemap check",
-    phase: 2,
-    what: "Sitemap score, Google index status and the Sitemap Validation API.",
-  },
-  "sitemap-urls": {
-    title: "Sitemap URL lists",
-    phase: 2,
-    what: "URLs to add manually and URLs to remove from sitemaps.",
-  },
   copilot: {
     title: "AI Copilot",
     phase: 4,
@@ -29,11 +19,6 @@ const SECTIONS: Record<string, { title: string; phase: number; what: string }> =
     title: "Keyword research",
     phase: 3,
     what: "Keyword ideas, clusters, keyword-to-page map and quick wins.",
-  },
-  monitoring: {
-    title: "Monitoring",
-    phase: 2,
-    what: "Scheduled audits, score history and alerts by email and Slack.",
   },
   authority: {
     title: "Authority (off-page)",
