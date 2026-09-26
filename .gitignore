@@ -10,3 +10,7 @@ coverage/
 packages/db/src/generated/
 .DS_Store
 Thumbs.db
+test-results/
+playwright-report/
+*.tsbuildinfo
+next-env.d.ts

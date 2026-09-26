@@ -11,8 +11,9 @@ concurrency:
 
 jobs:
   checks:
-    name: Lint, type-check, tests
+    name: Lint, type-check, tests, fixtures, e2e
     runs-on: ubuntu-latest
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
@@ -24,6 +25,17 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+
+      - name: Local services (Postgres, Redis, S3)
+        run: |
+          cp .env.example .env
+          docker compose up -d postgres redis s3
+
+      - name: Chromium for rendering, PDF export and e2e
+        run: pnpm --filter @seo/crawler exec playwright install --with-deps chromium
+
+      - name: Docker Compose file is valid
+        run: docker compose config --quiet
 
       - name: Format
         run: pnpm format:check
@@ -34,49 +46,28 @@ jobs:
       - name: Type-check
         run: pnpm typecheck
 
-      - name: Unit tests
-        run: pnpm test
-
-      - name: Fixture tests (golden + broken sites, determinism)
-        run: pnpm test:fixtures
-
-      - name: Docker Compose file is valid
-        run: docker compose config --quiet
-
-  database:
-    name: Migrations on real Postgres
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_USER: seo
-          POSTGRES_PASSWORD: seo_ci
-          POSTGRES_DB: seo_platform
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U seo -d seo_platform"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 10
-    env:
-      DATABASE_URL: postgresql://seo:seo_ci@localhost:5432/seo_platform
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: .nvmrc
-          cache: pnpm
-
-      - run: pnpm install --frozen-lockfile
-
       - name: Apply migrations
         run: pnpm db:migrate
 
       - name: Schema matches migrations (no drift)
         working-directory: packages/db
         run: pnpm exec prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code
+
+      - name: Unit + integration tests
+        run: pnpm test
+
+      - name: Fixture tests (golden = 100, broken sites, determinism ×10, ruleset gate)
+        run: pnpm test:fixtures
+
+      - name: Seed example-store.com
+        run: pnpm db:seed
+
+      - name: End-to-end tests
+        run: pnpm test:e2e
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report
+          retention-days: 7

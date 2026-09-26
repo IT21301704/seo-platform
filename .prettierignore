@@ -6,3 +6,7 @@ fixtures/broken-sites/
 docs/
 00-START-PROMPT.md
 CLAUDE.md
+**/.next/
+test-results/
+playwright-report/
+fixtures/expected/reports/

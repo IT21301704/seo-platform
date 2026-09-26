@@ -9,6 +9,8 @@ export default tseslint.config(
       "**/dist/**",
       "**/.turbo/**",
       "**/.next/**",
+      "**/test-results/**",
+      "**/playwright-report/**",
       "**/generated/**",
       "fixtures/golden-site/**",
       "fixtures/broken-sites/**",

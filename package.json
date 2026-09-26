@@ -15,7 +15,7 @@
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "test:fixtures": "turbo run test:fixtures",
-    "test:e2e": "echo \"No e2e tests until Phase 1 (Playwright)\"",
+    "test:e2e": "pnpm --filter @seo/web test:e2e",
     "db:generate": "pnpm --filter @seo/db db:generate",
     "db:migrate": "pnpm --filter @seo/db db:migrate",
     "db:migration:sql": "pnpm --filter @seo/db db:migration:sql",

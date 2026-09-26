@@ -26,13 +26,16 @@ Full spec: `docs/REQUIREMENTS.md` (single source of truth). Decisions log: `docs
 ## Commands (keep this section up to date)
 - `docker compose up -d` — Postgres, Redis, S3 storage (SeaweedFS), WordPress test site (http://localhost:8088)
 - `pnpm install` — needs pnpm 10 (`npm i -g pnpm@10` or `corepack enable`)
-- `pnpm dev` — web + worker (from Phase 1)
+- `pnpm --filter @seo/crawler exec playwright install chromium` — browser for rendering, PDF export and e2e
+- `pnpm db:migrate` — apply Prisma migrations (needs `DATABASE_URL`); `pnpm db:generate` — Prisma client
+- `pnpm db:seed` — example-store.com with 6 fixture audits (dev login: owner@example-store.com)
+- `pnpm dev` — web (http://localhost:3000) + worker
 - `pnpm lint` / `pnpm typecheck` / `pnpm format:check`
-- `pnpm test` — unit tests (Vitest), including the migration test on in-process Postgres
-- `pnpm test:fixtures` — golden/broken site results + determinism check (10 runs)
-- `pnpm test:e2e` — Playwright (from Phase 1)
-- `pnpm db:generate` — generate the Prisma client
-- `pnpm db:migrate` — apply Prisma migrations (needs `DATABASE_URL`)
+- `pnpm test` — unit + integration tests (Vitest; worker DB tests skip when Postgres is down)
+- `pnpm test:fixtures` — golden = 100, broken-site results, determinism (10 runs), report snapshots
+- `pnpm fixtures:update` — re-record fixture reports (refuses unless RULESET_VERSION was bumped)
+- `pnpm test:e2e` — Playwright; starts its own worker + web on :3100 (needs docker services + `pnpm db:seed`)
 
 ## Environment variables (never commit values)
-DATABASE_URL, REDIS_URL, S3_*, ANTHROPIC_API_KEY, LLM_MODEL_ID, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, PSI_API_KEY, ENCRYPTION_KEY, NEXTAUTH_SECRET, STRIPE_* (Phase 4)
+DATABASE_URL, REDIS_URL, S3_*, ANTHROPIC_API_KEY, LLM_MODEL_ID, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, PSI_API_KEY, ENCRYPTION_KEY, NEXTAUTH_SECRET (or AUTH_SECRET), EMAIL_SERVER, EMAIL_FROM, STRIPE_* (Phase 4)
+Dev-only flags (never in production): AUTH_DEV_LOGIN=true, FIXTURE_SITES=true
