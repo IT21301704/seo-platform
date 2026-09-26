@@ -34,14 +34,20 @@ export interface Inspection {
 
 export interface GscApi {
   listSites(): Promise<{ siteUrl: string; permissionLevel: string }[]>;
-  searchAnalytics(siteUrl: string, range: { startDate: string; endDate: string }): Promise<SearchRow[]>;
+  searchAnalytics(
+    siteUrl: string,
+    range: { startDate: string; endDate: string },
+  ): Promise<SearchRow[]>;
   listSitemaps(siteUrl: string): Promise<GscSitemap[]>;
   inspect(siteUrl: string, url: string): Promise<Inspection>;
 }
 
 export interface Ga4Api {
   listProperties(): Promise<{ id: string; name: string }[]>;
-  sessionsByPage(propertyId: string, range: { startDate: string; endDate: string }): Promise<{ path: string; sessions: number }[]>;
+  sessionsByPage(
+    propertyId: string,
+    range: { startDate: string; endDate: string },
+  ): Promise<{ path: string; sessions: number }[]>;
 }
 
 export type Band = "good" | "needs-improvement" | "poor";

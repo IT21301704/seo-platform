@@ -121,9 +121,39 @@ Format: **Decision** — why. (Revisit: when to reconsider.)
 58. **`FIXTURE_SITES=true` (development only) serves example-store.com from `fixtures/` instead of the network.** `pnpm db:seed` runs six real pipeline audits of the broken fixtures (3–24 Sep 2026), so the dashboard has a trend and the issue manager has New/Resolved items.
 59. **Code upload (M3) accepts ZIP only in Phase 1; public Git URLs come later.** Files are parsed as text and never executed. A malware scanner is not wired up yet. The ZIP is deleted from storage as soon as the audit has read it. A site URL is required, because canonical URLs refer to it.
 60. **Screen 07 is a read-only preview for ONP-004 (`/fixes/preview-onp-004`).** Claude drafts descriptions, the rule engine re-checks each draft (`recheckDescription`), and Approve/Publish stay disabled until Phase 3.
-61. **Screens of later phases appear in the sidebar with a "Soon" tag and a placeholder page.** GA4 visits show "—" until Phase 2.
+61. **Screens of later phases appear in the sidebar with a "Soon" tag and a placeholder page.** GA4 visits show "—" until Phase 2 (done: decision 67).
 62. **Audits can be cancelled; the worker stops at the next stage boundary.**
 63. **Live progress (screen 02) uses Server-Sent Events.** The route polls the crawl row and a short Redis log once a second.
 64. **Dates render in UTC with fixed English month names**, so server and browser output match ("24 Sep 2026").
 65. **Report export:** PDF is rendered by headless Chromium from server-built HTML (network blocked); Excel uses ExcelJS; issue lists export as CSV.
 66. **The audit log records every user write action** (project create/update, audit start/cancel, issue bulk changes, draft generation).
+
+## Phase 2 — Google data, monitoring, sitemap API, issue manager (26 Sep 2026)
+
+### Google data (M9)
+67. **Search Console, GA4 and CrUX data are stored as dated snapshots** (`gsc_snapshots`, `ga4_snapshots`, `crux_snapshots`, `url_inspections`). An audit copies the latest GSC snapshot into the crawl snapshot (`external.gsc`) *before* hashing, and records `crawls.gscSnapshotId`. Re-running an audit therefore gives the same result for the same data, and `snapshotSetHash` changes when the Google data changes.
+68. **URL Inspection quota: at most 2,000 per site per day and 600 per minute.** The day is Google's quota day (Pacific time). A `usage_counters` row per organization, site and day is incremented atomically before each call, so parallel syncs cannot exceed the limit. A 429 from Google stops the run. Order: never-inspected URLs first, then results older than 7 days; within each group, most-visited pages (GA4) first. The screen shows "Inspected X of Y · limit 2,000 per day (N used today)".
+69. **Ranges:** Search Console uses the 28 days ending 3 days ago (data delay); GA4 uses the last 28 complete days.
+70. **OAuth is read-only** (`webmasters.readonly`, `analytics.readonly`). Tokens are encrypted with AES-256-GCM (`ENCRYPTION_KEY`) and refreshed server-side; they never reach the browser. The OAuth state is an encrypted, short-lived cookie compared in constant time. All Google calls go through the SSRF-guarded HTTP client.
+71. **Demo provider:** when no Google OAuth client is configured and `FIXTURE_SITES=true` (development only), "Connect" creates a deterministic demo connection labelled "Demo data" everywhere. The seed uses it. It is refused in production.
+72. **Where Google is connected:** the Integrations screen (09) is Phase 3, so the Connect / Sync now / Disconnect controls sit on the Sitemap check and Monitoring screens. Onboarding step 3 points there ("After setup"), because the project does not exist yet while the form is filled in.
+73. **Ruleset 1.1.0 adds three GSC rules: SMP-003 (sitemap submitted in Search Console), SMP-013 (Search Console reports sitemap errors) and SMP-014 (listed in sitemap but not indexed).** They are N/A without GSC data, so fixture scores are unchanged (golden = 100); reports were re-recorded for the version bump.
+
+### Monitoring and alerts (M10, M11)
+74. **Monitoring compares each completed audit with the previous one** (score drop, new critical issues, pages that became noindex, new broken links, fixed issues) and stores `monitoring_events`. The rule engine output is the only input; nothing is estimated.
+75. **Default alert rules when a project has none:** score drop ≥ 5 points, new critical issue and noindex are on; the weekly summary is off.
+76. **Channels:** email (SMTP via `EMAIL_SERVER`; logged when unset) and Slack incoming webhooks. Slack URLs must be `https://hooks.slack.com/…` and are encrypted at rest.
+77. **Schedule in the project's time zone** (set from the country at onboarding, editable on the Monitoring screen): daily at 02:00, weekly on Monday at 02:00, Google sync daily after 02:00, weekly summary Monday 08:00. A BullMQ repeatable job ticks every 5 minutes; scheduled audits create issues with source "Monitoring".
+78. **Issue history (M11)** counts failing check results per audit for one rule (last 6 audits), from stored `check_results`, on the Monitoring screen and the issue detail page.
+
+### Sitemap Validation API (M17)
+79. **A sitemap check reuses the crawler and the SMP rules** on its own record (`smc_…` id), without a full audit. Its issues have source "Sitemap API" and it only resolves SMP issues, so it never closes audit issues.
+80. **Lists:** "Add manually" only contains URLs that return 200, are self-canonical, indexable, not blocked by robots.txt, missing from every sitemap *and* cannot be added automatically (generator unknown or not writable). "Remove" lists sitemap URLs that are not 200, noindex, canonicalised elsewhere or blocked, with the reason. Downloads: CSV, JSON and an XML urlset.
+81. **REST API under `/v1`:** Bearer API keys (`seo_live_…`, shown once, stored as SHA-256), scopes `sitemap:read` / `sitemap:write`, 60 requests per minute per key (Redis). A signed-in session also works for the same endpoints (used by the download buttons); viewers are read-only. The fix endpoints (`/fixes`, `/fix-batches/…`) return 501 until Phase 3 ("no auto-fix yet").
+82. **Webhooks:** https only, SSRF-checked when saved and when sent. Events `sitemap.check.completed` and `audit.completed`. Header `x-seo-signature: t=<unix>,v1=<hex>` = HMAC-SHA256 of `<t>.<body>`; receivers should reject timestamps older than 5 minutes. 5 retries with exponential backoff; every attempt is logged.
+
+### Issue manager (M19)
+83. **Five views:** Grouped, Flat list, By page, Board (by status) and By source. Filters: search, severity, source, status, assignee, category, fix type, first seen since, new since last audit, sort. All filtering, counting and paging run in Postgres; grouped view loads 5 items per issue type. Tested with 50,000 items (every query under 2 s; in practice far below).
+84. **Saved views are per user** and store the filter query string. There is one view per filter set: saving the same filters under a new name renames the view.
+85. **Bulk actions:** status, ignore (reason required), assign (notifies the assignee in-app and by email), due date. Exports: CSV and Excel with the same filters (max 50,000 rows).
+86. **Comments are per issue type**, with `@name` / `@email` mentions that notify teammates. Notifications (mentions, assignments, regressions, alerts) have a page and an unread badge in the sidebar.

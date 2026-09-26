@@ -40,7 +40,11 @@ describe("rule registry", () => {
         // e.g. "prf-001-002-003-web-vitals.test.ts" or "smp-003-013-014-search-console.test.ts".
         const tested = files.some((f) => {
           const ids = /^([a-z]+)-((?:\d{3}-)+)/.exec(f);
-          return f.endsWith(".test.ts") && ids?.[1] === prefix && ids[2]?.split("-").includes(num ?? "");
+          return (
+            f.endsWith(".test.ts") &&
+            ids?.[1] === prefix &&
+            ids?.[2]?.split("-").includes(num ?? "")
+          );
         });
         expect(tested, `${category}/${file}`).toBe(true);
       }

@@ -111,10 +111,29 @@ export function BulkForm({
             >
               Ignore…
             </button>
+            <label className="sr-only" htmlFor="bulk-due">
+              Due date
+            </label>
+            <input id="bulk-due" name="dueDate" type="date" className={control} />
+            <button
+              type="submit"
+              name="action"
+              value="due"
+              className={button}
+              disabled={pending || selected === 0}
+            >
+              Due date
+            </button>
           </>
         )}
         <a href={exportHref} className={`${button} text-ink no-underline hover:text-ink`}>
-          Export
+          Export CSV
+        </a>
+        <a
+          href={exportHref.replace("/export", "/export/xlsx")}
+          className={`${button} text-ink no-underline hover:text-ink`}
+        >
+          Excel
         </a>
       </div>
       {result && (

@@ -119,3 +119,17 @@ function text(value: unknown): string | null {
 export function isW3cDate(value: string): boolean {
   return /^\d{4}(-\d{2}(-\d{2}(T\d{2}:\d{2}(:\d{2}(\.\d+)?)?(Z|[+-]\d{2}:\d{2}))?)?)?$/.test(value);
 }
+
+/** Which tool generated a sitemap (M17 detection), from its URL and content. */
+export function detectSitemapGenerator(url: string, body: string | null): string {
+  const text = (body ?? "").slice(0, 4000).toLowerCase();
+  const path = new URL(url).pathname.toLowerCase();
+  if (text.includes("yoast") || text.includes("main-sitemap.xsl")) return "Yoast SEO";
+  if (text.includes("rank-math") || text.includes("rank math")) return "Rank Math";
+  if (path.startsWith("/wp-sitemap")) return "WordPress core";
+  if (text.includes("shopify") || /sitemap_(products|pages|collections|blogs)_\d/.test(path))
+    return "Shopify";
+  if (text.includes("webflow")) return "Webflow";
+  if (text.includes("next-sitemap") || path.includes("server-sitemap")) return "Next.js";
+  return "Static or unknown";
+}

@@ -15,10 +15,13 @@ export function Sidebar({
   groups,
   projectName,
   user,
+  notifications,
 }: {
   groups: NavGroup[];
   projectName: string | null;
   user: { name: string; role: string };
+  /** Link to the notifications page and the unread count. */
+  notifications?: { href: string; unread: number };
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -114,6 +117,33 @@ export function Sidebar({
             <span className="truncate text-[13px] font-semibold">{user.name}</span>
             <span className="text-xs capitalize text-[#A3A7AD]">{user.role}</span>
           </div>
+          {notifications && (
+            <Link
+              href={notifications.href}
+              onClick={() => setOpen(false)}
+              aria-label={`Notifications, ${notifications.unread} unread`}
+              className="relative ml-auto flex h-8 w-8 items-center justify-center rounded-md text-[#C9CCD1] hover:bg-sidebar-card hover:text-white"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0" />
+              </svg>
+              {notifications.unread > 0 && (
+                <span className="absolute -right-1 -top-1 min-w-[18px] rounded-full bg-crit px-1 text-center text-[11px] font-bold leading-[18px] text-white">
+                  {notifications.unread > 99 ? "99+" : notifications.unread}
+                </span>
+              )}
+            </Link>
+          )}
         </div>
       </nav>
     </>

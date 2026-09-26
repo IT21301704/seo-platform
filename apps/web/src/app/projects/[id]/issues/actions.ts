@@ -15,7 +15,11 @@ const BulkSchema = z.object({
   status: z.enum(STATUSES).optional(),
   reason: z.string().trim().max(500).optional(),
   assigneeId: z.string().optional(),
-  dueDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).or(z.literal("clear")).optional(),
+  dueDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .or(z.literal("clear"))
+    .optional(),
   selection: z.array(z.string()).min(1, "Select at least one item"),
 });
 
@@ -29,7 +33,11 @@ export interface BulkResult {
  * open items of an issue type). Verified is set only by a passing re-check; Ignored needs a
  * reason (REQUIREMENTS M19).
  */
-export async function bulkUpdate(projectId: string, _prev: BulkResult | null, formData: FormData): Promise<BulkResult> {
+export async function bulkUpdate(
+  projectId: string,
+  _prev: BulkResult | null,
+  formData: FormData,
+): Promise<BulkResult> {
   const { user, db } = await requireUser();
   assertCanEdit(user);
   const project = await requireProject(db, projectId);
@@ -41,7 +49,8 @@ export async function bulkUpdate(projectId: string, _prev: BulkResult | null, fo
     dueDate: formData.get("dueDate") || undefined,
     selection: formData.getAll("selection").map(String),
   });
-  if (!parsed.success) return { ok: false, message: parsed.error.issues[0]?.message ?? "Invalid request" };
+  if (!parsed.success)
+    return { ok: false, message: parsed.error.issues[0]?.message ?? "Invalid request" };
   const { action, selection } = parsed.data;
 
   const itemIds = selection.filter((s) => s.startsWith("item:")).map((s) => s.slice(5));
@@ -63,24 +72,45 @@ export async function bulkUpdate(projectId: string, _prev: BulkResult | null, fo
     data = { status, ignoredReason: null };
   } else if (action === "due") {
     if (!parsed.data.dueDate) return { ok: false, message: "Choose a due date" };
-    data = { dueDate: parsed.data.dueDate === "clear" ? null : new Date(`${parsed.data.dueDate}T00:00:00Z`) };
+    data = {
+      dueDate:
+        parsed.data.dueDate === "clear" ? null : new Date(`${parsed.data.dueDate}T00:00:00Z`),
+    };
   } else {
-    const assigneeId = parsed.data.assigneeId && parsed.data.assigneeId !== "none" ? parsed.data.assigneeId : null;
+    const assigneeId =
+      parsed.data.assigneeId && parsed.data.assigneeId !== "none" ? parsed.data.assigneeId : null;
     if (assigneeId) {
-      assignee = await db.user.findUnique({ where: { id: assigneeId }, select: { id: true, email: true, name: true } });
+      assignee = await db.user.findUnique({
+        where: { id: assigneeId },
+        select: { id: true, email: true, name: true },
+      });
       if (!assignee) return { ok: false, message: "Unknown user" };
     }
     data = { assigneeId };
   }
 
   const result = await db.issueItem.updateMany({ where, data });
-  await logAction(db, user, { action: `issues.${action}`, entityType: "issue_item", entityId: projectId, after: { selection, ...(data as Record<string, Prisma.InputJsonValue>) } });
+  await logAction(db, user, {
+    action: `issues.${action}`,
+    entityType: "issue_item",
+    entityId: projectId,
+    after: { selection, ...(data as Record<string, Prisma.InputJsonValue>) },
+  });
 
   // Notify the new owner (M19: notifications on assign).
   if (assignee && assignee.id !== user.id && result.count > 0) {
     const link = `${appUrl()}/projects/${projectId}/issues?assignee=${assignee.id}`;
     const title = `${user.name ?? user.email} assigned you ${result.count} issue item${result.count === 1 ? "" : "s"}`;
-    await db.notification.create({ data: { organizationId: user.organizationId, userId: assignee.id, type: "assigned", title, body: project.name, link } });
+    await db.notification.create({
+      data: {
+        organizationId: user.organizationId,
+        userId: assignee.id,
+        type: "assigned",
+        title,
+        body: project.name,
+        link,
+      },
+    });
     await mailerFromEnv()
       .send([assignee.email], title, `${title} on ${project.name}.\n\n${link}`)
       .catch(() => undefined);
@@ -90,16 +120,30 @@ export async function bulkUpdate(projectId: string, _prev: BulkResult | null, fo
 }
 
 /** Saves the current filters as a named view for this user. */
-export async function saveView(projectId: string, query: string, formData: FormData): Promise<void> {
+export async function saveView(
+  projectId: string,
+  query: string,
+  formData: FormData,
+): Promise<void> {
   const { user, db } = await requireUser();
   await requireProject(db, projectId);
   const name = String(formData.get("name") ?? "")
     .trim()
     .slice(0, 60);
   if (!name) return;
+  // One saved view per filter set: saving the same filters under a new name renames it.
+  await db.savedView.deleteMany({
+    where: { projectId, userId: user.id, query, name: { not: name } },
+  });
   await db.savedView.upsert({
     where: { projectId_userId_name: { projectId, userId: user.id, name } },
-    create: { organizationId: user.organizationId, projectId, userId: user.id, name, query } as Prisma.SavedViewUncheckedCreateInput,
+    create: {
+      organizationId: user.organizationId,
+      projectId,
+      userId: user.id,
+      name,
+      query,
+    } as Prisma.SavedViewUncheckedCreateInput,
     update: { query },
   });
   redirect(`/projects/${projectId}/issues${query}`);
@@ -113,7 +157,12 @@ export async function deleteView(projectId: string, viewId: string): Promise<voi
 }
 
 /** Comment on an issue type; @name or @email mentions notify teammates. */
-export async function addComment(projectId: string, issueId: string, _prev: BulkResult | null, formData: FormData): Promise<BulkResult> {
+export async function addComment(
+  projectId: string,
+  issueId: string,
+  _prev: BulkResult | null,
+  formData: FormData,
+): Promise<BulkResult> {
   const { user, db } = await requireUser();
   assertCanEdit(user);
   const project = await requireProject(db, projectId);
@@ -125,7 +174,9 @@ export async function addComment(projectId: string, issueId: string, _prev: Bulk
   const itemId = String(formData.get("itemId") ?? "") || null;
 
   const users = await db.user.findMany({ select: { id: true, email: true, name: true } });
-  const handles = new Set([...body.matchAll(/@([\w.+-]+(?:@[\w.-]+)?)/g)].map((m) => (m[1] ?? "").toLowerCase()));
+  const handles = new Set(
+    [...body.matchAll(/@([\w.+-]+(?:@[\w.-]+)?)/g)].map((m) => (m[1] ?? "").toLowerCase()),
+  );
   const mentioned = users.filter(
     (u) =>
       u.id !== user.id &&
@@ -135,17 +186,43 @@ export async function addComment(projectId: string, issueId: string, _prev: Bulk
   );
 
   await db.issueComment.create({
-    data: { organizationId: user.organizationId, issueId, itemId, authorId: user.id, body, mentions: mentioned.map((u) => u.id) } as Prisma.IssueCommentUncheckedCreateInput,
+    data: {
+      organizationId: user.organizationId,
+      issueId,
+      itemId,
+      authorId: user.id,
+      body,
+      mentions: mentioned.map((u) => u.id),
+    } as Prisma.IssueCommentUncheckedCreateInput,
   });
   const link = `${appUrl()}/projects/${projectId}/issues/${issue.ruleId}#comments`;
   for (const u of mentioned) {
     const title = `${user.name ?? user.email} mentioned you on ${issue.ruleId}`;
-    await db.notification.create({ data: { organizationId: user.organizationId, userId: u.id, type: "mention", title, body: body.slice(0, 300), link } });
+    await db.notification.create({
+      data: {
+        organizationId: user.organizationId,
+        userId: u.id,
+        type: "mention",
+        title,
+        body: body.slice(0, 300),
+        link,
+      },
+    });
     await mailerFromEnv()
       .send([u.email], title, `${body}\n\n${project.name}: ${link}`)
       .catch(() => undefined);
   }
-  await logAction(db, user, { action: "issue.comment", entityType: "issue", entityId: issueId, after: { mentions: mentioned.map((u) => u.id) } });
+  await logAction(db, user, {
+    action: "issue.comment",
+    entityType: "issue",
+    entityId: issueId,
+    after: { mentions: mentioned.map((u) => u.id) },
+  });
   revalidatePath(`/projects/${projectId}/issues/${issue.ruleId}`);
-  return { ok: true, message: mentioned.length ? `Comment added; notified ${mentioned.map((u) => u.name ?? u.email).join(", ")}` : "Comment added" };
+  return {
+    ok: true,
+    message: mentioned.length
+      ? `Comment added; notified ${mentioned.map((u) => u.name ?? u.email).join(", ")}`
+      : "Comment added",
+  };
 }

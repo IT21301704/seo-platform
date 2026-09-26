@@ -1,6 +1,7 @@
 import { defineRule, fail, pass } from "../src/define";
 
-const indexed = (verdict: string, coverage: string): boolean => verdict === "PASS" || /^submitted and indexed$|^indexed/i.test(coverage);
+const indexed = (verdict: string, coverage: string): boolean =>
+  verdict === "PASS" || /^submitted and indexed$|^indexed/i.test(coverage);
 
 export const SMP_014 = defineRule(
   {
@@ -28,7 +29,11 @@ export const SMP_014 = defineRule(
     [...site.sitemapEntries.keys()].flatMap((url) => {
       const i = site.gscInspections.get(url);
       if (!i) return [];
-      const evidence = { coverageState: i.coverageState, verdict: i.verdict, inspectedAt: i.inspectedAt };
+      const evidence = {
+        coverageState: i.coverageState,
+        verdict: i.verdict,
+        inspectedAt: i.inspectedAt,
+      };
       return [indexed(i.verdict, i.coverageState) ? pass(url, evidence) : fail(url, evidence)];
     }),
 );

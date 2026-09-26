@@ -9,7 +9,16 @@
     "./progress": "./src/progress.ts",
     "./storage": "./src/storage.ts",
     "./crawls": "./src/crawls.ts",
-    "./llm-cache": "./src/llm-cache.ts"
+    "./llm-cache": "./src/llm-cache.ts",
+    "./sitemap-lists": "./src/sitemap-lists.ts",
+    "./sitemap-check": "./src/sitemap-check.ts",
+    "./schedule": "./src/schedule.ts",
+    "./webhooks": "./src/webhooks.ts",
+    "./notify": "./src/notify.ts",
+    "./google-sync": "./src/google-sync.ts",
+    "./google": "./src/google.ts",
+    "./monitoring": "./src/monitoring.ts",
+    "./scheduler": "./src/scheduler.ts"
   },
   "scripts": {
     "dev": "tsx watch src/main.ts",
@@ -28,13 +37,17 @@
     "@seo/shared": "workspace:*",
     "bullmq": "catalog:",
     "ioredis": "catalog:",
-    "yauzl": "catalog:"
+    "yauzl": "catalog:",
+    "@seo/integrations": "workspace:*",
+    "nodemailer": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
     "@types/yauzl": "catalog:",
     "tsx": "catalog:",
     "typescript": "catalog:",
-    "vitest": "catalog:"
+    "vitest": "catalog:",
+    "@types/nodemailer": "catalog:",
+    "@seo/rules": "workspace:*"
   }
 }

@@ -1,6 +1,6 @@
 {
   "fixture": "broken-sitemap",
-  "rulesetVersion": "1.0.0",
+  "rulesetVersion": "1.1.0",
   "description": "Sitemap faults: no Sitemap line in robots.txt, a 404 URL in the sitemap, a noindex URL in the sitemap, and a lastmod date in the future.",
   "changedFiles": ["policies/privacy/index.html", "robots.txt", "sitemap.xml"],
   "expectedFailures": [

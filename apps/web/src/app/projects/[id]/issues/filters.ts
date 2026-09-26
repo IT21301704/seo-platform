@@ -48,8 +48,11 @@ const DEFAULTS: IssueFilters = {
   limit: 20,
 };
 
-const pick = <T extends string>(value: string | undefined, allowed: readonly T[], fallback: T): T =>
-  allowed.includes(value as T) ? (value as T) : fallback;
+const pick = <T extends string>(
+  value: string | undefined,
+  allowed: readonly T[],
+  fallback: T,
+): T => (allowed.includes(value as T) ? (value as T) : fallback);
 
 export function parseFilters(sp: Record<string, string | string[] | undefined>): IssueFilters {
   const one = (k: string) => (Array.isArray(sp[k]) ? sp[k][0] : sp[k]);
@@ -73,7 +76,19 @@ export function parseFilters(sp: Record<string, string | string[] | undefined>):
 export function toQuery(f: IssueFilters, overrides: Partial<IssueFilters> = {}): string {
   const merged = { ...f, ...overrides };
   const params = new URLSearchParams();
-  const keys: (keyof IssueFilters)[] = ["view", "q", "severity", "status", "source", "category", "fix", "assignee", "since", "sort", "limit"];
+  const keys: (keyof IssueFilters)[] = [
+    "view",
+    "q",
+    "severity",
+    "status",
+    "source",
+    "category",
+    "fix",
+    "assignee",
+    "since",
+    "sort",
+    "limit",
+  ];
   for (const key of keys) {
     const value = merged[key];
     if (value !== DEFAULTS[key] && value !== "") params.set(key, String(value));
@@ -84,7 +99,11 @@ export function toQuery(f: IssueFilters, overrides: Partial<IssueFilters> = {}):
 }
 
 /** Item-level WHERE for every filter (server-side, index-backed). */
-export function itemWhere(projectId: string, f: IssueFilters, userId = ""): Prisma.IssueItemWhereInput {
+export function itemWhere(
+  projectId: string,
+  f: IssueFilters,
+  userId = "",
+): Prisma.IssueItemWhereInput {
   const where: Prisma.IssueItemWhereInput = { projectId };
   if (f.status === "open") {
     where.auditTag = { not: "resolved" };
@@ -104,7 +123,8 @@ export function itemWhere(projectId: string, f: IssueFilters, userId = ""): Pris
   if (f.source !== "all") issue.source = f.source;
   if (f.category !== "all") issue.category = f.category;
   if (Object.keys(issue).length) where.issue = issue;
-  if (f.fix !== "all") where.ruleId = { in: RULES.filter((r) => fixType(r) === f.fix).map((r) => r.id) };
+  if (f.fix !== "all")
+    where.ruleId = { in: RULES.filter((r) => fixType(r) === f.fix).map((r) => r.id) };
   if (f.assignee === "none") where.assigneeId = null;
   else if (f.assignee === "me") where.assigneeId = userId || "__nobody__";
   else if (f.assignee !== "all") where.assigneeId = f.assignee;
@@ -115,6 +135,7 @@ export function itemWhere(projectId: string, f: IssueFilters, userId = ""): Pris
 export function itemOrder(sort: Sort): Prisma.IssueItemOrderByWithRelationInput[] {
   if (sort === "newest") return [{ firstSeen: "desc" }, { url: "asc" }];
   if (sort === "url") return [{ url: "asc" }, { ruleId: "asc" }];
-  if (sort === "severity") return [{ issue: { severity: "asc" } }, { ruleId: "asc" }, { url: "asc" }];
+  if (sort === "severity")
+    return [{ issue: { severity: "asc" } }, { ruleId: "asc" }, { url: "asc" }];
   return [{ issue: { priority: "desc" } }, { ruleId: "asc" }, { url: "asc" }];
 }

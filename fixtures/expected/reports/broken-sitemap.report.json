@@ -4,7 +4,7 @@
     "high": 3,
     "low": 0,
     "medium": 1,
-    "notApplicable": 7,
+    "notApplicable": 10,
     "passed": 606
   },
   "crawledAt": "2026-09-25T00:00:00Z",
@@ -4382,6 +4382,42 @@
       "version": "1.0.0"
     },
     {
+      "appliesTo": "url",
+      "autoFixable": true,
+      "category": "sitemap",
+      "counts": {
+        "fail": 0,
+        "na": 1,
+        "pass": 0
+      },
+      "fixType": "auto-approve",
+      "outcomes": [
+        {
+          "evidence": {
+            "reason": "Nothing on this site for this check"
+          },
+          "result": "na",
+          "url": null
+        }
+      ],
+      "passRatio": null,
+      "priority": {
+        "confidence": 1,
+        "effort": 1,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SMP-003",
+      "scoreCategory": "technical",
+      "severity": "high",
+      "status": "na",
+      "title": "Sitemap is not submitted in Search Console",
+      "version": "1.0.0"
+    },
+    {
       "appliesTo": "both",
       "autoFixable": true,
       "category": "sitemap",
@@ -5203,6 +5239,78 @@
       "version": "1.0.0"
     },
     {
+      "appliesTo": "url",
+      "autoFixable": false,
+      "category": "sitemap",
+      "counts": {
+        "fail": 0,
+        "na": 1,
+        "pass": 0
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "reason": "Nothing on this site for this check"
+          },
+          "result": "na",
+          "url": null
+        }
+      ],
+      "passRatio": null,
+      "priority": {
+        "confidence": 1,
+        "effort": 2,
+        "failingItems": 0,
+        "impact": 4,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "high",
+      "ruleId": "SMP-013",
+      "scoreCategory": "indexing",
+      "severity": "high",
+      "status": "na",
+      "title": "Search Console reports sitemap errors or warnings",
+      "version": "1.0.0"
+    },
+    {
+      "appliesTo": "url",
+      "autoFixable": false,
+      "category": "sitemap",
+      "counts": {
+        "fail": 0,
+        "na": 1,
+        "pass": 0
+      },
+      "fixType": "guide",
+      "outcomes": [
+        {
+          "evidence": {
+            "reason": "Nothing on this site for this check"
+          },
+          "result": "na",
+          "url": null
+        }
+      ],
+      "passRatio": null,
+      "priority": {
+        "confidence": 0.7,
+        "effort": 3,
+        "failingItems": 0,
+        "impact": 3,
+        "pagesFactor": 0,
+        "priority": 0
+      },
+      "riskLevel": "low",
+      "ruleId": "SMP-014",
+      "scoreCategory": "indexing",
+      "severity": "medium",
+      "status": "na",
+      "title": "Sitemap URLs that Google has not indexed",
+      "version": "1.0.0"
+    },
+    {
       "appliesTo": "both",
       "autoFixable": true,
       "category": "sitemap",
@@ -5772,8 +5880,8 @@
   },
   "versions": {
     "crawlerVersion": "1.0.0",
-    "rulesetVersion": "1.0.0",
-    "snapshotSetHash": "bbf91f9282506e725dd9e923cd4fc201f15dc2d12ddcc3dbc33a4efbe6a61fe6",
+    "rulesetVersion": "1.1.0",
+    "snapshotSetHash": "5f864fd0b83916b2a46d4f0b1c0415ca321a9b1b402e3d88bdb419b673176466",
     "weightsVersion": "v1"
   }
 }

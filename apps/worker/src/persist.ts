@@ -142,7 +142,13 @@ export async function persistAudit(db: ScopedPrisma, args: PersistArgs): Promise
         } as Prisma.ReportUncheckedCreateInput,
       });
 
-      return syncIssues(tx, { projectId: args.projectId, crawlId, report, now: args.now, source: args.source });
+      return syncIssues(tx, {
+        projectId: args.projectId,
+        crawlId,
+        report,
+        now: args.now,
+        source: args.source,
+      });
     },
     { timeout: 120_000, maxWait: 30_000 },
   );

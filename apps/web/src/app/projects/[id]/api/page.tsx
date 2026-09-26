@@ -14,7 +14,11 @@ const ENDPOINTS = [
   ["POST", "/v1/projects/{projectId}/sitemap-checks", "Start a check (async) → checkId"],
   ["GET", "/v1/sitemap-checks/{checkId}", "Status, score, counts, versions"],
   ["GET", "/v1/sitemap-checks/{checkId}/issues", "Failing checks; ?severity=&rule=&status=&page="],
-  ["GET", "/v1/sitemap-checks/{checkId}/urls", "Every sitemap URL with status, indexability, GSC state"],
+  [
+    "GET",
+    "/v1/sitemap-checks/{checkId}/urls",
+    "Every sitemap URL with status, indexability, GSC state",
+  ],
   ["GET", "/v1/sitemap-checks/{checkId}/manual-urls?format=csv|json|xml", "URLs to add by hand"],
   ["GET", "/v1/sitemap-checks/{checkId}/remove-urls", "URLs to remove"],
   ["POST", "/v1/sitemap-checks/{checkId}/fixes", "Auto-fix batches (Phase 3; returns 501 today)"],
@@ -28,7 +32,12 @@ export default async function ApiPage({ params }: { params: Promise<{ id: string
   const [keys, hooks, deliveries] = await Promise.all([
     db.apiKey.findMany({ where: { projectId: project.id }, orderBy: { createdAt: "desc" } }),
     db.webhook.findMany({ where: { projectId: project.id }, orderBy: { createdAt: "desc" } }),
-    db.webhookDelivery.findMany({ where: { webhook: { projectId: project.id } }, orderBy: { createdAt: "desc" }, take: 10, include: { webhook: { select: { url: true } } } }),
+    db.webhookDelivery.findMany({
+      where: { webhook: { projectId: project.id } },
+      orderBy: { createdAt: "desc" },
+      take: 10,
+      include: { webhook: { select: { url: true } } },
+    }),
   ]);
 
   return (
@@ -39,7 +48,8 @@ export default async function ApiPage({ params }: { params: Promise<{ id: string
           <Card className="flex flex-col gap-4 p-5">
             <CardLabel>API keys</CardLabel>
             <p className="m-0 text-sm text-muted">
-              Send <Mono>Authorization: Bearer &lt;key&gt;</Mono>. Keys only see this project. Limit: {RATE_LIMIT_PER_MINUTE} requests per minute per key. Project ID:{" "}
+              Send <Mono>Authorization: Bearer &lt;key&gt;</Mono>. Keys only see this project.
+              Limit: {RATE_LIMIT_PER_MINUTE} requests per minute per key. Project ID:{" "}
               <Mono>{project.id}</Mono>
             </p>
             {keys.length > 0 && (
@@ -63,7 +73,9 @@ export default async function ApiPage({ params }: { params: Promise<{ id: string
                         <Mono>{k.prefix}…</Mono>
                       </Td>
                       <Td className="text-xs">{k.scopes.join(", ")}</Td>
-                      <Td className="text-xs text-muted">{k.lastUsedAt ? formatDateTime(k.lastUsedAt) : "Never"}</Td>
+                      <Td className="text-xs text-muted">
+                        {k.lastUsedAt ? formatDateTime(k.lastUsedAt) : "Never"}
+                      </Td>
                       <Td>
                         {k.revokedAt ? (
                           <Pill tone="gray">Revoked</Pill>
@@ -92,7 +104,13 @@ export default async function ApiPage({ params }: { params: Promise<{ id: string
                   <legend className="mb-1 font-semibold">Scopes</legend>
                   {API_SCOPES.map((s) => (
                     <label key={s} className="flex items-center gap-2">
-                      <input type="checkbox" name="scopes" value={s} defaultChecked={s === "sitemap:read"} /> {s}
+                      <input
+                        type="checkbox"
+                        name="scopes"
+                        value={s}
+                        defaultChecked={s === "sitemap:read"}
+                      />{" "}
+                      {s}
                     </label>
                   ))}
                 </fieldset>
@@ -103,11 +121,15 @@ export default async function ApiPage({ params }: { params: Promise<{ id: string
           <Card className="flex flex-col gap-4 p-5">
             <CardLabel>Webhooks</CardLabel>
             <p className="m-0 text-sm text-muted">
-              We POST JSON with <Mono>x-seo-signature: t=&lt;unix&gt;,v1=&lt;hex&gt;</Mono>: HMAC-SHA256 of <Mono>&lt;t&gt;.&lt;body&gt;</Mono> with your signing secret.
-              Reject timestamps older than 5 minutes. Failed deliveries retry 5 times with backoff.
+              We POST JSON with <Mono>x-seo-signature: t=&lt;unix&gt;,v1=&lt;hex&gt;</Mono>:
+              HMAC-SHA256 of <Mono>&lt;t&gt;.&lt;body&gt;</Mono> with your signing secret. Reject
+              timestamps older than 5 minutes. Failed deliveries retry 5 times with backoff.
             </p>
             {hooks.map((h) => (
-              <div key={h.id} className="flex flex-wrap items-center gap-2 border-b border-[#EDEDE8] pb-3 text-sm">
+              <div
+                key={h.id}
+                className="flex flex-wrap items-center gap-2 border-b border-[#EDEDE8] pb-3 text-sm"
+              >
                 <Mono className="min-w-0 flex-1 truncate">{h.url}</Mono>
                 {h.events.map((e) => (
                   <Pill key={e} tone="info">
@@ -127,13 +149,25 @@ export default async function ApiPage({ params }: { params: Promise<{ id: string
               <SecretForm action={createWebhook.bind(null, project.id)} submitLabel="Add webhook">
                 <label className="flex flex-col gap-1 text-sm font-semibold">
                   Endpoint URL (https)
-                  <input name="url" type="url" required placeholder="https://example.com/hooks/seo" className={input} />
+                  <input
+                    name="url"
+                    type="url"
+                    required
+                    placeholder="https://example.com/hooks/seo"
+                    className={input}
+                  />
                 </label>
                 <fieldset className="m-0 flex flex-wrap gap-4 border-0 p-0 text-sm">
                   <legend className="mb-1 font-semibold">Events</legend>
                   {WEBHOOK_EVENTS.map((e) => (
                     <label key={e} className="flex items-center gap-2">
-                      <input type="checkbox" name="events" value={e} defaultChecked={e === "sitemap.check.completed"} /> {e}
+                      <input
+                        type="checkbox"
+                        name="events"
+                        value={e}
+                        defaultChecked={e === "sitemap.check.completed"}
+                      />{" "}
+                      {e}
                     </label>
                   ))}
                 </fieldset>
@@ -153,7 +187,15 @@ export default async function ApiPage({ params }: { params: Promise<{ id: string
                     <tr key={d.id}>
                       <Td className="text-xs">{d.event}</Td>
                       <Td>
-                        <Pill tone={d.status === "delivered" ? "pass" : d.status === "failed" ? "crit" : "gray"}>
+                        <Pill
+                          tone={
+                            d.status === "delivered"
+                              ? "pass"
+                              : d.status === "failed"
+                                ? "crit"
+                                : "gray"
+                          }
+                        >
                           {d.status}
                           {d.responseStatus ? ` · ${d.responseStatus}` : ""}
                         </Pill>

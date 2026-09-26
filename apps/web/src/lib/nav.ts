@@ -19,7 +19,7 @@ export function projectNav(projectId: string): NavGroup[] {
       items: [
         { label: "Dashboard", href: p },
         { label: "Issue manager", href: `${p}/issues` },
-        { label: "Sitemap check", href: `${p}/sitemap`, phase: 2 },
+        { label: "Sitemap check", href: `${p}/sitemap` },
         { label: "AI Copilot", href: `${p}/copilot`, phase: 4 },
       ],
     },
@@ -27,7 +27,7 @@ export function projectNav(projectId: string): NavGroup[] {
       label: "Fix",
       items: [
         { label: "Auto-fix review", href: `${p}/fixes` },
-        { label: "Sitemap URL lists", href: `${p}/sitemap-urls`, phase: 2 },
+        { label: "Sitemap URL lists", href: `${p}/sitemap/urls` },
         { label: "Change log", href: `${p}/changes`, phase: 3 },
       ],
     },
@@ -35,7 +35,7 @@ export function projectNav(projectId: string): NavGroup[] {
       label: "Grow",
       items: [
         { label: "Keyword research", href: `${p}/keywords`, phase: 3 },
-        { label: "Monitoring", href: `${p}/monitoring`, phase: 2 },
+        { label: "Monitoring", href: `${p}/monitoring` },
         { label: "Authority (off-page)", href: `${p}/authority`, phase: 4 },
       ],
     },
@@ -43,6 +43,7 @@ export function projectNav(projectId: string): NavGroup[] {
       label: "Settings",
       items: [
         { label: "Integrations", href: `${p}/integrations`, phase: 3 },
+        { label: "API & webhooks", href: `${p}/api` },
         { label: "Plans & billing", href: `${p}/billing`, phase: 4 },
         { label: "Add website", href: "/onboarding" },
       ],

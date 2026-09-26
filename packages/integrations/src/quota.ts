@@ -6,7 +6,12 @@ export const INSPECTION_MAX_AGE_DAYS = 7;
 
 /** Google quota days follow Pacific time. */
 export function quotaDay(now: Date): string {
-  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Los_Angeles", year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Los_Angeles",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(now);
 }
 
 export interface InspectionCandidate {
@@ -20,10 +25,17 @@ export interface InspectionCandidate {
  * Picks today's batch: never-inspected URLs first, then stale ones; highest traffic first, then
  * URL order. Fresh inspections are skipped. Never more than the remaining daily quota.
  */
-export function planInspections(candidates: InspectionCandidate[], remaining: number, now: Date, maxAgeDays = INSPECTION_MAX_AGE_DAYS): string[] {
+export function planInspections(
+  candidates: InspectionCandidate[],
+  remaining: number,
+  now: Date,
+  maxAgeDays = INSPECTION_MAX_AGE_DAYS,
+): string[] {
   if (remaining <= 0) return [];
   const staleBefore = now.getTime() - maxAgeDays * 86_400_000;
-  const due = candidates.filter((c) => c.lastInspectedAt === null || c.lastInspectedAt.getTime() < staleBefore);
+  const due = candidates.filter(
+    (c) => c.lastInspectedAt === null || c.lastInspectedAt.getTime() < staleBefore,
+  );
   const rank = (c: InspectionCandidate) => (c.lastInspectedAt === null ? 0 : 1);
   return [...new Map(due.map((c) => [c.url, c])).values()]
     .sort((a, b) => rank(a) - rank(b) || b.traffic - a.traffic || a.url.localeCompare(b.url))
@@ -36,7 +48,8 @@ export class RateLimiter {
   private next = 0;
   constructor(
     private readonly perMinute: number,
-    private readonly sleep: (ms: number) => Promise<void> = (ms) => new Promise((r) => setTimeout(r, ms)),
+    private readonly sleep: (ms: number) => Promise<void> = (ms) =>
+      new Promise((r) => setTimeout(r, ms)),
     private readonly clock: () => number = Date.now,
   ) {}
 

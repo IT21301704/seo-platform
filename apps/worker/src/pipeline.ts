@@ -1,25 +1,14 @@
 // The 6-stage audit (screen 02): Discover → Crawl → Render → Performance → Run checks → Explain.
 import {
-  HttpFetcher,
-  NO_PERFORMANCE,
-  PsiPerformance,
-  RecordedPerformance,
   buildSiteFacts,
   crawlSite,
-  loadFixtureSite,
   performanceSample,
   renderSnapshot,
   snapshotSetHash,
 } from "@seo/crawler";
-import type {
-  CrawlEvent,
-  CrawlSnapshot,
-  Fetcher,
-  PerformanceSource,
-  Renderer,
-  SiteFacts,
-} from "@seo/crawler";
-import type { PrismaClient, ScopedPrisma } from "@seo/db";
+import type { CrawlEvent, CrawlSnapshot, Fetcher, Renderer, SiteFacts } from "@seo/crawler";
+import type { Prisma, PrismaClient, ScopedPrisma } from "@seo/db";
+import type { JsonHttp } from "@seo/integrations";
 import { explainIssue } from "@seo/llm";
 import type { LlmClient } from "@seo/llm";
 import { RULES_BY_ID } from "@seo/rules";
@@ -27,20 +16,26 @@ import { runAudit, serializeReport } from "@seo/scoring";
 import type { AuditReport } from "@seo/scoring";
 import { CODE_VERSIONS, stableStringify } from "@seo/shared";
 import { createHash } from "node:crypto";
-import { fileURLToPath } from "node:url";
-import { codeFetcher, readZip } from "./code-upload";
+import { gscExternalFor } from "./external";
+import type { SyncResult } from "./issues";
 import { DbLlmCache } from "./llm-cache";
+import { diffAudits, triggeredAlerts } from "./monitoring";
+import type { RuleSetting } from "./monitoring";
+import { deliverAlerts, notifyEditors, notifyUser } from "./notify";
+import type { Mailer } from "./notify";
 import { persistAudit } from "./persist";
 import type { ProgressReporter } from "./progress";
-import { gzip, htmlKey, snapshotKey, uploadKey } from "./storage";
+import { sourceFor } from "./source";
+import type { SourceDeps } from "./source";
+import { gzip, htmlKey, snapshotKey } from "./storage";
 import type { BlobStore } from "./storage";
+import { queueWebhookEvent } from "./webhooks";
 
 export const DEFAULT_LLM_BUDGET = 30;
 
 class CancelledError extends Error {}
-const FIXTURES_DIR = fileURLToPath(new URL("../../../fixtures", import.meta.url));
 
-export interface PipelineDeps {
+export interface PipelineDeps extends SourceDeps {
   prisma: PrismaClient;
   db: ScopedPrisma;
   blobs: BlobStore;
@@ -50,67 +45,17 @@ export interface PipelineDeps {
   now: () => Date;
   /** Max Claude explanations per audit (plan cap, REQUIREMENTS M7). */
   llmBudget?: number;
-  /** Dev/seed only: crawl this fixture folder instead of the network. */
-  fixture?: { name: string; crawledAt?: string };
+  /** Alert delivery (M10). Without it, monitoring events are still recorded but no alert is sent. */
+  alerts?: { http: JsonHttp; mailer: Mailer; appUrl: string };
 }
 
-interface Source {
-  fetcher: Fetcher;
-  performance: PerformanceSource;
-  crawledAt: string;
-  cleanup: () => Promise<void>;
-}
-
-/** Picks where pages come from: an uploaded ZIP, a dev fixture, or the live site. */
-async function sourceFor(
-  crawl: { id: string; inputType: "url" | "code"; organizationId: string },
-  project: { rootUrl: string },
-  deps: PipelineDeps,
-): Promise<Source> {
-  const now = deps.now().toISOString();
-  if (crawl.inputType === "code") {
-    const key = uploadKey(crawl.organizationId, crawl.id);
-    const zip = await deps.blobs.get(key);
-    if (!zip) throw new Error("Uploaded code not found");
-    const files = await readZip(zip);
-    // Uploaded code is deleted as soon as the audit has read it (retention).
-    return {
-      fetcher: codeFetcher(files, new URL(project.rootUrl).origin),
-      performance: NO_PERFORMANCE,
-      crawledAt: now,
-      cleanup: () => deps.blobs.delete(key),
-    };
-  }
-  const fixtureName =
-    deps.fixture?.name ??
-    (process.env["FIXTURE_SITES"] === "true" &&
-    new URL(project.rootUrl).hostname === "example-store.com"
-      ? (process.env["FIXTURE_SITE_NAME"] ?? "golden-site")
-      : null);
-  if (fixtureName) {
-    const dir =
-      fixtureName === "golden-site"
-        ? `${FIXTURES_DIR}/golden-site`
-        : `${FIXTURES_DIR}/broken-sites/${fixtureName}`;
-    const site = loadFixtureSite(dir);
-    return {
-      fetcher: site.fetcher,
-      performance: new RecordedPerformance(site.server.performance),
-      crawledAt: deps.fixture?.crawledAt ?? site.server.crawledAt,
-      cleanup: async () => undefined,
-    };
-  }
-  const fetcher = new HttpFetcher();
-  const psiKey = process.env["PSI_API_KEY"];
-  return {
-    fetcher,
-    performance: psiKey
-      ? new PsiPerformance(psiKey, new HttpFetcher({ requestsPerSecond: 1, timeoutMs: 90_000 }))
-      : NO_PERFORMANCE,
-    crawledAt: now,
-    cleanup: () => fetcher.close(),
-  };
-}
+/** Alert rules when a project has not configured any (REQUIREMENTS M10 defaults). */
+export const DEFAULT_ALERT_RULES: RuleSetting[] = [
+  { type: "score_drop", enabled: true, threshold: 5 },
+  { type: "new_critical", enabled: true, threshold: null },
+  { type: "noindex", enabled: true, threshold: null },
+  { type: "weekly_summary", enabled: false, threshold: null },
+];
 
 export async function runPipeline(crawlId: string, deps: PipelineDeps): Promise<AuditReport> {
   const { db } = deps;
@@ -209,6 +154,10 @@ export async function runPipeline(crawlId: string, deps: PipelineDeps): Promise<
       detail: snapshot.performance.note ?? `${snapshot.performance.pages.length} pages measured`,
     });
 
+    // Dated Search Console data becomes part of the snapshot (and of its hash).
+    const gsc = crawl.inputType === "url" ? await gscExternalFor(db, project.id) : null;
+    snapshot = { ...snapshot, external: { gsc } };
+
     // Store snapshots (content-addressed HTML + the full snapshot).
     const snapshotPaths = await storeSnapshots(deps.blobs, crawl.organizationId, crawlId, snapshot);
     const setHash = snapshotSetHash(snapshot);
@@ -235,7 +184,7 @@ export async function runPipeline(crawlId: string, deps: PipelineDeps): Promise<
       reportHash = result.reportHash;
       site = result.site;
     }
-    await persistAudit(db, {
+    const sync = await persistAudit(db, {
       crawlId,
       projectId: project.id,
       site,
@@ -243,10 +192,12 @@ export async function runPipeline(crawlId: string, deps: PipelineDeps): Promise<
       reportHash,
       snapshotPaths,
       now: deps.now(),
+      source: crawl.trigger === "scheduled" ? "monitoring" : "site_audit",
     });
     await db.crawl.update({
       where: { id: crawlId },
       data: {
+        gscSnapshotId: gsc?.snapshotId ?? null,
         snapshotSetHash: setHash,
         healthScore: auditReport.score.health,
         reportHash,
@@ -270,6 +221,7 @@ export async function runPipeline(crawlId: string, deps: PipelineDeps): Promise<
       where: { id: crawlId },
       data: { status: "completed", finishedAt: deps.now() },
     });
+    await afterAudit(deps, { id: project.id, name: project.name }, crawlId, auditReport, sync);
     await report("Audit complete");
     return auditReport;
   } catch (error) {
@@ -399,5 +351,83 @@ async function explainFailures(
     detail: `${done} issues explained`,
     done,
     total: failing.length,
+  });
+}
+
+/**
+ * After an audit (M10/M11/M19): record what changed since the previous audit, send alerts,
+ * notify people about regressed items, and fire the audit.completed webhook.
+ */
+async function afterAudit(
+  deps: PipelineDeps,
+  project: { id: string; name: string },
+  crawlId: string,
+  report: AuditReport,
+  sync: SyncResult,
+): Promise<void> {
+  const { db } = deps;
+  const previous = await db.crawl.findFirst({
+    where: { projectId: project.id, status: "completed", id: { not: crawlId } },
+    orderBy: { createdAt: "desc" },
+    include: { report: true },
+  });
+  const events = diffAudits(
+    (previous?.report?.reportJson as unknown as AuditReport | undefined) ?? null,
+    report,
+  );
+  await db.monitoringEvent.createMany({
+    data: events.map((e) => ({
+      projectId: project.id,
+      crawlId,
+      type: e.type,
+      level: e.level,
+      message: e.message,
+      data: e.data as Prisma.InputJsonValue,
+      createdAt: deps.now(),
+    })) as Prisma.MonitoringEventCreateManyInput[],
+  });
+
+  const base = deps.alerts?.appUrl ?? "";
+  if (previous && deps.alerts) {
+    const stored = await db.alertRule.findMany({ where: { projectId: project.id } });
+    const rules: RuleSetting[] = stored.length
+      ? stored.map((r) => ({ type: r.type, enabled: r.enabled, threshold: r.threshold }))
+      : DEFAULT_ALERT_RULES;
+    await deliverAlerts(db, project.id, project.name, triggeredAlerts(events, rules), {
+      ...deps.alerts,
+      link: `${base}/projects/${project.id}/monitoring`,
+    });
+  }
+
+  for (const item of sync.regressed) {
+    const n = {
+      type: "regressed",
+      title: `${item.ruleId} is back on ${new URL(item.url).pathname}`,
+      body: "An issue that was verified as fixed failed again in the latest audit.",
+      link: `${base}/projects/${project.id}/issues/${item.ruleId}`,
+    };
+    if (item.assigneeId) await notifyUser(db, item.assigneeId, n);
+  }
+  const unassigned = sync.regressed.filter((r) => !r.assigneeId).length;
+  if (unassigned) {
+    await notifyEditors(db, {
+      type: "regressed",
+      title: `${unassigned} issue${unassigned === 1 ? "" : "s"} regressed`,
+      body: "Items verified as fixed failed again in the latest audit.",
+      link: `${base}/projects/${project.id}/issues?status=all`,
+    });
+  }
+
+  await queueWebhookEvent(db, project.id, "audit.completed", {
+    crawlId,
+    projectId: project.id,
+    score: report.score.health,
+    versions: {
+      crawler: report.versions.crawlerVersion,
+      ruleset: report.versions.rulesetVersion,
+      weights: report.versions.weightsVersion,
+      snapshotSetHash: report.versions.snapshotSetHash,
+    },
+    counts: report.counts,
   });
 }

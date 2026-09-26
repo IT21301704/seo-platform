@@ -70,16 +70,35 @@ export default async function IssueDetailPage({
 
   const [ga4, recent, comments] = await Promise.all([
     db.ga4Snapshot.findFirst({ where: { projectId: project.id }, orderBy: { fetchedAt: "desc" } }),
-    db.crawl.findMany({ where: { projectId: project.id, status: "completed" }, orderBy: { createdAt: "desc" }, take: 6, select: { id: true, createdAt: true } }),
-    issue ? db.issueComment.findMany({ where: { issueId: issue.id }, include: { author: { select: { name: true, email: true } } }, orderBy: { createdAt: "asc" } }) : [],
+    db.crawl.findMany({
+      where: { projectId: project.id, status: "completed" },
+      orderBy: { createdAt: "desc" },
+      take: 6,
+      select: { id: true, createdAt: true },
+    }),
+    issue
+      ? db.issueComment.findMany({
+          where: { issueId: issue.id },
+          include: { author: { select: { name: true, email: true } } },
+          orderBy: { createdAt: "asc" },
+        })
+      : [],
   ]);
   // Visits per page from the latest GA4 snapshot (sessions, last 28 days).
-  const visits = new Map(((ga4?.rows ?? []) as { path: string; sessions: number }[]).map((r) => [r.path, r.sessions]));
+  const visits = new Map(
+    ((ga4?.rows ?? []) as { path: string; sessions: number }[]).map((r) => [r.path, r.sessions]),
+  );
   const visitsOf = (url: string | null) => (url ? visits.get(new URL(url).pathname) : undefined);
   // M11: failing items of this rule per audit.
-  const counts = await db.checkResult.groupBy({ by: ["crawlId"], where: { crawlId: { in: recent.map((c) => c.id) }, ruleId: rule.id, result: "fail" }, _count: { _all: true } });
+  const counts = await db.checkResult.groupBy({
+    by: ["crawlId"],
+    where: { crawlId: { in: recent.map((c) => c.id) }, ruleId: rule.id, result: "fail" },
+    _count: { _all: true },
+  });
   const countByCrawl = new Map(counts.map((c) => [c.crawlId, c._count._all]));
-  const history = [...recent].reverse().map((c) => ({ label: formatShortDate(c.createdAt), count: countByCrawl.get(c.id) ?? 0 }));
+  const history = [...recent]
+    .reverse()
+    .map((c) => ({ label: formatShortDate(c.createdAt), count: countByCrawl.get(c.id) ?? 0 }));
 
   return (
     <>
@@ -126,7 +145,11 @@ export default async function IssueDetailPage({
               <Card className="px-2 pb-2 pt-4">
                 <div className="flex items-baseline justify-between px-3">
                   <CardLabel>Affected pages</CardLabel>
-                  <span className="text-xs text-muted">{ga4 ? `Visits: Google Analytics sessions ${ga4.startDate} to ${ga4.endDate}${ga4.provider === "demo" ? " (demo data)" : ""}` : "Connect Google Analytics to see visits"}</span>
+                  <span className="text-xs text-muted">
+                    {ga4
+                      ? `Visits: Google Analytics sessions ${ga4.startDate} to ${ga4.endDate}${ga4.provider === "demo" ? " (demo data)" : ""}`
+                      : "Connect Google Analytics to see visits"}
+                  </span>
                 </div>
                 <div className="overflow-x-auto">
                   <Table>
@@ -148,7 +171,11 @@ export default async function IssueDetailPage({
                             {evidenceText(o.evidence)}
                           </Td>
                           <Td>
-                            <Mono>{visitsOf(o.url) === undefined ? "—" : formatNumber(visitsOf(o.url) ?? 0)}</Mono>
+                            <Mono>
+                              {visitsOf(o.url) === undefined
+                                ? "—"
+                                : formatNumber(visitsOf(o.url) ?? 0)}
+                            </Mono>
                           </Td>
                           <Td>
                             <Pill tone="crit">Failing</Pill>
@@ -211,7 +238,10 @@ export default async function IssueDetailPage({
                   {comments.map((c) => (
                     <li key={c.id} className="rounded-lg bg-canvas p-3">
                       <p className="m-0 text-xs text-muted">
-                        <span className="font-semibold text-ink">{c.author.name ?? c.author.email}</span> · {formatDateTime(c.createdAt)}
+                        <span className="font-semibold text-ink">
+                          {c.author.name ?? c.author.email}
+                        </span>{" "}
+                        · {formatDateTime(c.createdAt)}
                       </p>
                       <p className="m-0 mt-1 whitespace-pre-wrap text-sm">{c.body}</p>
                     </li>
@@ -219,11 +249,21 @@ export default async function IssueDetailPage({
                 </ul>
               )}
               {issue && canEdit(user.role) && (
-                <ActionForm action={addComment.bind(null, project.id, issue.id)} submitLabel="Add comment">
+                <ActionForm
+                  action={addComment.bind(null, project.id, issue.id)}
+                  submitLabel="Add comment"
+                >
                   <label className="sr-only" htmlFor="comment-body">
                     Comment
                   </label>
-                  <textarea id="comment-body" name="body" rows={3} maxLength={5000} placeholder="Write a comment. Use @name to notify a teammate." className="rounded-lg border border-[#CFCFC8] bg-white p-2 text-sm" />
+                  <textarea
+                    id="comment-body"
+                    name="body"
+                    rows={3}
+                    maxLength={5000}
+                    placeholder="Write a comment. Use @name to notify a teammate."
+                    className="rounded-lg border border-[#CFCFC8] bg-white p-2 text-sm"
+                  />
                 </ActionForm>
               )}
             </Card>

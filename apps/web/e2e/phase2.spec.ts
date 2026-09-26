@@ -19,7 +19,9 @@ test.describe("Phase 2: Google data, monitoring, sitemap API, issue manager", ()
   test("sitemap URL lists (screen 14) have both tabs and downloads", async ({ page }) => {
     const project = await signIn(page);
     await page.goto(`${project}/sitemap/urls`);
-    await expect(page.getByRole("heading", { name: "Sitemap URL lists", exact: true })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Sitemap URL lists", exact: true }),
+    ).toBeVisible();
     await page.getByRole("link", { name: /Remove from sitemap \(\d+\)/ }).click();
     await expect(page).toHaveURL(/tab=remove/);
     const csv = await page.getByRole("link", { name: "Download CSV" }).getAttribute("href");
@@ -58,7 +60,18 @@ test.describe("Phase 2: Google data, monitoring, sitemap API, issue manager", ()
         "content-type"
       ],
     ).toContain("xml");
-    expect((await request.post(`${href}/fixes`, { headers: auth })).status()).toBe(501);
+    expect((await request.post(`${href}/fixes`, { headers: auth })).status()).toBe(403);
+
+    // A write key reaches the reserved auto-fix endpoint, which is not built until Phase 3.
+    await page.goto(`${project}/api`);
+    await page.getByLabel("Name").fill(`e2e write ${Date.now()}`);
+    await page.getByRole("checkbox", { name: "sitemap:write" }).check();
+    await page.getByRole("button", { name: "Create API key" }).click();
+    const writeKey = (await page.getByRole("status").locator("code").textContent()) ?? "";
+    const fixes = await request.post(`${href}/fixes`, {
+      headers: { authorization: `Bearer ${writeKey}` },
+    });
+    expect(fixes.status()).toBe(501);
   });
 
   test("webhooks must use https", async ({ page }) => {
@@ -108,7 +121,8 @@ test.describe("Phase 2: Google data, monitoring, sitemap API, issue manager", ()
 
   test("issue detail: visits, history and comments", async ({ page }) => {
     const project = await signIn(page);
-    await page.goto(`${project}/issues/LNK-002`);
+    // ONP-004 fails in the latest seeded audit (broken-onpage), so it has failing URLs with visits.
+    await page.goto(`${project}/issues/ONP-004`);
     await expect(page.getByText(/Visits: Google Analytics sessions/)).toBeVisible();
     const text = `Checked by e2e ${Date.now()}`;
     await page.getByLabel("Comment").fill(text);

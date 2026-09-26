@@ -43,15 +43,29 @@ export class GuardedJsonHttp implements JsonHttp {
     bodyTimeout: 60_000,
   });
 
-  async send<T = unknown>({ method, url, headers = {}, json, form }: JsonRequest): Promise<JsonResponse<T>> {
+  async send<T = unknown>({
+    method,
+    url,
+    headers = {},
+    json,
+    form,
+  }: JsonRequest): Promise<JsonResponse<T>> {
     const target = assertSafeUrl(url);
-    const body = form ? new URLSearchParams(form).toString() : json === undefined ? undefined : JSON.stringify(json);
+    const body = form
+      ? new URLSearchParams(form).toString()
+      : json === undefined
+        ? undefined
+        : JSON.stringify(json);
     const res = await request(target, {
       method,
       dispatcher: this.agent,
       headers: {
         accept: "application/json",
-        ...(form ? { "content-type": "application/x-www-form-urlencoded" } : json === undefined ? {} : { "content-type": "application/json" }),
+        ...(form
+          ? { "content-type": "application/x-www-form-urlencoded" }
+          : json === undefined
+            ? {}
+            : { "content-type": "application/json" }),
         ...headers,
       },
       body,
@@ -64,7 +78,7 @@ export class GuardedJsonHttp implements JsonHttp {
       chunks.push(chunk as Buffer);
     }
     const text = Buffer.concat(chunks).toString("utf8");
-    let parsed: unknown = text;
+    let parsed: unknown;
     try {
       parsed = text ? JSON.parse(text) : null;
     } catch {
@@ -81,7 +95,10 @@ export class GuardedJsonHttp implements JsonHttp {
 /** Throws HttpError unless the response is 2xx. */
 export function ok<T>(res: JsonResponse<T>, what: string): T {
   if (res.status < 200 || res.status >= 300) {
-    const detail = typeof res.body === "object" && res.body !== null ? JSON.stringify(res.body).slice(0, 300) : String(res.body).slice(0, 300);
+    const detail =
+      typeof res.body === "object" && res.body !== null
+        ? JSON.stringify(res.body).slice(0, 300)
+        : String(res.body).slice(0, 300);
     throw new HttpError(res.status, `${what} failed (${res.status}): ${detail}`);
   }
   return res.body;

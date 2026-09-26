@@ -51,3 +51,22 @@ export function hostOf(url: string): string {
 /** "1 page", "3 pages". */
 export const plural = (n: number, word: string, many = `${word}s`): string =>
   `${formatNumber(n)} ${n === 1 ? word : many}`;
+
+/** "Mon 28 Sep 2026, 02:00" in a given IANA time zone. */
+export function formatZoned(d: Date | string, timeZone: string): string {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone,
+      weekday: "short",
+      day: "numeric",
+      month: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23",
+    })
+      .formatToParts(new Date(d))
+      .map((p) => [p.type, p.value]),
+  );
+  return `${parts["weekday"]} ${parts["day"]} ${MONTHS[Number(parts["month"]) - 1]} ${parts["year"]}, ${parts["hour"]}:${parts["minute"]}`;
+}

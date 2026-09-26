@@ -8,16 +8,28 @@ import { cn, formatDate, formatNumber, hostOf, pathOf } from "@/lib/utils";
 import { runSitemapCheckAction, toggleAdded } from "../actions";
 
 const ROWS = 200;
-const outline = "inline-flex h-10 items-center rounded-lg border border-[#CFCFC8] bg-white px-4 text-sm font-semibold text-ink no-underline hover:bg-canvas hover:text-ink";
+const outline =
+  "inline-flex h-10 items-center rounded-lg border border-[#CFCFC8] bg-white px-4 text-sm font-semibold text-ink no-underline hover:bg-canvas hover:text-ink";
 
-export default async function SitemapUrlListsPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ tab?: string }> }) {
+export default async function SitemapUrlListsPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ tab?: string }>;
+}) {
   const { id } = await params;
   const tab = (await searchParams).tab === "remove" ? "remove" : "manual";
   const { user, db } = await requireUser();
   const project = await requireProject(db, id);
   const editable = canEdit(user.role);
-  const check = await db.sitemapCheck.findFirst({ where: { projectId: project.id, status: "completed" }, orderBy: { createdAt: "desc" } });
-  const running = await db.sitemapCheck.findFirst({ where: { projectId: project.id, status: { in: ["queued", "running"] } } });
+  const check = await db.sitemapCheck.findFirst({
+    where: { projectId: project.id, status: "completed" },
+    orderBy: { createdAt: "desc" },
+  });
+  const running = await db.sitemapCheck.findFirst({
+    where: { projectId: project.id, status: { in: ["queued", "running"] } },
+  });
   const recheck = runSitemapCheckAction.bind(null, project.id, "urls");
   const toggle = toggleAdded.bind(null, project.id);
   const base = `/projects/${project.id}/sitemap/urls`;
@@ -36,7 +48,11 @@ export default async function SitemapUrlListsPage({ params, searchParams }: { pa
   }
 
   const listType = tab === "manual" ? ("manual_add" as const) : ("remove" as const);
-  const rows = await db.sitemapUrl.findMany({ where: { checkId: check.id, listType }, orderBy: { url: "asc" }, take: ROWS });
+  const rows = await db.sitemapUrl.findMany({
+    where: { checkId: check.id, listType },
+    orderBy: { url: "asc" },
+    take: ROWS,
+  });
   const total = tab === "manual" ? check.manualUrls : check.urlsToRemove;
   const api = `/v1/sitemap-checks/${check.id}`;
   const listApi = tab === "manual" ? `${api}/manual-urls` : `${api}/remove-urls`;
@@ -47,7 +63,8 @@ export default async function SitemapUrlListsPage({ params, searchParams }: { pa
       <PageHeader
         eyebrow={
           <>
-            <Link href={`/projects/${project.id}/sitemap`}>Sitemap check {check.id}</Link> · {formatDate(check.createdAt)}
+            <Link href={`/projects/${project.id}/sitemap`}>Sitemap check {check.id}</Link> ·{" "}
+            {formatDate(check.createdAt)}
           </>
         }
         title="Sitemap URL lists"
@@ -60,7 +77,10 @@ export default async function SitemapUrlListsPage({ params, searchParams }: { pa
               Download JSON
             </a>
             {tab === "manual" && (
-              <a className="inline-flex h-10 items-center rounded-lg bg-primary px-4 text-sm font-semibold text-white no-underline hover:bg-primary-dark hover:text-white" href={`${listApi}?format=xml`}>
+              <a
+                className="inline-flex h-10 items-center rounded-lg bg-primary px-4 text-sm font-semibold text-white no-underline hover:bg-primary-dark hover:text-white"
+                href={`${listApi}?format=xml`}
+              >
                 Download XML
               </a>
             )}
@@ -77,7 +97,12 @@ export default async function SitemapUrlListsPage({ params, searchParams }: { pa
               key={t.key}
               href={t.key === "manual" ? base : `${base}?tab=remove`}
               aria-current={tab === t.key ? "page" : undefined}
-              className={cn("-mb-px border-b-2 px-4 py-3 text-sm font-semibold no-underline", tab === t.key ? "border-primary text-ink" : "border-transparent text-muted hover:text-ink")}
+              className={cn(
+                "-mb-px border-b-2 px-4 py-3 text-sm font-semibold no-underline",
+                tab === t.key
+                  ? "border-primary text-ink"
+                  : "border-transparent text-muted hover:text-ink",
+              )}
             >
               {t.label}
             </Link>
@@ -86,13 +111,14 @@ export default async function SitemapUrlListsPage({ params, searchParams }: { pa
 
         {tab === "manual" ? (
           <p className="m-0 rounded-[10px] border border-line bg-white p-4 text-sm text-muted">
-            Only URLs that return 200, are self-canonical, have no noindex, are not blocked by robots.txt, are missing from every sitemap,{" "}
+            Only URLs that return 200, are self-canonical, have no noindex, are not blocked by
+            robots.txt, are missing from every sitemap,{" "}
             <strong className="text-ink">and can&apos;t be added automatically</strong>.
           </p>
         ) : (
           <p className="m-0 rounded-[10px] border border-line bg-white p-4 text-sm text-muted">
-            URLs listed in a sitemap that should not be: errors, redirects, noindex, blocked by robots.txt, non-canonical, or not https on this host. Kept separate
-            from the add list.
+            URLs listed in a sitemap that should not be: errors, redirects, noindex, blocked by
+            robots.txt, non-canonical, or not https on this host. Kept separate from the add list.
           </p>
         )}
 
@@ -100,7 +126,18 @@ export default async function SitemapUrlListsPage({ params, searchParams }: { pa
           <EmptyState title={tab === "manual" ? "Nothing to add by hand" : "Nothing to remove"} />
         ) : tab === "manual" ? (
           <ManualUrlList
-            rows={rows.map((r) => ({ id: r.id, url: r.url, path: pathOf(r.url), reason: r.reason, foundVia: r.foundVia, lastmod: r.suggestedLastmod, targetFile: r.targetFile, sitemapFile: r.sitemapFile, status: r.status, added: r.added }))}
+            rows={rows.map((r) => ({
+              id: r.id,
+              url: r.url,
+              path: pathOf(r.url),
+              reason: r.reason,
+              foundVia: r.foundVia,
+              lastmod: r.suggestedLastmod,
+              targetFile: r.targetFile,
+              sitemapFile: r.sitemapFile,
+              status: r.status,
+              added: r.added,
+            }))}
             editable={editable}
             onToggle={toggle}
           />
@@ -134,20 +171,32 @@ export default async function SitemapUrlListsPage({ params, searchParams }: { pa
             </Table>
           </Card>
         )}
-        {total > rows.length && <p className="m-0 text-sm text-muted">Showing {rows.length} of {formatNumber(total)} URLs. Download the CSV or JSON for the full list.</p>}
+        {total > rows.length && (
+          <p className="m-0 text-sm text-muted">
+            Showing {rows.length} of {formatNumber(total)} URLs. Download the CSV or JSON for the
+            full list.
+          </p>
+        )}
 
         <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
           <Card className="flex flex-col gap-3 p-5">
             <CardLabel>Same list by API</CardLabel>
-            <code className="block rounded-lg bg-canvas p-3 font-mono text-[13px]">GET {api}/manual-urls?format=csv</code>
-            <code className="block rounded-lg bg-canvas p-3 font-mono text-[13px]">GET {api}/remove-urls</code>
+            <code className="block rounded-lg bg-canvas p-3 font-mono text-[13px]">
+              GET {api}/manual-urls?format=csv
+            </code>
+            <code className="block rounded-lg bg-canvas p-3 font-mono text-[13px]">
+              GET {api}/remove-urls
+            </code>
             <Link href={`/projects/${project.id}/api`} className="text-sm font-semibold">
               API keys and webhooks →
             </Link>
           </Card>
           <Card className="flex flex-col gap-3 p-5">
             <CardLabel>After adding them</CardLabel>
-            <p className="m-0 text-sm text-muted">Run the check again. Added URLs leave this list. Resubmitting the sitemap to Search Console arrives with auto-fix (Phase 3).</p>
+            <p className="m-0 text-sm text-muted">
+              Run the check again. Added URLs leave this list. Resubmitting the sitemap to Search
+              Console arrives with auto-fix (Phase 3).
+            </p>
             {editable && (
               <form action={recheck}>
                 <Button type="submit" className="w-full" disabled={Boolean(running)}>

@@ -9,7 +9,8 @@ const GA4_ADMIN = "https://analyticsadmin.googleapis.com/v1beta";
 const CRUX = "https://chromeuxreport.googleapis.com/v1/records:queryRecord";
 const ROW_LIMIT = 25_000;
 
-const num = (v: unknown): number | null => (v === undefined || v === null || v === "" ? null : Number(v));
+const num = (v: unknown): number | null =>
+  v === undefined || v === null || v === "" ? null : Number(v);
 
 /** Search Console API (Search Analytics, Sitemaps, URL Inspection). */
 export class GoogleGscApi implements GscApi {
@@ -23,13 +24,33 @@ export class GoogleGscApi implements GscApi {
   }
 
   async listSites() {
-    const body = ok(await this.http.send<{ siteEntry?: { siteUrl: string; permissionLevel: string }[] }>({ method: "GET", url: `${WEBMASTERS}/sites`, headers: await this.auth() }), "GSC sites");
-    return (body.siteEntry ?? []).filter((s) => s.permissionLevel !== "siteUnverifiedUser").sort((a, b) => a.siteUrl.localeCompare(b.siteUrl));
+    const body = ok(
+      await this.http.send<{ siteEntry?: { siteUrl: string; permissionLevel: string }[] }>({
+        method: "GET",
+        url: `${WEBMASTERS}/sites`,
+        headers: await this.auth(),
+      }),
+      "GSC sites",
+    );
+    return (body.siteEntry ?? [])
+      .filter((s) => s.permissionLevel !== "siteUnverifiedUser")
+      .sort((a, b) => a.siteUrl.localeCompare(b.siteUrl));
   }
 
-  async searchAnalytics(siteUrl: string, range: { startDate: string; endDate: string }): Promise<SearchRow[]> {
+  async searchAnalytics(
+    siteUrl: string,
+    range: { startDate: string; endDate: string },
+  ): Promise<SearchRow[]> {
     const body = ok(
-      await this.http.send<{ rows?: { keys: string[]; clicks: number; impressions: number; ctr: number; position: number }[] }>({
+      await this.http.send<{
+        rows?: {
+          keys: string[];
+          clicks: number;
+          impressions: number;
+          ctr: number;
+          position: number;
+        }[];
+      }>({
         method: "POST",
         url: `${WEBMASTERS}/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`,
         headers: await this.auth(),
@@ -37,17 +58,29 @@ export class GoogleGscApi implements GscApi {
       }),
       "GSC search analytics",
     );
-    return (body.rows ?? []).map((r) => ({ page: r.keys[0] ?? "", clicks: r.clicks, impressions: r.impressions, ctr: r.ctr, position: r.position }));
+    return (body.rows ?? []).map((r) => ({
+      page: r.keys[0] ?? "",
+      clicks: r.clicks,
+      impressions: r.impressions,
+      ctr: r.ctr,
+      position: r.position,
+    }));
   }
 
   async listSitemaps(siteUrl: string): Promise<GscSitemap[]> {
     const body = ok(
-      await this.http.send<{ sitemap?: Record<string, unknown>[] }>({ method: "GET", url: `${WEBMASTERS}/sites/${encodeURIComponent(siteUrl)}/sitemaps`, headers: await this.auth() }),
+      await this.http.send<{ sitemap?: Record<string, unknown>[] }>({
+        method: "GET",
+        url: `${WEBMASTERS}/sites/${encodeURIComponent(siteUrl)}/sitemaps`,
+        headers: await this.auth(),
+      }),
       "GSC sitemaps",
     );
     return (body.sitemap ?? []).map((s) => {
-      const contents = (s["contents"] as { submitted?: string; indexed?: string }[] | undefined) ?? [];
-      const sum = (key: "submitted" | "indexed") => (contents.length ? contents.reduce((n, c) => n + (num(c[key]) ?? 0), 0) : null);
+      const contents =
+        (s["contents"] as { submitted?: string; indexed?: string }[] | undefined) ?? [];
+      const sum = (key: "submitted" | "indexed") =>
+        contents.length ? contents.reduce((n, c) => n + (num(c[key]) ?? 0), 0) : null;
       return {
         path: String(s["path"]),
         lastSubmitted: (s["lastSubmitted"] as string) ?? null,
@@ -95,7 +128,12 @@ export class GoogleGa4Api implements Ga4Api {
 
   async listProperties() {
     const body = ok(
-      await this.http.send<{ accountSummaries?: { displayName: string; propertySummaries?: { property: string; displayName: string }[] }[] }>({
+      await this.http.send<{
+        accountSummaries?: {
+          displayName: string;
+          propertySummaries?: { property: string; displayName: string }[];
+        }[];
+      }>({
         method: "GET",
         url: `${GA4_ADMIN}/accountSummaries?pageSize=200`,
         headers: { authorization: `Bearer ${await this.accessToken()}` },
@@ -103,34 +141,59 @@ export class GoogleGa4Api implements Ga4Api {
       "GA4 properties",
     );
     return (body.accountSummaries ?? [])
-      .flatMap((a) => (a.propertySummaries ?? []).map((p) => ({ id: p.property, name: `${a.displayName} › ${p.displayName}` })))
+      .flatMap((a) =>
+        (a.propertySummaries ?? []).map((p) => ({
+          id: p.property,
+          name: `${a.displayName} › ${p.displayName}`,
+        })),
+      )
       .sort((a, b) => a.name.localeCompare(b.name));
   }
 
   async sessionsByPage(propertyId: string, range: { startDate: string; endDate: string }) {
     const body = ok(
-      await this.http.send<{ rows?: { dimensionValues: { value: string }[]; metricValues: { value: string }[] }[] }>({
+      await this.http.send<{
+        rows?: { dimensionValues: { value: string }[]; metricValues: { value: string }[] }[];
+      }>({
         method: "POST",
         url: `${GA4_DATA}/${propertyId}:runReport`,
         headers: { authorization: `Bearer ${await this.accessToken()}` },
-        json: { dateRanges: [range], dimensions: [{ name: "pagePath" }], metrics: [{ name: "sessions" }], limit: ROW_LIMIT },
+        json: {
+          dateRanges: [range],
+          dimensions: [{ name: "pagePath" }],
+          metrics: [{ name: "sessions" }],
+          limit: ROW_LIMIT,
+        },
       }),
       "GA4 report",
     );
     return (body.rows ?? [])
-      .map((r) => ({ path: r.dimensionValues[0]?.value ?? "/", sessions: Number(r.metricValues[0]?.value ?? 0) }))
+      .map((r) => ({
+        path: r.dimensionValues[0]?.value ?? "/",
+        sessions: Number(r.metricValues[0]?.value ?? 0),
+      }))
       .sort((a, b) => b.sessions - a.sessions || a.path.localeCompare(b.path));
   }
 }
 
 const bandOf = (metric: "lcp" | "inp" | "cls", value: number): Band => {
   const limits = { lcp: [2500, 4000], inp: [200, 500], cls: [0.1, 0.25] }[metric];
-  return value <= (limits[0] ?? 0) ? "good" : value <= (limits[1] ?? 0) ? "needs-improvement" : "poor";
+  return value <= (limits[0] ?? 0)
+    ? "good"
+    : value <= (limits[1] ?? 0)
+      ? "needs-improvement"
+      : "poor";
 };
 
 /** CrUX origin-level field data (phone form factor, 28-day rolling p75). */
-export async function queryCruxOrigin(http: JsonHttp, apiKey: string, origin: string): Promise<CruxMetrics | null> {
-  const res = await http.send<{ record?: { metrics?: Record<string, { percentiles?: { p75?: number | string } }> } }>({
+export async function queryCruxOrigin(
+  http: JsonHttp,
+  apiKey: string,
+  origin: string,
+): Promise<CruxMetrics | null> {
+  const res = await http.send<{
+    record?: { metrics?: Record<string, { percentiles?: { p75?: number | string } }> };
+  }>({
     method: "POST",
     url: `${CRUX}?key=${encodeURIComponent(apiKey)}`,
     json: { origin, formFactor: "PHONE" },

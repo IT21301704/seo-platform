@@ -3,11 +3,14 @@
 import { randomBytes } from "node:crypto";
 import { PlaywrightRenderer } from "@seo/crawler/playwright";
 import { createPrismaClient, forOrganization } from "@seo/db";
+import { GuardedJsonHttp } from "@seo/integrations";
 import { llmClientFromEnv } from "@seo/llm";
-import { createCrawl } from "./crawls";
+import { createCrawl, createSitemapCheck } from "./crawls";
 import { loadRootEnv, requireEnv } from "./env";
+import { syncGoogle } from "./google-sync";
 import { registerRules } from "./persist";
 import { runPipeline } from "./pipeline";
+import { runSitemapCheck } from "./sitemap-check";
 import { S3BlobStore } from "./storage";
 
 loadRootEnv();
@@ -41,6 +44,7 @@ const project = await db.project.create({
     country: "LK",
     language: "en",
     crawlFrequency: "weekly",
+    timezone: "Asia/Colombo",
     pageLimit: 1000,
     cmsType: "static",
     verificationToken: `seo-verify=${randomBytes(12).toString("hex")}`,
@@ -48,9 +52,33 @@ const project = await db.project.create({
   } as Parameters<typeof db.project.create>[0]["data"],
 });
 
+// Demo Google connections (labelled "demo data" in the UI; deterministic, no Google account needed).
+for (const type of ["gsc", "ga4"] as const) {
+  await db.integration.create({
+    data: {
+      organizationId: org.id,
+      projectId: project.id,
+      type,
+      provider: "demo",
+      status: "connected",
+      externalId: type === "gsc" ? "sc-domain:example-store.com" : "properties/000000000",
+    },
+  });
+}
+
 const blobs = S3BlobStore.fromEnv();
 const llm = llmClientFromEnv();
-for (const audit of AUDITS) {
+const http = new GuardedJsonHttp();
+for (const [i, audit] of AUDITS.entries()) {
+  if (i === AUDITS.length - 1) {
+    // Dated Search Console / GA4 snapshot before the latest audit, so SMP-003/013/014 apply.
+    const sync = await syncGoogle(project.id, {
+      db,
+      http,
+      now: () => new Date(Date.parse(audit.date) - 3_600_000),
+    });
+    console.log(`Google demo sync: ${sync.inspected} URLs inspected`);
+  }
   const crawl = await createCrawl(db, { projectId: project.id, inputType: "url" });
   await prisma.crawl.update({ where: { id: crawl.id }, data: { createdAt: new Date(audit.date) } });
   const report = await runPipeline(crawl.id, {
@@ -67,6 +95,16 @@ for (const audit of AUDITS) {
     `${audit.date.slice(0, 10)}  ${audit.fixture.padEnd(17)} health ${report.score.health}`,
   );
 }
+
+const check = await createSitemapCheck(db, project.id);
+await runSitemapCheck(check.id, {
+  prisma,
+  db,
+  blobs,
+  now: () => new Date("2026-09-24T06:00:00Z"),
+  fixture: { name: "broken-sitemap", crawledAt: "2026-09-24T06:00:00Z" },
+});
+console.log(`Sitemap check ${check.id} (broken-sitemap)`);
 
 console.log(`\nSeeded organization "${ORG_NAME}", owner ${OWNER_EMAIL}, project ${project.id}`);
 await prisma.$disconnect();

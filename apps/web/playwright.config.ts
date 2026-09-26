@@ -20,10 +20,18 @@ export default defineConfig({
   reporter: process.env["CI"] ? [["list"], ["html", { open: "never" }]] : "list",
   use: { baseURL: `http://localhost:${PORT}`, trace: "retain-on-failure" },
   projects: [
+    // Runs first, while the latest seeded audit (broken-onpage) still has failing URLs. The Phase 1
+    // flow then runs a golden-site audit, after which every site-audit check passes.
+    {
+      name: "seeded",
+      use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 900 } },
+      testMatch: /phase2\.spec\.ts/,
+    },
     {
       name: "desktop",
       use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 900 } },
-      testIgnore: /responsive.spec.ts/,
+      testIgnore: /(responsive|phase2)\.spec\.ts/,
+      dependencies: ["seeded"],
     },
     { name: "mobile", use: { ...devices["Pixel 7"] }, testMatch: /responsive\.spec\.ts/ },
   ],

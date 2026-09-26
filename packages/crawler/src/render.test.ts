@@ -26,7 +26,8 @@ describe("needsRender", () => {
 describe("PlaywrightRenderer", () => {
   const site = loadFixtureSite(fixtureDir("broken-ai"));
   const renderer = new PlaywrightRenderer(site.fetcher);
-  afterAll(() => renderer.close());
+  // Closing Chromium can take over 10 s while turbo runs every package's tests in parallel.
+  afterAll(() => renderer.close(), 60_000);
 
   it("renders JS-injected FAQ content, deterministically", async () => {
     const snapshot = await crawlFixture("broken-ai");

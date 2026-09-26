@@ -17,7 +17,11 @@ export default async function NotificationsPage({ params }: { params: Promise<{ 
   const { id } = await params;
   const { user, db } = await requireUser();
   const project = await requireProject(db, id);
-  const notifications = await db.notification.findMany({ where: { userId: user.id }, orderBy: [{ createdAt: "desc" }, { id: "asc" }], take: 100 });
+  const notifications = await db.notification.findMany({
+    where: { userId: user.id },
+    orderBy: [{ createdAt: "desc" }, { id: "asc" }],
+    take: 100,
+  });
   const unread = notifications.filter((n) => !n.readAt).length;
 
   return (
@@ -28,7 +32,10 @@ export default async function NotificationsPage({ params }: { params: Promise<{ 
         actions={
           unread > 0 && (
             <form action={markRead.bind(null, project.id, null)}>
-              <button type="submit" className="inline-flex h-9 items-center rounded-lg border border-[#CFCFC8] bg-white px-3 text-sm font-semibold">
+              <button
+                type="submit"
+                className="inline-flex h-9 items-center rounded-lg border border-[#CFCFC8] bg-white px-3 text-sm font-semibold"
+              >
                 Mark all as read
               </button>
             </form>
@@ -38,17 +45,25 @@ export default async function NotificationsPage({ params }: { params: Promise<{ 
       <PageBody>
         {notifications.length === 0 ? (
           <EmptyState title="No notifications">
-            <p className="m-0 text-muted">You are notified when someone mentions you, assigns you issues, an issue comes back, or an alert fires.</p>
+            <p className="m-0 text-muted">
+              You are notified when someone mentions you, assigns you issues, an issue comes back,
+              or an alert fires.
+            </p>
           </EmptyState>
         ) : (
           <Card className="flex flex-col divide-y divide-line">
             {notifications.map((n) => {
               const type = TYPE[n.type] ?? { label: n.type, tone: "gray" as const };
               return (
-                <article key={n.id} className={`flex flex-wrap items-start gap-3 px-5 py-4 ${n.readAt ? "" : "bg-primary-soft"}`}>
+                <article
+                  key={n.id}
+                  className={`flex flex-wrap items-start gap-3 px-5 py-4 ${n.readAt ? "" : "bg-primary-soft"}`}
+                >
                   <Pill tone={type.tone}>{type.label}</Pill>
                   <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <p className="m-0 text-sm font-semibold">{n.link ? <a href={n.link}>{n.title}</a> : n.title}</p>
+                    <p className="m-0 text-sm font-semibold">
+                      {n.link ? <a href={n.link}>{n.title}</a> : n.title}
+                    </p>
                     {n.body && <p className="m-0 line-clamp-2 text-sm text-muted">{n.body}</p>}
                     <span className="text-xs text-muted">{formatDateTime(n.createdAt)}</span>
                   </div>

@@ -6,11 +6,26 @@ import type { Ga4Api, GscApi, GscSitemap, Inspection, SearchRow } from "./types"
 const h = (s: string): number => createHash("sha256").update(s).digest().readUInt32BE(0);
 
 function coverageFor(url: string): Pick<Inspection, "verdict" | "coverageState" | "indexingState"> {
-  if (/old-post|gone/.test(url)) return { verdict: "FAIL", coverageState: "Not found (404)", indexingState: "INDEXING_ALLOWED" };
+  if (/old-post|gone/.test(url))
+    return { verdict: "FAIL", coverageState: "Not found (404)", indexingState: "INDEXING_ALLOWED" };
   const n = h(url) % 13;
-  if (n === 0) return { verdict: "NEUTRAL", coverageState: "Crawled - currently not indexed", indexingState: "INDEXING_ALLOWED" };
-  if (n === 1) return { verdict: "NEUTRAL", coverageState: "Discovered - currently not indexed", indexingState: "INDEXING_ALLOWED" };
-  return { verdict: "PASS", coverageState: "Submitted and indexed", indexingState: "INDEXING_ALLOWED" };
+  if (n === 0)
+    return {
+      verdict: "NEUTRAL",
+      coverageState: "Crawled - currently not indexed",
+      indexingState: "INDEXING_ALLOWED",
+    };
+  if (n === 1)
+    return {
+      verdict: "NEUTRAL",
+      coverageState: "Discovered - currently not indexed",
+      indexingState: "INDEXING_ALLOWED",
+    };
+  return {
+    verdict: "PASS",
+    coverageState: "Submitted and indexed",
+    indexingState: "INDEXING_ALLOWED",
+  };
 }
 
 /** Demo Search Console for `origin`: sitemaps, clicks and index states derived from the URL list. */
@@ -23,7 +38,9 @@ export class DemoGscApi implements GscApi {
   ) {}
 
   async listSites() {
-    return [{ siteUrl: `sc-domain:${new URL(this.origin).hostname}`, permissionLevel: "siteOwner" }];
+    return [
+      { siteUrl: `sc-domain:${new URL(this.origin).hostname}`, permissionLevel: "siteOwner" },
+    ];
   }
 
   async searchAnalytics(): Promise<SearchRow[]> {
@@ -31,7 +48,13 @@ export class DemoGscApi implements GscApi {
       .map((page) => {
         const impressions = 200 + (h(`i${page}`) % 4800);
         const clicks = Math.round(impressions * ((h(`c${page}`) % 60) / 1000));
-        return { page, clicks, impressions, ctr: impressions ? clicks / impressions : 0, position: 3 + (h(`p${page}`) % 250) / 10 };
+        return {
+          page,
+          clicks,
+          impressions,
+          ctr: impressions ? clicks / impressions : 0,
+          position: 3 + (h(`p${page}`) % 250) / 10,
+        };
       })
       .sort((a, b) => b.clicks - a.clicks || a.page.localeCompare(b.page));
   }
@@ -53,7 +76,14 @@ export class DemoGscApi implements GscApi {
 
   async inspect(_siteUrl: string, url: string): Promise<Inspection> {
     const c = coverageFor(url);
-    return { url, ...c, robotsTxtState: "ALLOWED", lastCrawlTime: "2026-09-20T03:00:00Z", googleCanonical: url, raw: { demo: true, ...c } };
+    return {
+      url,
+      ...c,
+      robotsTxtState: "ALLOWED",
+      lastCrawlTime: "2026-09-20T03:00:00Z",
+      googleCanonical: url,
+      raw: { demo: true, ...c },
+    };
   }
 }
 

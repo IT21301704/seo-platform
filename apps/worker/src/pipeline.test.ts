@@ -2,6 +2,7 @@
 import { randomBytes } from "node:crypto";
 import { PlaywrightRenderer } from "@seo/crawler/playwright";
 import { createPrismaClient, forOrganization } from "@seo/db";
+import { RULESET_VERSION } from "@seo/shared";
 import type { PrismaClient } from "@seo/db";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createCrawl } from "./crawls";
@@ -92,7 +93,7 @@ describe.skipIf(!available)("audit pipeline (Postgres)", () => {
     expect(crawl).toMatchObject({
       status: "completed",
       healthScore: 100,
-      rulesetVersion: "1.0.0",
+      rulesetVersion: RULESET_VERSION,
       llmModelId: "template",
     });
     expect(crawl.snapshotSetHash).toMatch(/^[a-f0-9]{64}$/);

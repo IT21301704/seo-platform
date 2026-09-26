@@ -15,7 +15,10 @@ export const SMP_003 = defineRule(
     effort: 1,
     explanation: {
       why: "Submitting the sitemap in Search Console lets Google report how many of its URLs it could read and index, and speeds up discovery.",
-      fix: ["Submit the sitemap in Search Console (Indexing → Sitemaps).", "Auto-fix will submit it through the API once approvals arrive (Phase 3)."],
+      fix: [
+        "Submit the sitemap in Search Console (Indexing → Sitemaps).",
+        "Auto-fix will submit it through the API once approvals arrive (Phase 3).",
+      ],
     },
   },
   (site) => {

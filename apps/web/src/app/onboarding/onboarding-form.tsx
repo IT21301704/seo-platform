@@ -109,7 +109,7 @@ export function OnboardingForm({ token }: { token: string }) {
     });
 
   return (
-    <form action={createAction} className="flex flex-col gap-5" encType="multipart/form-data">
+    <form action={createAction} className="flex flex-col gap-5">
       <input type="hidden" name="inputType" value={inputType} />
       <input type="hidden" name="verificationToken" value={token} />
       <input type="hidden" name="searchEngine" value="google" />
@@ -281,14 +281,19 @@ export function OnboardingForm({ token }: { token: string }) {
                 type="button"
                 disabled
                 className="h-10 rounded-lg border border-[#CFCFC8] bg-white px-4 text-sm font-semibold opacity-60"
-                title={phase === "After setup" ? "Connect from Sitemap check or Monitoring once the audit has started" : `Available in ${phase}`}
+                title={
+                  phase === "After setup"
+                    ? "Connect from Sitemap check or Monitoring once the audit has started"
+                    : `Available in ${phase}`
+                }
               >
                 {phase}
               </button>
             </div>
           ))}
           <p className="m-0 text-xs text-muted">
-            Google accounts are connected from the Sitemap check or Monitoring screen after this form, with read-only access.
+            Google accounts are connected from the Sitemap check or Monitoring screen after this
+            form, with read-only access.
           </p>
         </section>
 

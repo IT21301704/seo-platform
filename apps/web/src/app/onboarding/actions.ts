@@ -160,7 +160,10 @@ export async function createProjectAndAudit(
     ? await db.project.update({ where: { id: existing.id }, data })
     : await db.project.create({
         // The schedule runs in the site owner's local time; editable on the Monitoring screen.
-        data: { ...data, timezone: COUNTRY_TIMEZONE[input.country] ?? "UTC" } as Prisma.ProjectUncheckedCreateInput,
+        data: {
+          ...data,
+          timezone: COUNTRY_TIMEZONE[input.country] ?? "UTC",
+        } as Prisma.ProjectUncheckedCreateInput,
       });
   await logAction(db, user, {
     action: existing ? "project.update" : "project.create",
