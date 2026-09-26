@@ -7,6 +7,7 @@ import { parseSitemap } from "./sitemap";
 import type { ParsedSitemap, SitemapEntry } from "./sitemap";
 import type {
   CrawlSnapshot,
+  GscExternal,
   PageRecord,
   PerformanceData,
   ResourceRecord,
@@ -63,6 +64,9 @@ export interface SiteFacts {
   externalLinks: Map<string, ResourceRecord>;
   probes: CrawlSnapshot["probes"];
   performance: PerformanceData;
+  /** Search Console snapshot (null when not connected). */
+  gsc: GscExternal | null;
+  gscInspections: Map<string, GscExternal["inspections"][number]>;
   /** Home, header-nav pages, and pages linked from the main content of those pages. */
   importantUrls: string[];
   isAllowedForGooglebot(url: string): boolean;
@@ -121,6 +125,8 @@ export function buildSiteFacts(
     externalLinks: new Map(snapshot.externalLinks.map((r) => [r.url, r])),
     probes: snapshot.probes,
     performance: snapshot.performance,
+    gsc: snapshot.external?.gsc ?? null,
+    gscInspections: new Map((snapshot.external?.gsc?.inspections ?? []).map((i) => [i.url, i])),
     importantUrls: importantUrls(pageByUrl, snapshot.rootUrl, snapshot.origin),
     isAllowedForGooglebot,
   };

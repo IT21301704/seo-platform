@@ -101,6 +101,28 @@ export interface TextResource {
   error: string | null;
 }
 
+/** Search Console data as of a dated snapshot (REQUIREMENTS B2: external data is snapshotted). */
+export interface GscExternal {
+  snapshotId: string;
+  siteUrl: string;
+  /** Last day of the GSC data range. */
+  dataDate: string;
+  fetchedAt: string;
+  sitemaps: {
+    path: string;
+    errors: number;
+    warnings: number;
+    isSitemapsIndex: boolean;
+    lastDownloaded: string | null;
+  }[];
+  /** Latest URL Inspection per URL, sorted by URL. */
+  inspections: { url: string; verdict: string; coverageState: string; inspectedAt: string }[];
+}
+
+export interface ExternalData {
+  gsc: GscExternal | null;
+}
+
 export interface CrawlSnapshot {
   crawlerVersion: string;
   inputType: InputType;
@@ -123,6 +145,8 @@ export interface CrawlSnapshot {
   externalLinks: ResourceRecord[];
   probes: { notFound: ResourceRecord | null; alternateOrigins: ResourceRecord[] };
   performance: PerformanceData;
+  /** Dated third-party data the rules may read (never fetched by rules themselves). */
+  external: ExternalData;
 }
 
 // ─── Progress ───────────────────────────────────────────────────────────────

@@ -161,7 +161,7 @@ describe("URL Inspection quota", () => {
   });
 
   it("uses a 28-day search analytics window ending 3 days ago", () => {
-    expect(gscRange(now)).toEqual({ startDate: "2026-08-25", endDate: "2026-09-21" });
+    expect(gscRange(now)).toEqual({ startDate: "2026-08-26", endDate: "2026-09-22" });
   });
 });
 

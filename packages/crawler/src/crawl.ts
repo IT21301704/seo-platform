@@ -148,6 +148,7 @@ export async function crawlSite(options: CrawlOptions): Promise<CrawlSnapshot> {
     externalLinks,
     probes: { notFound, alternateOrigins },
     performance: { source: "none", pages: [], note: "Performance not measured yet" },
+    external: { gsc: null },
   };
 }
 
