@@ -12,7 +12,7 @@ test.describe("Phase 1 MVP audit flow", () => {
     const project = await signIn(page);
     await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
     await expect(page.getByRole("img", { name: /Health score \d+ out of 100/ })).toBeVisible();
-    await expect(page.getByText(/Ruleset v1\.0\.0 · Weights v1/)).toBeVisible();
+    await expect(page.getByText(/Ruleset v1\.1\.0 · Weights v1/)).toBeVisible();
     await expect(page.getByText(/we never guarantee them/)).toBeVisible();
     await expect(page.getByRole("link", { name: "Issue manager", exact: true })).toHaveAttribute(
       "href",
