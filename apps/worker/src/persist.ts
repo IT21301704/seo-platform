@@ -1,9 +1,10 @@
 import type { SiteFacts } from "@seo/crawler";
-import type { Prisma, PrismaClient, ScopedPrisma } from "@seo/db";
+import type { IssueSource, Prisma, PrismaClient, ScopedPrisma } from "@seo/db";
 import { RULES } from "@seo/rules";
 import type { AuditReport } from "@seo/scoring";
 import { RULESET_VERSION, SCORED_CATEGORIES } from "@seo/shared";
 import { syncIssues } from "./issues";
+import type { SyncResult } from "./issues";
 
 const MAX_LINKS_PER_PAGE = 500;
 
@@ -35,12 +36,14 @@ export interface PersistArgs {
   reportHash: string;
   snapshotPaths: Map<string, string>;
   now: Date;
+  /** Issue manager source: site_audit (manual/API) or monitoring (scheduled). */
+  source: IssueSource;
 }
 
 /** Writes pages, facts, links, check results, scores, the report and issues for one crawl. */
-export async function persistAudit(db: ScopedPrisma, args: PersistArgs): Promise<void> {
+export async function persistAudit(db: ScopedPrisma, args: PersistArgs): Promise<SyncResult> {
   const { crawlId, site, report } = args;
-  await db.$transaction(
+  return db.$transaction(
     async (tx) => {
       // Idempotent: a retried job replaces its own rows.
       await tx.checkResult.deleteMany({ where: { crawlId } });
@@ -139,7 +142,7 @@ export async function persistAudit(db: ScopedPrisma, args: PersistArgs): Promise
         } as Prisma.ReportUncheckedCreateInput,
       });
 
-      await syncIssues(tx, { projectId: args.projectId, crawlId, report, now: args.now });
+      return syncIssues(tx, { projectId: args.projectId, crawlId, report, now: args.now, source: args.source });
     },
     { timeout: 120_000, maxWait: 30_000 },
   );
