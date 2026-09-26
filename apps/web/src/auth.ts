@@ -1,4 +1,4 @@
-import { randomBytes } from "node:crypto";
+import { createHash } from "node:crypto";
 import NextAuth from "next-auth";
 import type { Adapter, AdapterUser } from "next-auth/adapters";
 import Credentials from "next-auth/providers/credentials";
@@ -14,7 +14,13 @@ declare module "next-auth" {
   }
 }
 
-const toAdapterUser = (u: { id: string; email: string; name: string | null; image: string | null; emailVerified: Date | null }): AdapterUser => ({
+const toAdapterUser = (u: {
+  id: string;
+  email: string;
+  name: string | null;
+  image: string | null;
+  emailVerified: Date | null;
+}): AdapterUser => ({
   id: u.id,
   email: u.email,
   name: u.name,
@@ -29,9 +35,18 @@ const toAdapterUser = (u: { id: string; email: string; name: string | null; imag
 const adapter: Adapter = {
   async createUser(user) {
     const created = await prisma.$transaction(async (tx) => {
-      const org = await tx.organization.create({ data: { name: user.email.split("@")[1] ?? user.email } });
+      const org = await tx.organization.create({
+        data: { name: user.email.split("@")[1] ?? user.email },
+      });
       return tx.user.create({
-        data: { organizationId: org.id, email: user.email.toLowerCase(), name: user.name ?? null, image: user.image ?? null, emailVerified: user.emailVerified, role: "owner" },
+        data: {
+          organizationId: org.id,
+          email: user.email.toLowerCase(),
+          name: user.name ?? null,
+          image: user.image ?? null,
+          emailVerified: user.emailVerified,
+          role: "owner",
+        },
       });
     });
     return toAdapterUser(created);
@@ -54,7 +69,11 @@ const adapter: Adapter = {
   async updateUser(user) {
     const u = await prisma.user.update({
       where: { id: user.id },
-      data: { name: user.name ?? undefined, image: user.image ?? undefined, emailVerified: user.emailVerified ?? undefined },
+      data: {
+        name: user.name ?? undefined,
+        image: user.image ?? undefined,
+        emailVerified: user.emailVerified ?? undefined,
+      },
     });
     return toAdapterUser(u);
   },
@@ -78,7 +97,9 @@ const adapter: Adapter = {
   },
   async useVerificationToken({ identifier, token }) {
     try {
-      return await prisma.verificationToken.delete({ where: { identifier_token: { identifier, token } } });
+      return await prisma.verificationToken.delete({
+        where: { identifier_token: { identifier, token } },
+      });
     } catch {
       return null;
     }
@@ -107,8 +128,11 @@ const emailProvider: EmailConfig = {
   },
 };
 
-export const devLoginEnabled = process.env["AUTH_DEV_LOGIN"] === "true" && process.env.NODE_ENV !== "production";
-export const googleEnabled = Boolean(process.env["GOOGLE_CLIENT_ID"] && process.env["GOOGLE_CLIENT_SECRET"]);
+export const devLoginEnabled =
+  process.env["AUTH_DEV_LOGIN"] === "true" && process.env.NODE_ENV !== "production";
+export const googleEnabled = Boolean(
+  process.env["GOOGLE_CLIENT_ID"] && process.env["GOOGLE_CLIENT_SECRET"],
+);
 
 const providers: Provider[] = [emailProvider];
 if (googleEnabled) providers.push(Google);
@@ -128,12 +152,17 @@ if (devLoginEnabled) {
   );
 }
 
-// Without AUTH_SECRET/NEXTAUTH_SECRET in development, use a per-process random secret
-// (sessions end on restart). Production requires a real secret.
+// Production requires AUTH_SECRET (or NEXTAUTH_SECRET). In development only, fall back to a
+// value derived from the local DATABASE_URL, so every route bundle shares one secret without
+// a secret being committed.
 const secret =
   process.env["AUTH_SECRET"] ||
   process.env["NEXTAUTH_SECRET"] ||
-  (process.env.NODE_ENV === "production" ? undefined : randomBytes(32).toString("hex"));
+  (process.env.NODE_ENV === "production"
+    ? undefined
+    : createHash("sha256")
+        .update(`seo-platform-dev-auth:${process.env["DATABASE_URL"] ?? ""}`)
+        .digest("hex"));
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter,
