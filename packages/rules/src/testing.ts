@@ -1,7 +1,7 @@
 // Test harness: build a tiny site in memory, crawl it with the real crawler, and evaluate a rule.
 // Each rule test defines a passing and a failing mini-site ("pass fixture" / "fail fixture").
 import { MemoryFetcher, buildSiteFacts, crawlSite } from "@seo/crawler";
-import type { OwnerIntent, PerformanceData, SiteFacts } from "@seo/crawler";
+import type { GscExternal, OwnerIntent, PerformanceData, SiteFacts } from "@seo/crawler";
 import type { FixtureServer, InputType } from "@seo/shared";
 import { evaluateRule } from "./engine";
 import type { RuleDefinition, RuleOutcome } from "./types";
@@ -124,6 +124,8 @@ export interface MiniSiteOptions {
   ownerIntent?: OwnerIntent;
   inputType?: InputType;
   performance?: PerformanceData;
+  /** Search Console snapshot the rules see (default: not connected). */
+  gsc?: Partial<GscExternal>;
   pageLimit?: number;
 }
 
@@ -178,6 +180,19 @@ export async function miniSite(options: MiniSiteOptions = {}): Promise<SiteFacts
     crawledAt: server.crawledAt,
     inputType: options.inputType ?? "url",
   });
+  if (options.gsc) {
+    snapshot.external = {
+      gsc: {
+        snapshotId: "gsc_test",
+        siteUrl: "sc-domain:example-store.com",
+        dataDate: "2026-09-22",
+        fetchedAt: CRAWLED_AT,
+        sitemaps: [],
+        inspections: [],
+        ...options.gsc,
+      },
+    };
+  }
   snapshot.performance = options.performance ?? {
     source: "fixture",
     pages: [{ url: `${ORIGIN}/`, ...server.performance, basis: "recorded" }],
