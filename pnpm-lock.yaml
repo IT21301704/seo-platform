@@ -191,6 +191,9 @@ importers:
       '@seo/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@seo/integrations':
+        specifier: workspace:*
+        version: link:../../packages/integrations
       '@seo/llm':
         specifier: workspace:*
         version: link:../../packages/llm
@@ -288,6 +291,9 @@ importers:
       '@seo/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@seo/integrations':
+        specifier: workspace:*
+        version: link:../../packages/integrations
       '@seo/llm':
         specifier: workspace:*
         version: link:../../packages/llm
@@ -306,6 +312,9 @@ importers:
       ioredis:
         specifier: 'catalog:'
         version: 6.0.0
+      nodemailer:
+        specifier: 'catalog:'
+        version: 7.0.13
       yauzl:
         specifier: 'catalog:'
         version: 3.4.0
@@ -313,6 +322,9 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.10.1
+      '@types/nodemailer':
+        specifier: 'catalog:'
+        version: 7.0.12
       '@types/yauzl':
         specifier: 'catalog:'
         version: 3.4.0
