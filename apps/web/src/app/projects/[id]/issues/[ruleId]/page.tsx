@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { ExplanationSchema, TEMPLATE_MODEL_ID, templateExplanation } from "@seo/llm";
 import { RULES_BY_ID } from "@seo/rules";
 import type { JsonValue } from "@seo/shared";
+import { ActionForm } from "@/components/action-form";
+import { IssueHistory } from "@/components/monitoring-charts";
 import { PageBody, PageHeader } from "@/components/page-header";
 import {
   ButtonLink,
@@ -18,8 +20,9 @@ import {
 import { CATEGORY_LABEL, FIX_LABEL } from "@/lib/labels";
 import { PREVIEWABLE } from "@/lib/fixes";
 import { latestCompletedCrawl } from "@/lib/queries";
-import { requireProject, requireUser } from "@/lib/session";
-import { pathOf, plural } from "@/lib/utils";
+import { canEdit, requireProject, requireUser } from "@/lib/session";
+import { formatDateTime, formatNumber, formatShortDate, pathOf, plural } from "@/lib/utils";
+import { addComment } from "../actions";
 
 const PAGE_ROWS = 25;
 
@@ -41,7 +44,7 @@ export default async function IssueDetailPage({
   const { all } = await searchParams;
   const rule = RULES_BY_ID.get(ruleId);
   if (!rule) notFound();
-  const { db } = await requireUser();
+  const { user, db } = await requireUser();
   const project = await requireProject(db, id);
   const latest = await latestCompletedCrawl(db, project.id);
   const ruleReport = latest?.report.rules.find((r) => r.ruleId === rule.id);
@@ -64,6 +67,19 @@ export default async function IssueDetailPage({
   const preview = PREVIEWABLE.has(rule.id) && failing.length > 0;
   const previewHref = `/projects/${project.id}/fixes/preview-${rule.id.toLowerCase()}`;
   const shown = all ? failing : failing.slice(0, PAGE_ROWS);
+
+  const [ga4, recent, comments] = await Promise.all([
+    db.ga4Snapshot.findFirst({ where: { projectId: project.id }, orderBy: { fetchedAt: "desc" } }),
+    db.crawl.findMany({ where: { projectId: project.id, status: "completed" }, orderBy: { createdAt: "desc" }, take: 6, select: { id: true, createdAt: true } }),
+    issue ? db.issueComment.findMany({ where: { issueId: issue.id }, include: { author: { select: { name: true, email: true } } }, orderBy: { createdAt: "asc" } }) : [],
+  ]);
+  // Visits per page from the latest GA4 snapshot (sessions, last 28 days).
+  const visits = new Map(((ga4?.rows ?? []) as { path: string; sessions: number }[]).map((r) => [r.path, r.sessions]));
+  const visitsOf = (url: string | null) => (url ? visits.get(new URL(url).pathname) : undefined);
+  // M11: failing items of this rule per audit.
+  const counts = await db.checkResult.groupBy({ by: ["crawlId"], where: { crawlId: { in: recent.map((c) => c.id) }, ruleId: rule.id, result: "fail" }, _count: { _all: true } });
+  const countByCrawl = new Map(counts.map((c) => [c.crawlId, c._count._all]));
+  const history = [...recent].reverse().map((c) => ({ label: formatShortDate(c.createdAt), count: countByCrawl.get(c.id) ?? 0 }));
 
   return (
     <>
@@ -110,7 +126,7 @@ export default async function IssueDetailPage({
               <Card className="px-2 pb-2 pt-4">
                 <div className="flex items-baseline justify-between px-3">
                   <CardLabel>Affected pages</CardLabel>
-                  <span className="text-xs text-muted">Visits need Google Analytics (Phase 2)</span>
+                  <span className="text-xs text-muted">{ga4 ? `Visits: Google Analytics sessions ${ga4.startDate} to ${ga4.endDate}${ga4.provider === "demo" ? " (demo data)" : ""}` : "Connect Google Analytics to see visits"}</span>
                 </div>
                 <div className="overflow-x-auto">
                   <Table>
@@ -132,7 +148,7 @@ export default async function IssueDetailPage({
                             {evidenceText(o.evidence)}
                           </Td>
                           <Td>
-                            <Mono>—</Mono>
+                            <Mono>{visitsOf(o.url) === undefined ? "—" : formatNumber(visitsOf(o.url) ?? 0)}</Mono>
                           </Td>
                           <Td>
                             <Pill tone="crit">Failing</Pill>
@@ -185,9 +201,41 @@ export default async function IssueDetailPage({
                 )}
               </Card>
             </div>
+
+            <Card id="comments" className="flex flex-col gap-3 p-5">
+              <CardLabel>Comments</CardLabel>
+              {comments.length === 0 ? (
+                <p className="m-0 text-sm text-muted">No comments yet.</p>
+              ) : (
+                <ul className="m-0 flex list-none flex-col gap-3 p-0">
+                  {comments.map((c) => (
+                    <li key={c.id} className="rounded-lg bg-canvas p-3">
+                      <p className="m-0 text-xs text-muted">
+                        <span className="font-semibold text-ink">{c.author.name ?? c.author.email}</span> · {formatDateTime(c.createdAt)}
+                      </p>
+                      <p className="m-0 mt-1 whitespace-pre-wrap text-sm">{c.body}</p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {issue && canEdit(user.role) && (
+                <ActionForm action={addComment.bind(null, project.id, issue.id)} submitLabel="Add comment">
+                  <label className="sr-only" htmlFor="comment-body">
+                    Comment
+                  </label>
+                  <textarea id="comment-body" name="body" rows={3} maxLength={5000} placeholder="Write a comment. Use @name to notify a teammate." className="rounded-lg border border-[#CFCFC8] bg-white p-2 text-sm" />
+                </ActionForm>
+              )}
+            </Card>
           </div>
 
           <div className="flex flex-col gap-5 xl:w-[320px] xl:shrink-0">
+            {history.length > 1 && (
+              <Card className="p-5">
+                <CardLabel>Failing items per audit</CardLabel>
+                <IssueHistory points={history} rule={rule.id} />
+              </Card>
+            )}
             <Card className="p-5">
               <CardLabel>Priority breakdown</CardLabel>
               {ruleReport ? (
