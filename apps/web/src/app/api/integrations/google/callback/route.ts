@@ -27,9 +27,12 @@ export async function GET(request: Request): Promise<Response> {
     return new Response("The connection request expired. Please start again.", { status: 400 });
   }
   const state = url.searchParams.get("state") ?? "";
-  const same = state.length === saved.state.length && timingSafeEqual(Buffer.from(state), Buffer.from(saved.state));
+  const same =
+    state.length === saved.state.length &&
+    timingSafeEqual(Buffer.from(state), Buffer.from(saved.state));
   const client = oauthClient();
-  if (!same || !client || !isGoogleType(saved.type)) return new Response("Invalid OAuth state", { status: 400 });
+  if (!same || !client || !isGoogleType(saved.type))
+    return new Response("Invalid OAuth state", { status: 400 });
   const back = `${appUrl()}/projects/${saved.projectId}/${saved.back === "monitoring" ? "monitoring" : "sitemap"}`;
   const code = url.searchParams.get("code");
   if (!code) return Response.redirect(`${back}?google=denied`, 302);
@@ -53,9 +56,26 @@ export async function GET(request: Request): Promise<Response> {
   };
   await db.integration.upsert({
     where: { projectId_type: { projectId: project.id, type: saved.type } },
-    create: { organizationId: user.organizationId, projectId: project.id, type: saved.type, ...data } as Prisma.IntegrationUncheckedCreateInput,
+    create: {
+      organizationId: user.organizationId,
+      projectId: project.id,
+      type: saved.type,
+      ...data,
+    } as Prisma.IntegrationUncheckedCreateInput,
     update: data,
   });
-  await db.auditLog.create({ data: { organizationId: user.organizationId, actorId: user.id, action: `integration.${saved.type}.authorize`, entityType: "project", entityId: project.id, source: "user" } });
-  return Response.redirect(`${appUrl()}/projects/${project.id}/connect/${saved.type}?back=${saved.back}`, 302);
+  await db.auditLog.create({
+    data: {
+      organizationId: user.organizationId,
+      actorId: user.id,
+      action: `integration.${saved.type}.authorize`,
+      entityType: "project",
+      entityId: project.id,
+      source: "user",
+    },
+  });
+  return Response.redirect(
+    `${appUrl()}/projects/${project.id}/connect/${saved.type}?back=${saved.back}`,
+    302,
+  );
 }
