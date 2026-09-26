@@ -37,7 +37,7 @@ describe("rule registry", () => {
       )) {
         const [prefix, num] = file.split("-");
         // A test file covers every ID listed at the start of its name,
-        // e.g. "prf-001-003-web-vitals.test.ts" or "smp-003-013-014-search-console.test.ts".
+        // e.g. "prf-001-002-003-web-vitals.test.ts" or "smp-003-013-014-search-console.test.ts".
         const tested = files.some((f) => {
           const ids = /^([a-z]+)-((?:\d{3}-)+)/.exec(f);
           return f.endsWith(".test.ts") && ids?.[1] === prefix && ids[2]?.split("-").includes(num ?? "");
