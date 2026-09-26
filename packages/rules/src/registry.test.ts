@@ -35,18 +35,14 @@ describe("rule registry", () => {
       for (const file of files.filter(
         (f) => /^[a-z]+-\d{3}-.+\.ts$/.test(f) && !f.endsWith(".test.ts"),
       )) {
-        const id = file.slice(0, file.indexOf("-", file.indexOf("-") + 1));
-        const tested = files.some(
-          (f) =>
-            f.endsWith(".test.ts") && (f.startsWith(file.replace(".ts", "")) || f.includes(id)),
-        );
-        const sharedTest = files.some(
-          (f) =>
-            f.endsWith(".test.ts") &&
-            f.startsWith(`${id.split("-")[0]}-`) &&
-            f.includes("web-vitals"),
-        );
-        expect(tested || sharedTest, `${category}/${file}`).toBe(true);
+        const [prefix, num] = file.split("-");
+        // A test file covers every ID listed at the start of its name,
+        // e.g. "prf-001-003-web-vitals.test.ts" or "smp-003-013-014-search-console.test.ts".
+        const tested = files.some((f) => {
+          const ids = /^([a-z]+)-((?:\d{3}-)+)/.exec(f);
+          return f.endsWith(".test.ts") && ids?.[1] === prefix && ids[2]?.split("-").includes(num ?? "");
+        });
+        expect(tested, `${category}/${file}`).toBe(true);
       }
     }
   });
