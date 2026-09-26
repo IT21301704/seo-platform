@@ -1,6 +1,6 @@
 {
   "fixture": "broken-schema",
-  "rulesetVersion": "1.0.0",
+  "rulesetVersion": "1.1.0",
   "description": "Structured-data faults: invalid JSON-LD syntax, a Product without offers, and FAQ markup that does not match the visible answers.",
   "changedFiles": [
     "faq/index.html",

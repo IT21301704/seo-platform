@@ -1,6 +1,6 @@
 {
   "fixture": "broken-onpage",
-  "rulesetVersion": "1.0.0",
+  "rulesetVersion": "1.1.0",
   "description": "On-page faults: a missing meta description, a duplicate title, two H1s and an image without alt text.",
   "changedFiles": [
     "about/index.html",

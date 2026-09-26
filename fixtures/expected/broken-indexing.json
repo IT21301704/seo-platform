@@ -1,6 +1,6 @@
 {
   "fixture": "broken-indexing",
-  "rulesetVersion": "1.0.0",
+  "rulesetVersion": "1.1.0",
   "description": "Indexing faults: an important page set to noindex, a canonical pointing to a 404, and a missing canonical.",
   "changedFiles": [
     "about/index.html",

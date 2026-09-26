@@ -1,6 +1,6 @@
 {
   "fixture": "broken-links",
-  "rulesetVersion": "1.0.0",
+  "rulesetVersion": "1.1.0",
   "description": "Link faults: a broken internal link, an orphan page, and a two-hop redirect chain linked from the home page.",
   "changedFiles": [
     "_fixture.json",
