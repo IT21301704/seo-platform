@@ -15,6 +15,7 @@ const config: NextConfig = {
     "@seo/crawler",
     "@seo/rules",
     "@seo/scoring",
+    "@seo/integrations",
     "@seo/llm",
     "@seo/worker",
   ],
