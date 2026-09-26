@@ -54,6 +54,7 @@ import { SD_008 } from "../schema/sd-008-article";
 import { SD_009 } from "../schema/sd-009-service";
 import { SMP_001 } from "../sitemap/smp-001-sitemap-exists";
 import { SMP_002 } from "../sitemap/smp-002-listed-in-robots";
+import { SMP_003 } from "../sitemap/smp-003-submitted-in-gsc";
 import { SMP_004 } from "../sitemap/smp-004-valid-xml";
 import { SMP_005 } from "../sitemap/smp-005-size-limits";
 import { SMP_006 } from "../sitemap/smp-006-absolute-urls";
@@ -63,6 +64,8 @@ import { SMP_009 } from "../sitemap/smp-009-no-robots-blocked";
 import { SMP_010 } from "../sitemap/smp-010-canonical-only";
 import { SMP_011 } from "../sitemap/smp-011-lastmod";
 import { SMP_012 } from "../sitemap/smp-012-missing-from-sitemap";
+import { SMP_013 } from "../sitemap/smp-013-gsc-errors";
+import { SMP_014 } from "../sitemap/smp-014-listed-not-indexed";
 import { SMP_015 } from "../sitemap/smp-015-sitemap-hreflang";
 import { SMP_016 } from "../sitemap/smp-016-image-video-entries";
 import { TEC_001 } from "../technical/tec-001-robots-valid";
@@ -132,6 +135,7 @@ export const RULES: readonly RuleDefinition[] = [
   SD_009,
   SMP_001,
   SMP_002,
+  SMP_003,
   SMP_004,
   SMP_005,
   SMP_006,
@@ -141,6 +145,8 @@ export const RULES: readonly RuleDefinition[] = [
   SMP_010,
   SMP_011,
   SMP_012,
+  SMP_013,
+  SMP_014,
   SMP_015,
   SMP_016,
   TEC_001,

@@ -7,7 +7,7 @@
  * Bump PROMPT_VERSION whenever an LLM prompt or output schema changes.
  */
 export const CRAWLER_VERSION = "1.0.0";
-export const RULESET_VERSION = "1.0.0";
+export const RULESET_VERSION = "1.1.0";
 export const WEIGHTS_VERSION = "v1";
 export const PROMPT_VERSION = "v1.0";
 
