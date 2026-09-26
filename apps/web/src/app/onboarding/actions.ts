@@ -12,6 +12,7 @@ import type { Detection, Fetcher, VerificationMethod } from "@seo/crawler";
 import type { Prisma } from "@seo/db";
 import { createCrawl } from "@seo/worker/crawls";
 import { enqueueAudit } from "@seo/worker/queue";
+import { COUNTRY_TIMEZONE } from "@seo/worker/schedule";
 import { S3BlobStore, uploadKey } from "@seo/worker/storage";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -157,7 +158,10 @@ export async function createProjectAndAudit(
   const existing = await db.project.findFirst({ where: { rootUrl } });
   const project = existing
     ? await db.project.update({ where: { id: existing.id }, data })
-    : await db.project.create({ data: data as Prisma.ProjectUncheckedCreateInput });
+    : await db.project.create({
+        // The schedule runs in the site owner's local time; editable on the Monitoring screen.
+        data: { ...data, timezone: COUNTRY_TIMEZONE[input.country] ?? "UTC" } as Prisma.ProjectUncheckedCreateInput,
+      });
   await logAction(db, user, {
     action: existing ? "project.update" : "project.create",
     entityType: "project",

@@ -265,8 +265,8 @@ export function OnboardingForm({ token }: { token: string }) {
             Step 3 · Connect data (optional)
           </h2>
           {[
-            ["Google Search Console", "Indexing status, search queries, links", "Phase 2"],
-            ["Google Analytics 4", "Traffic per page, to rank issue impact", "Phase 2"],
+            ["Google Search Console", "Indexing status, search queries, links", "After setup"],
+            ["Google Analytics 4", "Traffic per page, to rank issue impact", "After setup"],
             ["WordPress plugin", "Lets approved fixes be published", "Phase 3"],
           ].map(([name, desc, phase]) => (
             <div
@@ -281,12 +281,15 @@ export function OnboardingForm({ token }: { token: string }) {
                 type="button"
                 disabled
                 className="h-10 rounded-lg border border-[#CFCFC8] bg-white px-4 text-sm font-semibold opacity-60"
-                title={`Available in ${phase}`}
+                title={phase === "After setup" ? "Connect from Sitemap check or Monitoring once the audit has started" : `Available in ${phase}`}
               >
                 {phase}
               </button>
             </div>
           ))}
+          <p className="m-0 text-xs text-muted">
+            Google accounts are connected from the Sitemap check or Monitoring screen after this form, with read-only access.
+          </p>
         </section>
 
         <section className={card} aria-labelledby="step4">
