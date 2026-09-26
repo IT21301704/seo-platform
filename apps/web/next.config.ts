@@ -9,8 +9,24 @@ if (existsSync(rootEnv)) process.loadEnvFile(rootEnv);
 const config: NextConfig = {
   // Our rules live in the repo-root CLAUDE.md; do not generate app-level agent files.
   agentRules: false,
-  transpilePackages: ["@seo/shared", "@seo/db", "@seo/crawler", "@seo/rules", "@seo/scoring", "@seo/llm", "@seo/worker"],
-  serverExternalPackages: ["playwright", "@prisma/client", "@prisma/adapter-pg", "exceljs", "bullmq", "ioredis", "undici"],
+  transpilePackages: [
+    "@seo/shared",
+    "@seo/db",
+    "@seo/crawler",
+    "@seo/rules",
+    "@seo/scoring",
+    "@seo/llm",
+    "@seo/worker",
+  ],
+  serverExternalPackages: [
+    "playwright",
+    "@prisma/client",
+    "@prisma/adapter-pg",
+    "exceljs",
+    "bullmq",
+    "ioredis",
+    "undici",
+  ],
   experimental: {
     // Code uploads (ZIP) go through a Server Action: 100 MB + multipart overhead.
     serverActions: { bodySizeLimit: "101mb" },
