@@ -126,6 +126,54 @@ enum AiCrawlerIntent {
   block
 }
 
+enum IntegrationType {
+  gsc
+  ga4
+}
+
+/// "demo" serves deterministic sample data (local development with FIXTURE_SITES only).
+enum IntegrationProvider {
+  google
+  demo
+}
+
+enum IntegrationStatus {
+  needs_property
+  connected
+  error
+}
+
+enum CrawlTrigger {
+  manual
+  scheduled
+  api
+}
+
+enum SitemapCheckStatus {
+  queued
+  running
+  completed
+  failed
+}
+
+enum SitemapListType {
+  ok
+  manual_add
+  remove
+}
+
+enum AlertChannelType {
+  email
+  slack
+}
+
+enum AlertRuleType {
+  score_drop
+  new_critical
+  noindex
+  weekly_summary
+}
+
 enum ChangeSource {
   ai
   user
@@ -140,20 +188,39 @@ model Organization {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  users        User[]
-  projects     Project[]
-  crawls       Crawl[]
-  pages        Page[]
-  pageFacts    PageFact[]
-  links        Link[]
-  rules        Rule[]
-  checkResults CheckResult[]
-  scores       Score[]
-  issues       Issue[]
-  issueItems   IssueItem[]
-  llmOutputs   LlmOutput[]
-  auditLogs    AuditLog[]
-  reports      Report[]
+  users             User[]
+  projects          Project[]
+  crawls            Crawl[]
+  pages             Page[]
+  pageFacts         PageFact[]
+  links             Link[]
+  rules             Rule[]
+  checkResults      CheckResult[]
+  scores            Score[]
+  issues            Issue[]
+  issueItems        IssueItem[]
+  llmOutputs        LlmOutput[]
+  auditLogs         AuditLog[]
+  reports           Report[]
+  integrations      Integration[]
+  gscSnapshots      GscSnapshot[]
+  ga4Snapshots      Ga4Snapshot[]
+  cruxSnapshots     CruxSnapshot[]
+  urlInspections    UrlInspection[]
+  usageCounters     UsageCounter[]
+  sitemapChecks     SitemapCheck[]
+  sitemapFiles      SitemapFile[]
+  sitemapUrls       SitemapUrl[]
+  monitoringEvents  MonitoringEvent[]
+  alertChannels     AlertChannel[]
+  alertRules        AlertRule[]
+  alerts            Alert[]
+  apiKeys           ApiKey[]
+  webhooks          Webhook[]
+  webhookDeliveries WebhookDelivery[]
+  issueComments     IssueComment[]
+  notifications     Notification[]
+  savedViews        SavedView[]
 
   @@map("organizations")
 }
@@ -169,11 +236,14 @@ model User {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  organization  Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization  Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   assignedItems IssueItem[]
   auditLogs     AuditLog[]
   accounts      Account[]
   sessions      Session[]
+  comments      IssueComment[]
+  notifications Notification[]
+  savedViews    SavedView[]
 
   @@unique([email])
   @@index([organizationId])
@@ -199,13 +269,29 @@ model Project {
   verificationToken  String
   /// Onboarding detection chips (sitemap, robots.txt, HTTPS, CMS).
   detection          Json               @default("{}")
+  /// IANA time zone for scheduled crawls and the 02:00 Google sync.
+  timezone           String             @default("UTC")
+  /// Next scheduled crawl (null when crawlFrequency is manual).
+  nextCrawlAt        DateTime?
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  crawls       Crawl[]
-  issues       Issue[]
-  issueItems   IssueItem[]
+  organization     Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  crawls           Crawl[]
+  issues           Issue[]
+  issueItems       IssueItem[]
+  integrations     Integration[]
+  gscSnapshots     GscSnapshot[]
+  ga4Snapshots     Ga4Snapshot[]
+  cruxSnapshots    CruxSnapshot[]
+  urlInspections   UrlInspection[]
+  sitemapChecks    SitemapCheck[]
+  monitoringEvents MonitoringEvent[]
+  alertChannels    AlertChannel[]
+  alertRules       AlertRule[]
+  apiKeys          ApiKey[]
+  webhooks         Webhook[]
+  savedViews       SavedView[]
 
   @@unique([organizationId, rootUrl])
   @@map("projects")
@@ -215,11 +301,11 @@ model Project {
 
 /// One audit run. Stores every version needed to reproduce it (CLAUDE.md rule 2).
 model Crawl {
-  id                String      @id @default(cuid())
+  id                String       @id @default(cuid())
   organizationId    String
   projectId         String
   inputType         InputType
-  status            CrawlStatus @default(queued)
+  status            CrawlStatus  @default(queued)
   crawlerVersion    String
   rulesetVersion    String
   weightsVersion    String
@@ -227,11 +313,14 @@ model Crawl {
   llmModelId        String
   /// SHA-256 over sorted page content hashes; null until the crawl finishes.
   snapshotSetHash   String?
-  pagesFound        Int         @default(0)
-  pagesCrawled      Int         @default(0)
-  pagesRendered     Int         @default(0)
+  pagesFound        Int          @default(0)
+  pagesCrawled      Int          @default(0)
+  pagesRendered     Int          @default(0)
   /// Upload key for code audits (deleted after the audit).
   inputRef          String?
+  trigger           CrawlTrigger @default(manual)
+  /// Dated Search Console snapshot the rules saw (null = no GSC data).
+  gscSnapshotId     String?
   healthScore       Int?
   reportHash        String?
   /// Set when an unchanged site reused an earlier report (same snapshot + versions).
@@ -239,7 +328,7 @@ model Crawl {
   error             String?
   startedAt         DateTime?
   finishedAt        DateTime?
-  createdAt         DateTime    @default(now())
+  createdAt         DateTime     @default(now())
 
   organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   project      Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -403,9 +492,10 @@ model Issue {
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
 
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  organization Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
   items        IssueItem[]
+  comments     IssueComment[]
 
   @@unique([projectId, ruleId])
   @@index([organizationId, projectId, priority])
@@ -434,15 +524,19 @@ model IssueItem {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
 
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  issue        Issue        @relation(fields: [issueId], references: [id], onDelete: Cascade)
-  assignee     User?        @relation(fields: [assigneeId], references: [id], onDelete: SetNull)
+  organization Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project        @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  issue        Issue          @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  assignee     User?          @relation(fields: [assigneeId], references: [id], onDelete: SetNull)
+  comments     IssueComment[]
 
   @@unique([projectId, stableKey])
   @@index([organizationId, projectId, status])
   @@index([organizationId, issueId])
   @@index([organizationId, assigneeId])
+  @@index([organizationId, projectId, url])
+  @@index([organizationId, projectId, auditTag])
+  @@index([organizationId, projectId, firstSeen])
   @@map("issue_items")
 }
 
@@ -553,4 +647,408 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
+}
+
+// ─── Google integrations (M9) ───────────────────────────────────────────────
+
+/// OAuth connection to Search Console or GA4. Tokens are AES-256-GCM encrypted (never sent to the browser).
+model Integration {
+  id             String              @id @default(cuid())
+  organizationId String
+  projectId      String
+  type           IntegrationType
+  provider       IntegrationProvider @default(google)
+  status         IntegrationStatus   @default(needs_property)
+  encryptedToken String?
+  scopes         String[]
+  /// GSC property ("sc-domain:example.com" or URL prefix) or GA4 property ("properties/123").
+  externalId     String?
+  externalName   String?
+  connectedById  String?
+  lastSyncAt     DateTime?
+  error          String?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, type])
+  @@index([organizationId, projectId])
+  @@map("integrations")
+}
+
+/// Dated Search Console data (search analytics by page + sitemaps list). Crawls reference it by id.
+model GscSnapshot {
+  id              String              @id @default(cuid())
+  organizationId  String
+  projectId       String
+  provider        IntegrationProvider
+  siteUrl         String
+  /// Last day of the search analytics range (GSC data lags 2-3 days).
+  dataDate        String
+  fetchedAt       DateTime
+  searchAnalytics Json
+  sitemaps        Json
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, projectId, fetchedAt])
+  @@map("gsc_snapshots")
+}
+
+model Ga4Snapshot {
+  id             String              @id @default(cuid())
+  organizationId String
+  projectId      String
+  provider       IntegrationProvider
+  propertyId     String
+  startDate      String
+  endDate        String
+  fetchedAt      DateTime
+  /// [{ path, sessions }]
+  rows           Json
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, projectId, fetchedAt])
+  @@map("ga4_snapshots")
+}
+
+/// CrUX origin-level field data (28-day rolling p75 values and bands).
+model CruxSnapshot {
+  id             String   @id @default(cuid())
+  organizationId String
+  projectId      String
+  origin         String
+  fetchedAt      DateTime
+  metrics        Json
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, projectId, fetchedAt])
+  @@map("crux_snapshots")
+}
+
+/// Latest URL Inspection result per URL (quota: 2,000 per site per day).
+model UrlInspection {
+  id              String    @id @default(cuid())
+  organizationId  String
+  projectId       String
+  url             String
+  inspectedAt     DateTime
+  verdict         String
+  coverageState   String
+  indexingState   String?
+  robotsTxtState  String?
+  lastCrawlTime   DateTime?
+  googleCanonical String?
+  raw             Json
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, url])
+  @@index([organizationId, projectId, inspectedAt])
+  @@map("url_inspections")
+}
+
+/// Per-day usage counters, e.g. "url_inspection:<projectId>" (Google quota day = America/Los_Angeles).
+model UsageCounter {
+  id             String @id @default(cuid())
+  organizationId String
+  key            String
+  day            String
+  count          Int    @default(0)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, key, day])
+  @@map("usage_counters")
+}
+
+// ─── Sitemap Validation (M17) ───────────────────────────────────────────────
+
+model SitemapCheck {
+  /// "smc_..." (shown in the API).
+  id             String             @id
+  organizationId String
+  projectId      String
+  crawlId        String?
+  status         SitemapCheckStatus @default(queued)
+  trigger        CrawlTrigger       @default(manual)
+  crawlerVersion String
+  rulesetVersion String
+  score          Int?
+  sitemapsCount  Int                @default(0)
+  urlsInSitemaps Int                @default(0)
+  /// { critical, high, medium, low }
+  issueCounts    Json               @default("{}")
+  autoFixable    Int                @default(0)
+  manualUrls     Int                @default(0)
+  urlsToRemove   Int                @default(0)
+  /// { inspected, indexed, notIndexed, fetchedAt } or null without GSC.
+  gsc            Json?
+  /// SMP rule results of the check.
+  results        Json               @default("[]")
+  error          String?
+  createdAt      DateTime           @default(now())
+  completedAt    DateTime?
+
+  organization Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  files        SitemapFile[]
+  urls         SitemapUrl[]
+
+  @@index([organizationId, projectId, createdAt])
+  @@map("sitemap_checks")
+}
+
+model SitemapFile {
+  id                String    @id @default(cuid())
+  organizationId    String
+  checkId           String
+  url               String
+  kind              String
+  status            Int?
+  urlCount          Int
+  generator         String
+  discoveredVia     String
+  gscLastDownloaded DateTime?
+  gscErrors         Int?
+  gscWarnings       Int?
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  check        SitemapCheck @relation(fields: [checkId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, checkId])
+  @@map("sitemap_files")
+}
+
+/// Every sitemap URL (ok / remove) and every indexable URL missing from sitemaps (manual_add).
+model SitemapUrl {
+  id               String          @id @default(cuid())
+  organizationId   String
+  checkId          String
+  url              String
+  listType         SitemapListType
+  inSitemap        Boolean
+  sitemapFile      String?
+  status           Int?
+  indexable        Boolean
+  gscState         String?
+  /// Why it is on the list (remove reasons, or why it cannot be added automatically).
+  reason           String?
+  /// crawl / internal_links / gsc
+  foundVia         String?
+  suggestedLastmod String?
+  targetFile       String?
+  /// Owner ticked "added" (manual list); carried over until the URL is in a sitemap.
+  added            Boolean         @default(false)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  check        SitemapCheck @relation(fields: [checkId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, checkId, listType])
+  @@map("sitemap_urls")
+}
+
+// ─── Monitoring & alerts (M10) ──────────────────────────────────────────────
+
+model MonitoringEvent {
+  id             String   @id @default(cuid())
+  organizationId String
+  projectId      String
+  crawlId        String
+  /// score_drop, score_rise, new_critical, became_noindex, new_broken_links, pages_added, pages_removed, healthy
+  type           String
+  /// critical / alert / high / ok / info
+  level          String
+  message        String
+  data           Json     @default("{}")
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, projectId, createdAt])
+  @@map("monitoring_events")
+}
+
+model AlertChannel {
+  id              String           @id @default(cuid())
+  organizationId  String
+  projectId       String
+  type            AlertChannelType
+  enabled         Boolean          @default(true)
+  /// Email addresses (comma-separated) or the Slack channel label shown in the UI.
+  target          String
+  /// Slack incoming-webhook URL, encrypted.
+  encryptedSecret String?
+  createdAt       DateTime         @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, type])
+  @@map("alert_channels")
+}
+
+model AlertRule {
+  id             String        @id @default(cuid())
+  organizationId String
+  projectId      String
+  type           AlertRuleType
+  enabled        Boolean       @default(true)
+  /// Points for score_drop.
+  threshold      Int?
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, type])
+  @@map("alert_rules")
+}
+
+/// Log of alerts sent (or failed) per channel.
+model Alert {
+  id             String           @id @default(cuid())
+  organizationId String
+  projectId      String
+  ruleType       AlertRuleType
+  channel        AlertChannelType
+  status         String
+  message        String
+  error          String?
+  createdAt      DateTime         @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, projectId, createdAt])
+  @@map("alerts")
+}
+
+// ─── Public API (M17) ───────────────────────────────────────────────────────
+
+/// Per-project API key. Only a SHA-256 hash is stored; the key is shown once.
+model ApiKey {
+  id             String    @id @default(cuid())
+  organizationId String
+  projectId      String
+  name           String
+  /// First characters, shown in the UI.
+  prefix         String
+  hashedKey      String    @unique
+  scopes         String[]
+  createdById    String?
+  lastUsedAt     DateTime?
+  revokedAt      DateTime?
+  createdAt      DateTime  @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, projectId])
+  @@map("api_keys")
+}
+
+model Webhook {
+  id              String   @id @default(cuid())
+  organizationId  String
+  projectId       String
+  url             String
+  /// HMAC signing secret, encrypted.
+  encryptedSecret String
+  events          String[]
+  enabled         Boolean  @default(true)
+  createdAt       DateTime @default(now())
+
+  organization Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  deliveries   WebhookDelivery[]
+
+  @@index([organizationId, projectId])
+  @@map("webhooks")
+}
+
+model WebhookDelivery {
+  id             String    @id @default(cuid())
+  organizationId String
+  webhookId      String
+  event          String
+  payload        Json
+  status         String
+  attempts       Int       @default(0)
+  responseStatus Int?
+  lastError      String?
+  deliveredAt    DateTime?
+  createdAt      DateTime  @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  webhook      Webhook      @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, webhookId, createdAt])
+  @@map("webhook_deliveries")
+}
+
+// ─── Issue manager collaboration (M19) ──────────────────────────────────────
+
+model IssueComment {
+  id             String   @id @default(cuid())
+  organizationId String
+  issueId        String
+  itemId         String?
+  authorId       String
+  body           String
+  /// User ids mentioned with @.
+  mentions       String[]
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  issue        Issue        @relation(fields: [issueId], references: [id], onDelete: Cascade)
+  item         IssueItem?   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  author       User         @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, issueId, createdAt])
+  @@map("issue_comments")
+}
+
+model Notification {
+  id             String    @id @default(cuid())
+  organizationId String
+  userId         String
+  /// mention, assigned, regressed, alert
+  type           String
+  title          String
+  body           String
+  link           String?
+  readAt         DateTime?
+  createdAt      DateTime  @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, userId, createdAt])
+  @@map("notifications")
+}
+
+model SavedView {
+  id             String   @id @default(cuid())
+  organizationId String
+  projectId      String
+  userId         String
+  name           String
+  /// Issue manager query string, e.g. "?view=flat&severity=high".
+  query          String
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId, name])
+  @@map("saved_views")
 }
