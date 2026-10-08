@@ -433,9 +433,21 @@ importers:
 
   packages/fixes:
     dependencies:
+      '@seo/crawler':
+        specifier: workspace:*
+        version: link:../crawler
+      '@seo/integrations':
+        specifier: workspace:*
+        version: link:../integrations
+      '@seo/rules':
+        specifier: workspace:*
+        version: link:../rules
       '@seo/shared':
         specifier: workspace:*
         version: link:../shared
+      cheerio:
+        specifier: 'catalog:'
+        version: 1.2.0
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
