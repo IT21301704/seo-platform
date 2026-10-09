@@ -5,11 +5,10 @@ import type { StoredTokens } from "@seo/integrations";
 import { enqueueGoogleSync } from "@seo/worker/queue";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { googleHttp, isGoogleType } from "@/lib/google";
+import { googleHttp, isGoogleType, backPage } from "@/lib/google";
 import { assertCanEdit, logAction, requireProject, requireUser } from "@/lib/session";
 
-const backPath = (projectId: string, back: string) =>
-  `/projects/${projectId}/${back === "monitoring" ? "monitoring" : "sitemap"}`;
+const backPath = (projectId: string, back: string) => `/projects/${projectId}/${backPage(back)}`;
 
 /** Chooses the Search Console property or GA4 property and starts the first sync. */
 export async function selectProperty(

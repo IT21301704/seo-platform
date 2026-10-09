@@ -21,6 +21,30 @@ export function isBlockedAddress(address: string): boolean {
 
 const BLOCKED_HOSTNAMES = new Set(["localhost", "metadata.google.internal", "metadata"]);
 
+/**
+ * Local development only: DEV_ALLOW_PRIVATE_HOSTS="localhost:8088,host.docker.internal:8088"
+ * lets the worker reach the Docker WordPress test site. Always empty in production.
+ */
+export function devAllowedHosts(env: NodeJS.ProcessEnv = process.env): Set<string> {
+  if (env["NODE_ENV"] === "production") return new Set();
+  return new Set(
+    (env["DEV_ALLOW_PRIVATE_HOSTS"] ?? "")
+      .split(",")
+      .map((h) => h.trim().toLowerCase())
+      .filter(Boolean),
+  );
+}
+
+function hostWithPort(url: URL): string {
+  const port = url.port || (url.protocol === "https:" ? "443" : "80");
+  return `${url.hostname.toLowerCase()}:${port}`;
+}
+
+/** True when the dev allow-list covers this URL (exact host and port). */
+export function isDevAllowedUrl(url: URL, env: NodeJS.ProcessEnv = process.env): boolean {
+  return devAllowedHosts(env).has(hostWithPort(url));
+}
+
 /** Throws FetchError("blocked") unless the URL is http(s) to a hostname that may be public. */
 export function assertSafeUrl(rawUrl: string): URL {
   let url: URL;
@@ -35,6 +59,7 @@ export function assertSafeUrl(rawUrl: string): URL {
   if (url.username || url.password) {
     throw new FetchError("blocked", "URLs with credentials are not allowed");
   }
+  if (isDevAllowedUrl(url)) return url;
   const host = url.hostname.replace(/^\[|\]$/g, "").toLowerCase();
   if (BLOCKED_HOSTNAMES.has(host) || host.endsWith(".localhost") || host.endsWith(".internal")) {
     throw new FetchError("blocked", `Blocked host: ${host}`);
@@ -60,9 +85,12 @@ export function guardedLookup(
   options: LookupOptions,
   callback: LookupCallback,
 ): void {
+  // Dev allow-list entries are host:port; at DNS time only the host is known, so any listed
+  // host skips the address check (assertSafeUrl already enforced the port).
+  const devHost = [...devAllowedHosts()].some((h) => h.split(":")[0] === hostname.toLowerCase());
   dnsLookup(hostname, { ...options, all: true }, (err, addresses) => {
     if (err) return callback(err, []);
-    const blocked = addresses.find((a) => isBlockedAddress(a.address));
+    const blocked = devHost ? undefined : addresses.find((a) => isBlockedAddress(a.address));
     if (blocked) {
       const error: NodeJS.ErrnoException = new Error(
         `SSRF guard: ${hostname} resolves to blocked address ${blocked.address}`,

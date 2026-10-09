@@ -4,7 +4,14 @@ import type { Prisma } from "@seo/db";
 import { SCOPES, decryptSecret, encryptSecret, exchangeCode } from "@seo/integrations";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/db";
-import { OAUTH_COOKIE, appUrl, googleHttp, isGoogleType, oauthClient } from "@/lib/google";
+import {
+  OAUTH_COOKIE,
+  appUrl,
+  googleHttp,
+  isGoogleType,
+  oauthClient,
+  backPage,
+} from "@/lib/google";
 
 interface OAuthState {
   state: string;
@@ -33,7 +40,7 @@ export async function GET(request: Request): Promise<Response> {
   const client = oauthClient();
   if (!same || !client || !isGoogleType(saved.type))
     return new Response("Invalid OAuth state", { status: 400 });
-  const back = `${appUrl()}/projects/${saved.projectId}/${saved.back === "monitoring" ? "monitoring" : "sitemap"}`;
+  const back = `${appUrl()}/projects/${saved.projectId}/${backPage(saved.back)}`;
   const code = url.searchParams.get("code");
   if (!code) return Response.redirect(`${back}?google=denied`, 302);
 

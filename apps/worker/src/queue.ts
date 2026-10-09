@@ -7,6 +7,8 @@ export const SITEMAP_QUEUE = "sitemap-checks";
 export const GOOGLE_SYNC_QUEUE = "google-sync";
 export const WEBHOOK_QUEUE = "webhooks";
 export const SCHEDULER_QUEUE = "scheduler";
+export const FIX_QUEUE = "fixes";
+export const KEYWORD_QUEUE = "keywords";
 
 export interface AuditJobData {
   crawlId: string;
@@ -22,6 +24,17 @@ export interface GoogleSyncJobData {
 }
 export interface WebhookJobData {
   deliveryId: string;
+  organizationId: string;
+}
+
+/** Auto-fix jobs: generate a preview, publish approved fixes, verify (retries are delayed jobs). */
+export interface FixJobData {
+  batchId: string;
+  organizationId: string;
+  action: "generate" | "apply" | "verify";
+}
+export interface KeywordJobData {
+  projectId: string;
   organizationId: string;
 }
 
@@ -83,6 +96,36 @@ export async function enqueueWebhookDelivery(data: WebhookJobData): Promise<void
     backoff: { type: "exponential", delay: 60_000 },
     ...keep,
   });
+}
+
+export async function enqueueFixJob(data: FixJobData, delayMs = 0): Promise<void> {
+  await queue<FixJobData>(FIX_QUEUE).add(data.action, data, {
+    attempts: data.action === "verify" ? 2 : 1,
+    backoff: { type: "fixed", delay: 30_000 },
+    ...(delayMs > 0 ? { delay: delayMs } : {}),
+    ...keep,
+  });
+}
+
+/** Keyword analysis (clusters, map, KWD issues) after a Search Console sync or a map edit. */
+export async function enqueueKeywordRefresh(data: KeywordJobData): Promise<void> {
+  await queue<KeywordJobData>(KEYWORD_QUEUE).add("refresh", data, { attempts: 1, ...keep });
+}
+
+/**
+ * A WordPress "page changed" event re-checks the site at most once per 10 minutes per project
+ * (the job id is the time bucket, so repeated events in the bucket are ignored).
+ */
+export async function enqueueContentChangeAudit(
+  projectId: string,
+  bucket: number,
+  createCrawl: () => Promise<AuditJobData>,
+): Promise<boolean> {
+  const q = queue<AuditJobData>(AUDIT_QUEUE);
+  const id = `content-${projectId}-${bucket}`;
+  if (await q.getJob(id)) return false;
+  await q.add("audit", await createCrawl(), { jobId: id, attempts: 1, ...keep });
+  return true;
 }
 
 export async function closeQueues(): Promise<void> {

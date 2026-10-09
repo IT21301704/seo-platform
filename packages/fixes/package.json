@@ -11,7 +11,11 @@
     "test": "vitest run --passWithNoTests"
   },
   "dependencies": {
-    "@seo/shared": "workspace:*"
+    "@seo/crawler": "workspace:*",
+    "@seo/integrations": "workspace:*",
+    "@seo/rules": "workspace:*",
+    "@seo/shared": "workspace:*",
+    "cheerio": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",

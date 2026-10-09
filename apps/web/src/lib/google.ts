@@ -32,4 +32,10 @@ export function googleHttp(): GuardedJsonHttp {
   return http;
 }
 
+/** Where the Google connect flow returns to (an allow-list, never a free URL). */
+export const BACK_PAGES = ["sitemap", "monitoring", "integrations"] as const;
+export type BackPage = (typeof BACK_PAGES)[number];
+export const backPage = (back: string | null | undefined): BackPage =>
+  (BACK_PAGES as readonly string[]).includes(back ?? "") ? (back as BackPage) : "sitemap";
+
 export const OAUTH_COOKIE = "seo_google_oauth";

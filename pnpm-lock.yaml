@@ -191,9 +191,15 @@ importers:
       '@seo/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@seo/fixes':
+        specifier: workspace:*
+        version: link:../../packages/fixes
       '@seo/integrations':
         specifier: workspace:*
         version: link:../../packages/integrations
+      '@seo/keywords':
+        specifier: workspace:*
+        version: link:../../packages/keywords
       '@seo/llm':
         specifier: workspace:*
         version: link:../../packages/llm
@@ -291,9 +297,15 @@ importers:
       '@seo/db':
         specifier: workspace:*
         version: link:../../packages/db
+      '@seo/fixes':
+        specifier: workspace:*
+        version: link:../../packages/fixes
       '@seo/integrations':
         specifier: workspace:*
         version: link:../../packages/integrations
+      '@seo/keywords':
+        specifier: workspace:*
+        version: link:../../packages/keywords
       '@seo/llm':
         specifier: workspace:*
         version: link:../../packages/llm

@@ -1,15 +1,16 @@
 // Sitemap check job (REQUIREMENTS M17): discover → validate → check every listed URL → compare
-// with the crawl → Search Console → issues, lists and a Sitemap score. No auto-fix yet (Phase 3).
+// with the crawl → Search Console → issues, lists and a Sitemap score. Fixes: see fixes.ts.
 import { buildSiteFacts, crawlSite } from "@seo/crawler";
 import type { Prisma, PrismaClient, ScopedPrisma } from "@seo/db";
 import { RULES, runRules } from "@seo/rules";
 import { buildReport } from "@seo/scoring";
-import { CODE_VERSIONS } from "@seo/shared";
+import { CODE_VERSIONS, stableStringify } from "@seo/shared";
 import { gscExternalFor } from "./external";
 import { syncIssues } from "./issues";
 import { sitemapFiles, sitemapSummary, sitemapUrlRows } from "./sitemap-lists";
 import { sourceFor } from "./source";
 import type { SourceDeps } from "./source";
+import { gzip, snapshotKey } from "./storage";
 import { queueWebhookEvent } from "./webhooks";
 
 export const SITEMAP_RULES = RULES.filter((r) => r.category === "sitemap");
@@ -48,6 +49,12 @@ export async function runSitemapCheck(checkId: string, deps: SitemapCheckDeps): 
     });
     const gsc = await gscExternalFor(db, project.id);
     snapshot = { ...snapshot, external: { gsc } };
+    // Kept so sitemap fixes (M17 auto-fix) can be re-checked against exactly what was checked.
+    await deps.blobs.put(
+      snapshotKey(check.organizationId, checkId),
+      gzip(stableStringify(snapshot)),
+      "application/gzip",
+    );
     const site = buildSiteFacts(snapshot, { ownerIntent: { aiCrawlers: project.aiCrawlerIntent } });
     const results = runRules(site, SITEMAP_RULES);
     const report = buildReport({

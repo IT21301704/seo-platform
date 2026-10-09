@@ -21,7 +21,7 @@ services:
   redis:
     image: redis:7-alpine
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT:-6379}:6379"
     volumes:
       - redis-data:/data
     healthcheck:
@@ -74,6 +74,24 @@ services:
     volumes:
       - wordpress-data:/var/www/html
       - ./apps/wp-plugin:/var/www/html/wp-content/plugins/seo-platform:ro
+
+  # WP-CLI for the test site (pnpm wp:setup). Runs as www-data (33) like the Apache image.
+  wpcli:
+    image: wordpress:cli
+    profiles: ["tools"]
+    user: "33:33"
+    depends_on:
+      wordpress-db:
+        condition: service_healthy
+    environment:
+      WORDPRESS_DB_HOST: wordpress-db
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: ${WORDPRESS_DB_PASSWORD:-wp_local_only}
+    volumes:
+      - wordpress-data:/var/www/html
+      - ./apps/wp-plugin:/var/www/html/wp-content/plugins/seo-platform:ro
+      - ./apps/wp-plugin/dev:/dev-content:ro
 
 volumes:
   postgres-data:

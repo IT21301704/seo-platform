@@ -204,6 +204,23 @@ async function crawlPage(fetcher: Fetcher, url: string, via: DiscoveredVia): Pro
   return result;
 }
 
+/**
+ * Re-fetches one URL exactly as a crawl would (used to verify a published fix). Keeps the
+ * original discoveredVia so the patched snapshot stays comparable.
+ */
+export async function refetchPage(
+  fetcher: Fetcher,
+  url: string,
+  via: DiscoveredVia = "link",
+): Promise<PageRecord> {
+  return (await crawlPage(fetcher, url, via)).record;
+}
+
+/** Re-fetches robots.txt (or any text resource) exactly as a crawl would. */
+export async function refetchText(fetcher: Fetcher, url: string): Promise<TextResource> {
+  return fetchText(fetcher, url);
+}
+
 function isHtml(response: FetchResponse): boolean {
   const type = response.headers["content-type"] ?? "";
   return /text\/html|application\/xhtml\+xml/i.test(type);

@@ -10,6 +10,11 @@ export const CRAWLER_VERSION = "1.0.0";
 export const RULESET_VERSION = "1.1.0";
 export const WEIGHTS_VERSION = "v1";
 export const PROMPT_VERSION = "v1.0";
+/**
+ * Version of the Phase 3 drafting prompts (title drafts, keyword clusters, page briefs). Separate
+ * from PROMPT_VERSION, which is stored on reports: these prompts never feed a report.
+ */
+export const DRAFT_PROMPT_VERSION = "draft-v1.0";
 
 /** The full fingerprint saved on every crawl/report. */
 export interface VersionSet {

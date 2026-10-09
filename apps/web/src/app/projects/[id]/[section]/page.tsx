@@ -10,25 +10,10 @@ const SECTIONS: Record<string, { title: string; phase: number; what: string }> =
     phase: 4,
     what: "Ask questions about your audits, with cited checks and data sources.",
   },
-  changes: {
-    title: "Change log",
-    phase: 3,
-    what: "Every published fix with before/after values, verification and rollback.",
-  },
-  keywords: {
-    title: "Keyword research",
-    phase: 3,
-    what: "Keyword ideas, clusters, keyword-to-page map and quick wins.",
-  },
   authority: {
     title: "Authority (off-page)",
     phase: 4,
     what: "Referring domains and profile consistency. Not part of the Health Score.",
-  },
-  integrations: {
-    title: "Integrations",
-    phase: 3,
-    what: "Search Console, GA4, PageSpeed/CrUX and the WordPress plugin.",
   },
   billing: { title: "Plans & billing", phase: 4, what: "Plans, usage meters and invoices." },
 };

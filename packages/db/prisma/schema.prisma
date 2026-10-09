@@ -119,6 +119,8 @@ enum VerificationMethod {
   dns
   meta
   file
+  /// A signed handshake with our WordPress plugin on the site (docs/decisions.md).
+  plugin
 }
 
 enum AiCrawlerIntent {
@@ -129,12 +131,15 @@ enum AiCrawlerIntent {
 enum IntegrationType {
   gsc
   ga4
+  wordpress
 }
 
 /// "demo" serves deterministic sample data (local development with FIXTURE_SITES only).
 enum IntegrationProvider {
   google
   demo
+  /// Our WordPress companion plugin (apps/wp-plugin).
+  plugin
 }
 
 enum IntegrationStatus {
@@ -172,6 +177,38 @@ enum AlertRuleType {
   new_critical
   noindex
   weekly_summary
+}
+
+/// Auto-fix batch lifecycle (M12, M14).
+enum FixBatchState {
+  generating
+  preview
+  publishing
+  verifying
+  /// Verification failed once; retried after 5 min, 30 min and 24 h (CDN caches).
+  rechecking
+  verified
+  /// Some fixes never verified and were rolled back automatically.
+  verify_failed
+  rolled_back
+  failed
+}
+
+enum FixState {
+  draft
+  applied
+  verified
+  verify_failed
+  rolled_back
+  skipped
+  failed
+}
+
+/// Where approved fixes are published.
+enum FixTarget {
+  wordpress
+  /// No integration: the owner downloads the approved values and applies them.
+  manual
 }
 
 enum ChangeSource {
@@ -221,6 +258,10 @@ model Organization {
   issueComments     IssueComment[]
   notifications     Notification[]
   savedViews        SavedView[]
+  fixBatches        FixBatch[]
+  fixes             Fix[]
+  keywordSnapshots  KeywordSnapshot[]
+  keywordPageMaps   KeywordPageMap[]
 
   @@map("organizations")
 }
@@ -292,6 +333,10 @@ model Project {
   apiKeys          ApiKey[]
   webhooks         Webhook[]
   savedViews       SavedView[]
+  fixBatches       FixBatch[]
+  fixes            Fix[]
+  keywordSnapshots KeywordSnapshot[]
+  keywordPageMaps  KeywordPageMap[]
 
   @@unique([organizationId, rootUrl])
   @@map("projects")
@@ -651,7 +696,8 @@ model VerificationToken {
 
 // ─── Google integrations (M9) ───────────────────────────────────────────────
 
-/// OAuth connection to Search Console or GA4. Tokens are AES-256-GCM encrypted (never sent to the browser).
+/// OAuth connection to Search Console or GA4, or the WordPress plugin connection.
+/// Tokens and signing secrets are AES-256-GCM encrypted (never sent to the browser).
 model Integration {
   id             String              @id @default(cuid())
   organizationId String
@@ -667,6 +713,8 @@ model Integration {
   connectedById  String?
   lastSyncAt     DateTime?
   error          String?
+  /// WordPress: { pluginVersion, wpVersion, seoPlugin, seoPluginVersion, physicalRobotsTxt, sitemap }.
+  details        Json                @default("{}")
   createdAt      DateTime            @default(now())
   updatedAt      DateTime            @updatedAt
 
@@ -1051,4 +1099,141 @@ model SavedView {
 
   @@unique([projectId, userId, name])
   @@map("saved_views")
+}
+
+// ─── Auto-fix, verification, rollback (M12, M14) ────────────────────────────
+
+/// One reviewable set of changes for one rule ("batch #B-0142").
+model FixBatch {
+  id             String        @id @default(cuid())
+  organizationId String
+  projectId      String
+  /// Per-project sequence number, shown as B-0001.
+  number         Int
+  ruleId         String
+  /// Fix kind from @seo/fixes (meta_description, title, image_alt, noindex, ...).
+  kind           String
+  risk           RiskLevel
+  /// ai = values drafted by the LLM; user = deterministic or typed values.
+  source         ChangeSource
+  target         FixTarget
+  /// e.g. "WordPress · Yoast SEO description field".
+  targetDetail   String
+  state          FixBatchState @default(generating)
+  crawlId        String?
+  sitemapCheckId String?
+  modelId        String?
+  promptVersion  String?
+  createdById    String?
+  approvedById   String?
+  approvedAt     DateTime?
+  publishedAt    DateTime?
+  verifiedAt     DateTime?
+  rolledBackAt   DateTime?
+  rolledBackById String?
+  /// Verification attempts so far and the next retry (5 min, 30 min, 24 h).
+  verifyAttempts Int           @default(0)
+  nextVerifyAt   DateTime?
+  error          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  fixes        Fix[]
+
+  @@unique([projectId, number])
+  @@index([organizationId, projectId, createdAt])
+  @@map("fix_batches")
+}
+
+/// One change: rule × page × field. The old value is stored before anything is published.
+model Fix {
+  id             String    @id @default(cuid())
+  organizationId String
+  projectId      String
+  batchId        String
+  ruleId         String
+  url            String
+  kind           String
+  /// Where the value lives on the site, e.g. { "src": ".../mug.jpg" } for alt text.
+  targetRef      Json      @default("{}")
+  /// Value seen in the audit when the preview was made.
+  currentValue   Json?
+  /// Generator output (AI draft or deterministic value).
+  suggestedValue Json?
+  /// Value that will be published: the suggestion or the user's edit.
+  newValue       Json?
+  /// Value read from the site immediately before publishing; rollback restores it.
+  oldValue       Json?
+  /// Old value was read (distinguishes "not set" from "not read yet").
+  oldValueRead   Boolean   @default(false)
+  edited         Boolean   @default(false)
+  /// Rule-engine re-check of newValue: "pass" or the failure reason.
+  recheck        String
+  recheckDetail  String?
+  approved       Boolean   @default(false)
+  state          FixState  @default(draft)
+  appliedAt      DateTime?
+  verifiedAt     DateTime?
+  rolledBackAt   DateTime?
+  /// { before, after, observed, attempts, checkedAt }
+  verification   Json?
+  error          String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  batch        FixBatch     @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, batchId])
+  @@index([organizationId, projectId, url])
+  @@map("fixes")
+}
+
+// ─── Keyword research (M18) ─────────────────────────────────────────────────
+
+/// Dated Search Console query data (query × page × country) plus the clusters built from it.
+model KeywordSnapshot {
+  id             String              @id @default(cuid())
+  organizationId String
+  projectId      String
+  provider       IntegrationProvider
+  siteUrl        String
+  startDate      String
+  endDate        String
+  fetchedAt      DateTime
+  /// [{ query, page, country, clicks, impressions, position }] sorted.
+  rows           Json
+  /// { modelId, promptVersion, clusters: [{ name, keywords }] } or null until clustered.
+  clusters       Json?
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, projectId, fetchedAt])
+  @@map("keyword_snapshots")
+}
+
+/// Keyword-to-page map: one primary and any number of secondary keywords per page.
+model KeywordPageMap {
+  id             String   @id @default(cuid())
+  organizationId String
+  projectId      String
+  url            String
+  keyword        String
+  /// primary | secondary
+  role           String
+  /// auto (from Search Console clicks) | user
+  source         String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, url, keyword])
+  @@index([organizationId, projectId, keyword])
+  @@map("keyword_page_map")
 }

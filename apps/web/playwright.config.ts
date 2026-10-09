@@ -25,12 +25,12 @@ export default defineConfig({
     {
       name: "seeded",
       use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 900 } },
-      testMatch: /phase2\.spec\.ts/,
+      testMatch: /phase[23]\.spec\.ts/,
     },
     {
       name: "desktop",
       use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 900 } },
-      testIgnore: /(responsive|phase2)\.spec\.ts/,
+      testIgnore: /(responsive|phase[23])\.spec\.ts/,
       dependencies: ["seeded"],
     },
     { name: "mobile", use: { ...devices["Pixel 7"] }, testMatch: /responsive\.spec\.ts/ },

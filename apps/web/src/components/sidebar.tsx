@@ -16,9 +16,12 @@ export function Sidebar({
   projectName,
   user,
   notifications,
+  projects = [],
 }: {
   groups: NavGroup[];
   projectName: string | null;
+  /** Other projects of the organization (project switcher). */
+  projects?: { href: string; name: string }[];
   user: { name: string; role: string };
   /** Link to the notifications page and the unread count. */
   notifications?: { href: string; unread: number };
@@ -71,10 +74,40 @@ export function Sidebar({
           <span className="text-base font-bold">SEO Platform</span>
         </div>
         {projectName && (
-          <div className="flex flex-col gap-0.5 rounded-lg bg-sidebar-card px-3 py-2.5">
-            <span className="text-[11px] uppercase tracking-[0.06em] text-[#A3A7AD]">Project</span>
-            <span className="text-sm font-semibold">{projectName}</span>
-          </div>
+          <details className="group rounded-lg bg-sidebar-card px-3 py-2.5">
+            <summary
+              className="flex cursor-pointer list-none flex-col gap-0.5"
+              aria-label={`Project ${projectName}, switch project`}
+            >
+              <span className="text-[11px] uppercase tracking-[0.06em] text-[#A3A7AD]">
+                Project
+              </span>
+              <span className="text-sm font-semibold">{projectName}</span>
+            </summary>
+            <ul
+              className="m-0 mt-2 flex list-none flex-col gap-1 border-t border-white/10 p-0 pt-2"
+              aria-label="Switch project"
+            >
+              {projects.map((p) => (
+                <li key={p.href}>
+                  <Link
+                    href={p.href}
+                    className="block rounded px-1 py-1 text-sm text-[#E8E8E3] no-underline hover:bg-white/10 hover:text-white"
+                  >
+                    {p.name}
+                  </Link>
+                </li>
+              ))}
+              <li>
+                <Link
+                  href="/onboarding"
+                  className="block rounded px-1 py-1 text-sm text-[#A3A7AD] no-underline hover:text-white"
+                >
+                  + Add website
+                </Link>
+              </li>
+            </ul>
+          </details>
         )}
         <div className="flex flex-col gap-4">
           {groups.map((group) => (

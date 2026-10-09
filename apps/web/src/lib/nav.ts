@@ -28,13 +28,13 @@ export function projectNav(projectId: string): NavGroup[] {
       items: [
         { label: "Auto-fix review", href: `${p}/fixes` },
         { label: "Sitemap URL lists", href: `${p}/sitemap/urls` },
-        { label: "Change log", href: `${p}/changes`, phase: 3 },
+        { label: "Change log", href: `${p}/changes` },
       ],
     },
     {
       label: "Grow",
       items: [
-        { label: "Keyword research", href: `${p}/keywords`, phase: 3 },
+        { label: "Keyword research", href: `${p}/keywords` },
         { label: "Monitoring", href: `${p}/monitoring` },
         { label: "Authority (off-page)", href: `${p}/authority`, phase: 4 },
       ],
@@ -42,7 +42,7 @@ export function projectNav(projectId: string): NavGroup[] {
     {
       label: "Settings",
       items: [
-        { label: "Integrations", href: `${p}/integrations`, phase: 3 },
+        { label: "Integrations", href: `${p}/integrations` },
         { label: "API & webhooks", href: `${p}/api` },
         { label: "Plans & billing", href: `${p}/billing`, phase: 4 },
         { label: "Add website", href: "/onboarding" },

@@ -18,14 +18,18 @@
     "./google-sync": "./src/google-sync.ts",
     "./google": "./src/google.ts",
     "./monitoring": "./src/monitoring.ts",
-    "./scheduler": "./src/scheduler.ts"
+    "./scheduler": "./src/scheduler.ts",
+    "./fixes": "./src/fixes.ts",
+    "./wordpress": "./src/wordpress.ts",
+    "./keywords": "./src/keywords.ts"
   },
   "scripts": {
     "dev": "tsx watch src/main.ts",
     "start": "tsx src/main.ts",
     "seed": "tsx src/seed.ts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "wp:setup": "tsx src/wp-setup.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "catalog:",
@@ -39,7 +43,9 @@
     "ioredis": "catalog:",
     "yauzl": "catalog:",
     "@seo/integrations": "workspace:*",
-    "nodemailer": "catalog:"
+    "nodemailer": "catalog:",
+    "@seo/fixes": "workspace:*",
+    "@seo/keywords": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "catalog:",

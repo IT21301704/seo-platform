@@ -6,19 +6,12 @@ import type { JsonValue } from "@seo/shared";
 import { ActionForm } from "@/components/action-form";
 import { IssueHistory } from "@/components/monitoring-charts";
 import { PageBody, PageHeader } from "@/components/page-header";
-import {
-  ButtonLink,
-  Card,
-  CardLabel,
-  Mono,
-  Pill,
-  SeverityPill,
-  Table,
-  Td,
-  Th,
-} from "@/components/ui";
+import { Button, Card, CardLabel, Mono, Pill, SeverityPill, Table, Td, Th } from "@/components/ui";
 import { CATEGORY_LABEL, FIX_LABEL } from "@/lib/labels";
-import { PREVIEWABLE } from "@/lib/fixes";
+import { batchLabel, canAutoFix } from "@/lib/fixes";
+import { KEYWORD_CHECKS } from "@seo/keywords";
+import { generateFix } from "../../fixes/actions";
+import { KeywordIssue } from "./keyword-issue";
 import { latestCompletedCrawl } from "@/lib/queries";
 import { canEdit, requireProject, requireUser } from "@/lib/session";
 import { formatDateTime, formatNumber, formatShortDate, pathOf, plural } from "@/lib/utils";
@@ -42,6 +35,8 @@ export default async function IssueDetailPage({
 }) {
   const { id, ruleId } = await params;
   const { all } = await searchParams;
+  if (ruleId in KEYWORD_CHECKS)
+    return <KeywordIssue projectId={id} ruleId={ruleId as keyof typeof KEYWORD_CHECKS} />;
   const rule = RULES_BY_ID.get(ruleId);
   if (!rule) notFound();
   const { user, db } = await requireUser();
@@ -64,8 +59,15 @@ export default async function IssueDetailPage({
   const applicable = (ruleReport?.counts.pass ?? 0) + (ruleReport?.counts.fail ?? 0);
   const siteLevel = failing.length > 0 && failing.every((o) => o.url === null);
   const fixKey = ruleReport?.fixType ?? "guide";
-  const preview = PREVIEWABLE.has(rule.id) && failing.length > 0;
-  const previewHref = `/projects/${project.id}/fixes/preview-${rule.id.toLowerCase()}`;
+  const preview = canAutoFix(rule.id) && failing.length > 0 && canEdit(user.role);
+  const generate = generateFix.bind(null, project.id, rule.id);
+  const lastBatch = await db.fixBatch.findFirst({
+    where: { projectId: project.id, ruleId: rule.id },
+    orderBy: { createdAt: "desc" },
+  });
+  const fixed = lastBatch
+    ? ["publishing", "verifying", "rechecking", "verified"].includes(lastBatch.state)
+    : false;
   const shown = all ? failing : failing.slice(0, PAGE_ROWS);
 
   const [ga4, recent, comments] = await Promise.all([
@@ -117,7 +119,11 @@ export default async function IssueDetailPage({
             >
               {FIX_LABEL[fixKey]}
             </Pill>
-            {preview && <ButtonLink href={previewHref}>Generate &amp; preview fix</ButtonLink>}
+            {preview && (
+              <form action={generate}>
+                <Button type="submit">Generate &amp; preview fix</Button>
+              </form>
+            )}
           </>
         }
       />
@@ -308,20 +314,39 @@ export default async function IssueDetailPage({
               <CardLabel>Auto-fix</CardLabel>
               <div className="flex flex-wrap gap-1.5">
                 <Pill tone="pass">Detect ✓</Pill>
-                <Pill tone={preview ? "pass" : "gray"}>Recommend{preview ? " ✓" : ""}</Pill>
-                <Pill tone={preview ? "info" : "gray"}>Preview</Pill>
-                <Pill tone="gray">Approve</Pill>
-                <Pill tone="gray">Apply</Pill>
-                <Pill tone="gray">Verify</Pill>
+                <Pill tone={lastBatch ? "pass" : "gray"}>Recommend{lastBatch ? " ✓" : ""}</Pill>
+                <Pill tone={lastBatch?.state === "preview" ? "info" : lastBatch ? "pass" : "gray"}>
+                  Preview
+                </Pill>
+                <Pill tone={lastBatch?.approvedAt ? "pass" : "gray"}>Approve</Pill>
+                <Pill tone={lastBatch?.publishedAt ? "pass" : "gray"}>Apply</Pill>
+                <Pill tone={lastBatch?.state === "verified" ? "pass" : "gray"}>Verify</Pill>
               </div>
               <p className="m-0 text-sm leading-relaxed text-muted">
                 {rule.autoFixable
                   ? rule.riskLevel === "low"
-                    ? "Low risk. AI drafts each change, the rule engine re-checks it, and you approve before anything is published. Publishing arrives with the WordPress plugin (Phase 3)."
-                    : "Higher risk: each change will need your approval. Auto-fix for this rule arrives in Phase 3."
+                    ? "Low risk. Each change is drafted, re-checked by the rule engine and shown to you; you can approve them in bulk. The old value is saved first and every change can be rolled back."
+                    : canAutoFix(rule.id)
+                      ? "Higher risk: you approve each change one by one. The old value is saved first and every change can be rolled back."
+                      : "Automatic fixing for this rule is not available yet. Follow the steps in How to fix."
                   : "This issue needs a manual change. Follow the steps in How to fix."}
               </p>
-              {preview && <ButtonLink href={previewHref}>Generate &amp; preview fix</ButtonLink>}
+              {lastBatch && (
+                <p className="m-0 text-sm">
+                  Latest:{" "}
+                  <Link href={`/projects/${project.id}/fixes/${lastBatch.id}`}>
+                    batch #{batchLabel(lastBatch.number)}
+                  </Link>{" "}
+                  ({lastBatch.state.replace("_", " ")})
+                </p>
+              )}
+              {preview && (
+                <form action={generate}>
+                  <Button type="submit" variant="secondary">
+                    Generate &amp; preview fix
+                  </Button>
+                </form>
+              )}
             </Card>
             <Card className="flex flex-col gap-3 p-5">
               <CardLabel>Verification</CardLabel>
@@ -337,7 +362,14 @@ export default async function IssueDetailPage({
               <div className="flex items-center gap-2">
                 <Pill tone={failing.length ? "crit" : "pass"}>Before {failing.length} failing</Pill>
                 <span aria-hidden="true">→</span>
-                <Pill tone="gray">After: pending</Pill>
+                <Pill tone={lastBatch?.state === "verified" ? "pass" : "gray"}>
+                  After:{" "}
+                  {lastBatch?.state === "verified"
+                    ? "fix verified on the live pages"
+                    : fixed
+                      ? "checking"
+                      : "pending"}
+                </Pill>
               </div>
             </Card>
             <Card className="flex flex-col gap-2 p-5">

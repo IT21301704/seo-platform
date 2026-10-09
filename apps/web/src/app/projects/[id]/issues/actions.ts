@@ -5,13 +5,14 @@ import { mailerFromEnv } from "@seo/worker/notify";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
+import { canAutoFix, startFixBatch } from "@/lib/fixes";
 import { appUrl } from "@/lib/google";
 import { assertCanEdit, logAction, requireProject, requireUser } from "@/lib/session";
 
 const STATUSES = ["open", "in_progress", "fixed", "ignored"] as const;
 
 const BulkSchema = z.object({
-  action: z.enum(["status", "ignore", "assign", "due"]),
+  action: z.enum(["status", "ignore", "assign", "due", "autofix"]),
   status: z.enum(STATUSES).optional(),
   reason: z.string().trim().max(500).optional(),
   assigneeId: z.string().optional(),
@@ -59,6 +60,8 @@ export async function bulkUpdate(
     projectId,
     OR: [{ id: { in: itemIds } }, { issueId: { in: issueIds }, auditTag: { not: "resolved" } }],
   };
+
+  if (action === "autofix") return autoFixSelection(db, user, projectId, where);
 
   let data: Prisma.IssueItemUncheckedUpdateManyInput;
   let assignee: { id: string; email: string; name: string | null } | null = null;
@@ -117,6 +120,34 @@ export async function bulkUpdate(
   }
   revalidatePath(`/projects/${projectId}/issues`);
   return { ok: true, message: `${result.count} item${result.count === 1 ? "" : "s"} updated` };
+}
+
+/** Bulk "Auto-fix": one preview batch per fixable rule, limited to the selected pages (M19 → M12). */
+async function autoFixSelection(
+  db: Awaited<ReturnType<typeof requireUser>>["db"],
+  user: Awaited<ReturnType<typeof requireUser>>["user"],
+  projectId: string,
+  where: Prisma.IssueItemWhereInput,
+): Promise<BulkResult> {
+  const items = await db.issueItem.findMany({
+    where: { ...where, status: { notIn: ["ignored", "verified"] } },
+    select: { ruleId: true, url: true },
+    take: 2000,
+  });
+  const byRule = new Map<string, string[]>();
+  for (const i of items)
+    if (canAutoFix(i.ruleId)) byRule.set(i.ruleId, [...(byRule.get(i.ruleId) ?? []), i.url]);
+  if (byRule.size === 0)
+    return { ok: false, message: "None of the selected issues can be fixed automatically yet." };
+  const ids: string[] = [];
+  for (const [ruleId, urls] of byRule) {
+    const result = await startFixBatch(db, user, projectId, ruleId, { urls });
+    if ("error" in result) return { ok: false, message: result.error };
+    ids.push(result.id);
+  }
+  redirect(
+    ids.length === 1 ? `/projects/${projectId}/fixes/${ids[0]}` : `/projects/${projectId}/fixes`,
+  );
 }
 
 /** Saves the current filters as a named view for this user. */

@@ -1,4 +1,5 @@
-// Seeds example-store.com with six audits of the fixture sites (REQUIREMENTS: use example-store.com
+// Seeds example-store.com with six audits of the fixture sites, demo Google + keyword data and a
+// sitemap check (REQUIREMENTS: use example-store.com
 // for seed data). Runs the real pipeline in-process against fixtures, so no network is used.
 import { randomBytes } from "node:crypto";
 import { PlaywrightRenderer } from "@seo/crawler/playwright";
@@ -8,6 +9,7 @@ import { llmClientFromEnv } from "@seo/llm";
 import { createCrawl, createSitemapCheck } from "./crawls";
 import { loadRootEnv, requireEnv } from "./env";
 import { syncGoogle } from "./google-sync";
+import { refreshKeywords } from "./keywords";
 import { registerRules } from "./persist";
 import { runPipeline } from "./pipeline";
 import { runSitemapCheck } from "./sitemap-check";
@@ -95,6 +97,14 @@ for (const [i, audit] of AUDITS.entries()) {
     `${audit.date.slice(0, 10)}  ${audit.fixture.padEnd(17)} health ${report.score.health}`,
   );
 }
+
+// Keyword research (M18): clusters, keyword map and KWD issues from the demo query snapshot.
+const keywords = await refreshKeywords(project.id, {
+  db,
+  llm,
+  now: () => new Date("2026-09-24T06:00:00Z"),
+});
+console.log(`Keywords: ${keywords.clusters} clusters, ${keywords.issues} keyword issues`);
 
 const check = await createSitemapCheck(db, project.id);
 await runSitemapCheck(check.id, {

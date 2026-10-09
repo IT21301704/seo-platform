@@ -35,7 +35,9 @@
     "recharts": "catalog:",
     "tailwind-merge": "catalog:",
     "zod": "catalog:",
-    "@seo/integrations": "workspace:*"
+    "@seo/integrations": "workspace:*",
+    "@seo/fixes": "workspace:*",
+    "@seo/keywords": "workspace:*"
   },
   "devDependencies": {
     "@playwright/test": "catalog:",

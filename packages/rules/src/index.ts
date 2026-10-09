@@ -8,3 +8,4 @@ export {
 } from "../onpage/onp-004-meta-description";
 export type { DescriptionCheck } from "../onpage/onp-004-meta-description";
 export { RULES, RULES_BY_ID } from "./registry";
+export { TITLE_MIN, TITLE_MAX } from "../onpage/onp-003-title-length";

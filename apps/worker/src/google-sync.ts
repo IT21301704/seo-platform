@@ -14,6 +14,7 @@ import {
 } from "@seo/integrations";
 import type { JsonHttp } from "@seo/integrations";
 import { ga4ApiFor, gscApiFor } from "./google";
+import { saveKeywordSnapshot } from "./keywords";
 
 export interface GoogleSyncDeps {
   db: ScopedPrisma;
@@ -24,6 +25,7 @@ export interface GoogleSyncDeps {
 
 export interface GoogleSyncResult {
   gscSnapshotId: string | null;
+  keywordSnapshotId: string | null;
   ga4SnapshotId: string | null;
   inspected: number;
   quotaUsed: number;
@@ -71,6 +73,7 @@ export async function syncGoogle(
   const integrations = await db.integration.findMany({ where: { projectId, status: "connected" } });
   const result: GoogleSyncResult = {
     gscSnapshotId: null,
+    keywordSnapshotId: null,
     ga4SnapshotId: null,
     inspected: 0,
     quotaUsed: 0,
@@ -101,6 +104,20 @@ export async function syncGoogle(
       });
       result.gscSnapshotId = snapshot.id;
 
+      // Keyword research (M18): query × page × country, saved as its own dated snapshot.
+      try {
+        result.keywordSnapshotId = await saveKeywordSnapshot(db, {
+          projectId,
+          provider: gsc.provider === "demo" ? "demo" : "google",
+          siteUrl: gsc.externalId,
+          range,
+          api,
+          now,
+        });
+      } catch (error) {
+        result.errors.push(`Search Console queries: ${(error as Error).message.slice(0, 200)}`);
+      }
+
       // URL Inspection: today's batch within the remaining daily quota.
       const quota = await inspectionQuota(db, projectId, now);
       const candidates = await inspectionCandidates(db, projectId, clicksByUrl);
@@ -112,7 +129,8 @@ export async function syncGoogle(
           const i = await api.inspect(gsc.externalId, url);
           await countInspection(db, project.organizationId, projectId, quota.day);
           const data = {
-            inspectedAt: new Date(),
+            // The sync clock, not the wall clock: audits use inspections made up to the snapshot.
+            inspectedAt: deps.now(),
             verdict: i.verdict,
             coverageState: i.coverageState,
             indexingState: i.indexingState,

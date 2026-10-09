@@ -20,7 +20,8 @@
     "db:migrate": "pnpm --filter @seo/db db:migrate",
     "db:migration:sql": "pnpm --filter @seo/db db:migration:sql",
     "fixtures:update": "pnpm --filter @seo/fixtures fixtures:update",
-    "db:seed": "pnpm --filter @seo/worker seed"
+    "db:seed": "pnpm --filter @seo/worker seed",
+    "wp:setup": "pnpm --filter @seo/worker wp:setup"
   },
   "devDependencies": {
     "@eslint/js": "catalog:",

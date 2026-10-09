@@ -61,13 +61,6 @@ test.describe("Phase 1 MVP audit flow", () => {
     expect(xlsx.headers()["content-type"]).toContain("spreadsheetml");
   });
 
-  test("auto-fix review is a read-only preview", async ({ page }) => {
-    const project = await signIn(page);
-    await page.goto(`${project}/fixes/preview-onp-004`);
-    await expect(page.getByRole("heading", { name: "Review AI fixes" })).toBeVisible();
-    await expect(page.getByRole("button", { name: /Approve \d+ & publish/ })).toBeDisabled();
-  });
-
   test("onboarding detects the site and shows the verification token", async ({ page }) => {
     await signIn(page);
     await page.goto("/onboarding");

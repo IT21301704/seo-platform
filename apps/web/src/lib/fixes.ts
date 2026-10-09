@@ -1,95 +1,83 @@
 import "server-only";
-import { extractPageFacts } from "@seo/crawler";
 import type { ScopedPrisma } from "@seo/db";
-import { draftDescriptions, llmClientFromEnv } from "@seo/llm";
-import type { PageExcerpt } from "@seo/llm";
-import { recheckDescription } from "@seo/rules";
-import type { DescriptionCheck } from "@seo/rules";
-import { DbLlmCache } from "@seo/worker/llm-cache";
-import { S3BlobStore, gunzip } from "@seo/worker/storage";
+import { FIX_KINDS, kindForRule } from "@seo/fixes";
+import type { FixKind } from "@seo/fixes";
+import type { WpValue } from "@seo/integrations";
+import { createFixBatch } from "@seo/worker/fixes";
+import { enqueueFixJob } from "@seo/worker/queue";
 import { latestCompletedCrawl } from "./queries";
+import type { CurrentUser } from "./session";
 
-/** Rules with an AI draft preview in Phase 1 (read-only screen 07). */
-export const PREVIEWABLE = new Set(["ONP-004"]);
-export const MAX_PREVIEW_PAGES = 24;
+export const batchLabel = (n: number): string => `B-${String(n).padStart(4, "0")}`;
 
-export interface PreviewRow {
-  url: string;
-  current: string;
-  suggestion: string | null;
-  check: DescriptionCheck | null;
-}
+/** True when Phase 3 can generate a fix preview for this rule. */
+export const canAutoFix = (ruleId: string): boolean => kindForRule(ruleId) !== null;
 
-export interface PreviewData {
-  crawlId: string;
-  rows: PreviewRow[];
-  llmConfigured: boolean;
-  generated: boolean;
-  modelId: string | null;
-}
-
-/** Loads the failing ONP-004 pages of the latest audit, their current values and any cached drafts. */
-export async function loadDescriptionPreview(
+/**
+ * Starts a fix batch for a rule from the latest audit (or a sitemap check) and queues the
+ * preview generation. Nothing is published until the owner approves it on screen 07.
+ */
+export async function startFixBatch(
   db: ScopedPrisma,
+  user: CurrentUser,
   projectId: string,
-  generate: boolean,
-): Promise<PreviewData | null> {
-  const latest = await latestCompletedCrawl(db, projectId);
-  const rule = latest?.report.rules.find((r) => r.ruleId === "ONP-004");
-  if (!latest || !rule) return null;
-  const urls = rule.outcomes
-    .filter((o) => o.result === "fail" && o.url)
-    .map((o) => o.url as string)
-    .slice(0, MAX_PREVIEW_PAGES);
-
-  const pages = await db.page.findMany({
-    where: { crawlId: latest.crawl.id },
-    include: { facts: { where: { key: "metaDescription" } } },
-  });
-  const currentByUrl = new Map(pages.map((p) => [p.url, String(p.facts[0]?.value ?? "")]));
-
-  // Page excerpts (title, headings, first 2,000 words) come from the stored HTML snapshots.
-  const blobs = S3BlobStore.fromEnv();
-  const excerpts: PageExcerpt[] = [];
-  for (const url of urls) {
-    const page = pages.find((p) => p.url === url);
-    const html = page?.snapshotPath ? await blobs.get(page.snapshotPath) : null;
-    const facts = html ? extractPageFacts(gunzip(html), url) : null;
-    excerpts.push({
-      url,
-      title: facts?.title ?? null,
-      headings: facts?.headings.slice(0, 20).map((h) => h.text) ?? [],
-      text: facts?.mainText.split(" ").slice(0, 2000).join(" ") ?? "",
-    });
+  ruleId: string,
+  options: { urls?: string[]; sitemapCheckId?: string } = {},
+): Promise<{ id: string } | { error: string }> {
+  if (!canAutoFix(ruleId)) return { error: `${ruleId} has no automatic fix yet.` };
+  let crawlId: string | undefined;
+  if (!options.sitemapCheckId) {
+    const latest = await latestCompletedCrawl(db, projectId);
+    if (!latest) return { error: "Run an audit first." };
+    crawlId = latest.crawl.id;
   }
-
-  const llm = llmClientFromEnv();
-  const drafts = await draftDescriptions(excerpts, {
-    llm,
-    cache: new DbLlmCache(db),
-    cachedOnly: !generate,
+  const batch = await createFixBatch(db, {
+    projectId,
+    organizationId: user.organizationId,
+    ruleId,
+    userId: user.id,
+    crawlId,
+    sitemapCheckId: options.sitemapCheckId,
+    urls: options.urls,
   });
-  const suggestionByUrl = new Map(drafts?.output.drafts.map((d) => [d.url, d.description]) ?? []);
-
-  const rows = urls.map((url) => {
-    const suggestion = suggestionByUrl.get(url) ?? null;
-    // The rule engine, not the LLM, decides whether a draft is acceptable.
-    const others = [
-      ...[...currentByUrl].filter(([u, d]) => u !== url && d !== "").map(([, d]) => d),
-      ...[...suggestionByUrl].filter(([u]) => u !== url).map(([, d]) => d),
-    ];
-    return {
-      url,
-      current: currentByUrl.get(url) ?? "",
-      suggestion,
-      check: suggestion === null ? null : recheckDescription(suggestion, others),
-    };
+  await enqueueFixJob({
+    batchId: batch.id,
+    organizationId: user.organizationId,
+    action: "generate",
   });
-  return {
-    crawlId: latest.crawl.id,
-    rows,
-    llmConfigured: llm !== null,
-    generated: drafts !== null,
-    modelId: drafts?.modelId ?? llm?.modelId ?? null,
-  };
+  await db.auditLog.create({
+    data: {
+      organizationId: user.organizationId,
+      actorId: user.id,
+      action: "fix.batch.create",
+      entityType: "fix_batch",
+      entityId: batch.id,
+      after: { ruleId, urls: options.urls ?? null, sitemapCheckId: options.sitemapCheckId ?? null },
+      source: "user",
+    },
+  });
+  return { id: batch.id };
 }
+
+/** A fix value as text for tables (booleans and objects become plain words). */
+export function displayValue(kind: string, value: unknown): string {
+  const v = value as WpValue;
+  if (v === null || v === undefined || v === "") return "";
+  switch (kind as FixKind) {
+    case "noindex":
+      return v === true ? "noindex" : "index (noindex removed)";
+    case "sitemap_exclude":
+      return v === true ? "Removed from sitemap" : "Listed in sitemap";
+    case "sitemap_include":
+      return v === false ? "Listed in sitemap" : "Not in sitemap";
+    case "redirect":
+      return typeof v === "object" && !Array.isArray(v) ? `${v.status} → ${v.to}` : String(v);
+    case "robots_sitemap":
+      return Array.isArray(v) ? v.join("\n") : String(v);
+    default:
+      return typeof v === "string" ? v : JSON.stringify(v);
+  }
+}
+
+/** Text fields the owner can edit in the review table. */
+export const editable = (kind: string): boolean => FIX_KINDS[kind as FixKind]?.input !== "fixed";

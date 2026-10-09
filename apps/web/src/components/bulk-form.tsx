@@ -45,11 +45,18 @@ export function BulkForm({
         <span className="mr-auto text-sm font-semibold">
           {selected === 0 ? "Select issues or pages" : `${selected} selected`}
         </span>
-        <button type="button" disabled className={button} title="Auto-fix arrives in Phase 3">
-          Auto-fix
-        </button>
         {editable && (
           <>
+            <button
+              type="submit"
+              name="action"
+              value="autofix"
+              className={button}
+              disabled={pending || selected === 0}
+              title="Preview automatic fixes for the selection (nothing is published without approval)"
+            >
+              Auto-fix
+            </button>
             <label className="sr-only" htmlFor="bulk-assignee">
               Assignee
             </label>

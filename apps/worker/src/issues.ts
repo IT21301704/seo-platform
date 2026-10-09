@@ -1,7 +1,21 @@
 // Issue manager sync (REQUIREMENTS M19): one issue per rule, one item per rule × URL, tracked
 // across audits by stableKey = ruleId + normalised URL, and tagged New / Still open / Resolved / Regressed.
 import type { AuditTag, IssueItemStatus, IssueSource, Prisma, ScopedPrisma } from "@seo/db";
-import type { AuditReport } from "@seo/scoring";
+import type { Category, Severity } from "@seo/shared";
+import type { JsonValue } from "@seo/shared";
+
+/** What syncIssues reads from a report (an AuditReport, or keyword check results). */
+export interface SyncReport {
+  rootUrl: string;
+  rules: {
+    ruleId: string;
+    title: string;
+    category: Category;
+    severity: Severity;
+    priority: { priority: number };
+    outcomes: { url: string | null; result: string; evidence: Record<string, JsonValue> }[];
+  }[];
+}
 
 type Tx = Parameters<Parameters<ScopedPrisma["$transaction"]>[0]>[0];
 
@@ -42,7 +56,7 @@ export function nowPassing(current: {
 export interface SyncArgs {
   projectId: string;
   crawlId: string;
-  report: AuditReport;
+  report: SyncReport;
   now: Date;
   /** Who produced these results (issue manager "Source"). */
   source: IssueSource;

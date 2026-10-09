@@ -1,6 +1,15 @@
 import type { JsonHttp } from "../http";
 import { ok } from "../http";
-import type { Band, CruxMetrics, Ga4Api, GscApi, GscSitemap, Inspection, SearchRow } from "./types";
+import type {
+  Band,
+  CruxMetrics,
+  Ga4Api,
+  GscApi,
+  GscSitemap,
+  Inspection,
+  QueryRow,
+  SearchRow,
+} from "./types";
 
 const WEBMASTERS = "https://www.googleapis.com/webmasters/v3";
 const INSPECT = "https://searchconsole.googleapis.com/v1/urlInspection/index:inspect";
@@ -8,6 +17,8 @@ const GA4_DATA = "https://analyticsdata.googleapis.com/v1beta";
 const GA4_ADMIN = "https://analyticsadmin.googleapis.com/v1beta";
 const CRUX = "https://chromeuxreport.googleapis.com/v1/records:queryRecord";
 const ROW_LIMIT = 25_000;
+/** Query × page × country rows per snapshot (the API maximum per request). */
+const QUERY_ROW_LIMIT = 25_000;
 
 const num = (v: unknown): number | null =>
   v === undefined || v === null || v === "" ? null : Number(v);
@@ -63,6 +74,36 @@ export class GoogleGscApi implements GscApi {
       clicks: r.clicks,
       impressions: r.impressions,
       ctr: r.ctr,
+      position: r.position,
+    }));
+  }
+
+  async queryAnalytics(
+    siteUrl: string,
+    range: { startDate: string; endDate: string },
+  ): Promise<QueryRow[]> {
+    const body = ok(
+      await this.http.send<{
+        rows?: { keys: string[]; clicks: number; impressions: number; position: number }[];
+      }>({
+        method: "POST",
+        url: `${WEBMASTERS}/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`,
+        headers: await this.auth(),
+        json: {
+          ...range,
+          dimensions: ["query", "page", "country"],
+          rowLimit: QUERY_ROW_LIMIT,
+          dataState: "final",
+        },
+      }),
+      "GSC query analytics",
+    );
+    return (body.rows ?? []).map((r) => ({
+      query: r.keys[0] ?? "",
+      page: r.keys[1] ?? "",
+      country: r.keys[2] ?? "",
+      clicks: r.clicks,
+      impressions: r.impressions,
       position: r.position,
     }));
   }

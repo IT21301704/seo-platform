@@ -62,7 +62,7 @@ test.describe("Phase 2: Google data, monitoring, sitemap API, issue manager", ()
     ).toContain("xml");
     expect((await request.post(`${href}/fixes`, { headers: auth })).status()).toBe(403);
 
-    // A write key reaches the reserved auto-fix endpoint, which is not built until Phase 3.
+    // A write key creates fix batches (previews) for the failing sitemap rules (Phase 3).
     await page.goto(`${project}/api`);
     await page.getByLabel("Name").fill(`e2e write ${Date.now()}`);
     await page.getByRole("checkbox", { name: "sitemap:write" }).check();
@@ -71,7 +71,20 @@ test.describe("Phase 2: Google data, monitoring, sitemap API, issue manager", ()
     const fixes = await request.post(`${href}/fixes`, {
       headers: { authorization: `Bearer ${writeKey}` },
     });
-    expect(fixes.status()).toBe(501);
+    expect(fixes.status()).toBe(202);
+    const created = (await fixes.json()) as {
+      batches: { batchId: string; ruleId: string; href: string }[];
+    };
+    expect(created.batches.length).toBeGreaterThan(0);
+    const writeAuth = { authorization: `Bearer ${writeKey}` };
+    const highRisk = created.batches[0];
+    // High-risk sitemap fixes are approved one by one.
+    const approve = await request.post(`${highRisk?.href}/approve`, { headers: writeAuth });
+    expect(approve.status()).toBe(400);
+    expect(((await approve.json()) as { error: { code: string } }).error.code).toBe("approve_each");
+    const batch = await request.get(highRisk?.href ?? "", { headers: auth });
+    expect(batch.status()).toBe(200);
+    expect(((await batch.json()) as { ruleId: string }).ruleId).toMatch(/^SMP-/);
   });
 
   test("webhooks must use https", async ({ page }) => {

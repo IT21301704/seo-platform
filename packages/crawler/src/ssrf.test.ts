@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { HttpFetcher } from "./http-fetcher";
-import { assertSafeUrl, guardedLookup, isBlockedAddress } from "./ssrf";
+import {
+  assertSafeUrl,
+  devAllowedHosts,
+  guardedLookup,
+  isBlockedAddress,
+  isDevAllowedUrl,
+} from "./ssrf";
 import { FetchError } from "./types";
 
 describe("isBlockedAddress", () => {
@@ -65,5 +71,25 @@ describe("HttpFetcher", () => {
       code: "blocked",
     });
     await fetcher.close();
+  });
+});
+
+describe("DEV_ALLOW_PRIVATE_HOSTS (local development only)", () => {
+  const env = { DEV_ALLOW_PRIVATE_HOSTS: "localhost:8088, host.docker.internal:8088" };
+
+  it("allows exactly the listed host and port", () => {
+    expect(isDevAllowedUrl(new URL("http://localhost:8088/wp-json/"), env)).toBe(true);
+    expect(isDevAllowedUrl(new URL("http://localhost:8089/"), env)).toBe(false);
+    expect(isDevAllowedUrl(new URL("http://localhost/"), env)).toBe(false);
+    expect(isDevAllowedUrl(new URL("http://127.0.0.1:8088/"), env)).toBe(false);
+  });
+
+  it("is ignored in production", () => {
+    expect(devAllowedHosts({ ...env, NODE_ENV: "production" }).size).toBe(0);
+  });
+
+  it("is empty unless set", () => {
+    expect(devAllowedHosts({}).size).toBe(0);
+    expect(() => assertSafeUrl("http://localhost:8088/")).toThrow(FetchError);
   });
 });

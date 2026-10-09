@@ -8,6 +8,8 @@ export interface JsonRequest {
   /** JSON body, or form fields (sent as application/x-www-form-urlencoded). */
   json?: unknown;
   form?: Record<string, string>;
+  /** Pre-serialised JSON body, sent byte-for-byte (needed when the body is signed). */
+  rawJson?: string;
 }
 
 export interface JsonResponse<T = unknown> {
@@ -49,13 +51,16 @@ export class GuardedJsonHttp implements JsonHttp {
     headers = {},
     json,
     form,
+    rawJson,
   }: JsonRequest): Promise<JsonResponse<T>> {
     const target = assertSafeUrl(url);
     const body = form
       ? new URLSearchParams(form).toString()
-      : json === undefined
-        ? undefined
-        : JSON.stringify(json);
+      : rawJson !== undefined
+        ? rawJson
+        : json === undefined
+          ? undefined
+          : JSON.stringify(json);
     const res = await request(target, {
       method,
       dispatcher: this.agent,
@@ -63,7 +68,7 @@ export class GuardedJsonHttp implements JsonHttp {
         accept: "application/json",
         ...(form
           ? { "content-type": "application/x-www-form-urlencoded" }
-          : json === undefined
+          : json === undefined && rawJson === undefined
             ? {}
             : { "content-type": "application/json" }),
         ...headers,

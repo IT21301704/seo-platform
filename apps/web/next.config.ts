@@ -17,6 +17,8 @@ const config: NextConfig = {
     "@seo/scoring",
     "@seo/integrations",
     "@seo/llm",
+    "@seo/fixes",
+    "@seo/keywords",
     "@seo/worker",
   ],
   serverExternalPackages: [

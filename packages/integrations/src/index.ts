@@ -5,3 +5,5 @@ export * from "./google/types";
 export * from "./google/oauth";
 export * from "./google/clients";
 export * from "./google/demo";
+export * from "./wordpress/signing";
+export * from "./wordpress/client";

@@ -1,6 +1,7 @@
 import type { Integration } from "@seo/db";
 import { disconnect, syncNow } from "@/app/projects/[id]/connect/actions";
 import { Card, CardLabel, Pill } from "@/components/ui";
+import type { BackPage } from "@/lib/google";
 import { formatDateTime } from "@/lib/utils";
 
 const small =
@@ -16,7 +17,7 @@ export function GoogleConnections({
   projectId: string;
   integrations: Integration[];
   editable: boolean;
-  back: "sitemap" | "monitoring";
+  back: BackPage;
 }) {
   const rows = [
     {

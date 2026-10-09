@@ -6,7 +6,14 @@ import { enqueueGoogleSync } from "@seo/worker/queue";
 import { cookies } from "next/headers";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/db";
-import { OAUTH_COOKIE, appUrl, demoGoogleAllowed, isGoogleType, oauthClient } from "@/lib/google";
+import {
+  OAUTH_COOKIE,
+  appUrl,
+  demoGoogleAllowed,
+  isGoogleType,
+  oauthClient,
+  backPage,
+} from "@/lib/google";
 
 /** Starts connecting Search Console or GA4 for a project. */
 export async function GET(request: Request): Promise<Response> {
@@ -24,7 +31,7 @@ export async function GET(request: Request): Promise<Response> {
   const db = forOrganization(prisma, user.organizationId);
   const project = await db.project.findUnique({ where: { id: projectId } });
   if (!project) return new Response("Not found", { status: 404 });
-  const returnTo = `${appUrl()}/projects/${project.id}/${back === "monitoring" ? "monitoring" : "sitemap"}`;
+  const returnTo = `${appUrl()}/projects/${project.id}/${backPage(back)}`;
 
   const client = oauthClient();
   if (!client) {

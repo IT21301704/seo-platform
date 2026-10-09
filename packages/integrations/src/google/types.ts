@@ -7,6 +7,17 @@ export interface SearchRow {
   position: number;
 }
 
+/** Search Console row by query, page and country (keyword research, M18). */
+export interface QueryRow {
+  query: string;
+  page: string;
+  /** ISO 3166-1 alpha-3, lower case (Search Console format), e.g. "lka". */
+  country: string;
+  clicks: number;
+  impressions: number;
+  position: number;
+}
+
 export interface GscSitemap {
   path: string;
   lastSubmitted: string | null;
@@ -38,6 +49,11 @@ export interface GscApi {
     siteUrl: string,
     range: { startDate: string; endDate: string },
   ): Promise<SearchRow[]>;
+  /** Query × page × country rows for keyword research. */
+  queryAnalytics(
+    siteUrl: string,
+    range: { startDate: string; endDate: string },
+  ): Promise<QueryRow[]>;
   listSitemaps(siteUrl: string): Promise<GscSitemap[]>;
   inspect(siteUrl: string, url: string): Promise<Inspection>;
 }

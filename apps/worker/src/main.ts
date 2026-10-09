@@ -1,4 +1,5 @@
-// Worker process: audits, sitemap checks, Google sync, webhook deliveries and the scheduler.
+// Worker process: audits, sitemap checks, Google sync, keywords, auto-fixes, webhook deliveries
+// and the scheduler.
 import { PlaywrightRenderer } from "@seo/crawler/playwright";
 import { createPrismaClient, forOrganization } from "@seo/db";
 import { GuardedJsonHttp } from "@seo/integrations";
@@ -6,21 +7,35 @@ import { llmClientFromEnv } from "@seo/llm";
 import { Queue, Worker } from "bullmq";
 import type { Job } from "bullmq";
 import { loadRootEnv, requireEnv } from "./env";
+import { applyFixBatch, generateFixBatch, verifyFixBatch } from "./fixes";
+import type { FixDeps } from "./fixes";
 import { syncGoogle } from "./google-sync";
+import { refreshKeywords } from "./keywords";
 import { mailerFromEnv } from "./notify";
 import { registerRules } from "./persist";
 import { runPipeline } from "./pipeline";
 import { ProgressReporter } from "./progress";
 import {
   AUDIT_QUEUE,
+  FIX_QUEUE,
   GOOGLE_SYNC_QUEUE,
+  KEYWORD_QUEUE,
   SCHEDULER_QUEUE,
   SITEMAP_QUEUE,
   WEBHOOK_QUEUE,
+  enqueueFixJob,
+  enqueueKeywordRefresh,
   enqueueWebhookDelivery,
   redisConnection,
 } from "./queue";
-import type { AuditJobData, GoogleSyncJobData, SitemapJobData, WebhookJobData } from "./queue";
+import type {
+  AuditJobData,
+  FixJobData,
+  GoogleSyncJobData,
+  KeywordJobData,
+  SitemapJobData,
+  WebhookJobData,
+} from "./queue";
 import { schedulerTick } from "./scheduler";
 import { runSitemapCheck } from "./sitemap-check";
 import { S3BlobStore } from "./storage";
@@ -99,6 +114,7 @@ const workers = [
         http,
         now,
       });
+      if (result.keywordSnapshotId) await enqueueKeywordRefresh(job.data);
       if (result.errors.length)
         console.warn(`google sync ${job.data.projectId}: ${result.errors.join("; ")}`);
       return result;
@@ -118,6 +134,35 @@ const workers = [
       concurrency: 4,
     },
   ),
+  new Worker<KeywordJobData>(
+    KEYWORD_QUEUE,
+    async (job) =>
+      refreshKeywords(job.data.projectId, {
+        db: forOrganization(prisma, job.data.organizationId),
+        llm,
+        now,
+      }),
+    { connection: connection(), concurrency: 1 },
+  ),
+  new Worker<FixJobData>(
+    FIX_QUEUE,
+    async (job) => {
+      const { batchId, organizationId, action } = job.data;
+      const deps: FixDeps = {
+        db: forOrganization(prisma, organizationId),
+        blobs,
+        llm,
+        http,
+        now,
+        scheduleVerify: (id, delay) =>
+          enqueueFixJob({ batchId: id, organizationId, action: "verify" }, delay),
+      };
+      if (action === "generate") await generateFixBatch(batchId, deps);
+      else if (action === "apply") await applyFixBatch(batchId, deps);
+      else await verifyFixBatch(batchId, deps);
+    },
+    { connection: connection(), concurrency: 2 },
+  ),
   new Worker(SCHEDULER_QUEUE, async () => schedulerTick({ prisma, now, alerts }), {
     connection: connection(),
     concurrency: 1,
@@ -136,7 +181,7 @@ for (const w of workers) {
   w.on("failed", (job, err) => console.error(`${w.name} ${job?.id} failed: ${err.message}`));
 }
 console.log(
-  `Worker listening on queue "${AUDIT_QUEUE}" (+ ${SITEMAP_QUEUE}, ${GOOGLE_SYNC_QUEUE}, ${WEBHOOK_QUEUE}, ${SCHEDULER_QUEUE}); LLM: ${llm ? llm.modelId : "template explanations only"}`,
+  `Worker listening on queue "${AUDIT_QUEUE}" (+ ${SITEMAP_QUEUE}, ${GOOGLE_SYNC_QUEUE}, ${KEYWORD_QUEUE}, ${FIX_QUEUE}, ${WEBHOOK_QUEUE}, ${SCHEDULER_QUEUE}); LLM: ${llm ? llm.modelId : "template explanations only"}`,
 );
 
 const shutdown = async () => {
