@@ -1,3 +1,4 @@
+import { SITEMAP_FIX_RULE_IDS } from "@seo/fixes";
 import Link from "next/link";
 import type { RuleReport } from "@seo/scoring";
 import { URL_INSPECTION_DAILY_LIMIT } from "@seo/integrations";
@@ -27,7 +28,7 @@ import {
   hostOf,
   pathOf,
 } from "@/lib/utils";
-import { runSitemapCheckAction } from "./actions";
+import { fixSitemapAction, runSitemapCheckAction } from "./actions";
 
 const GSC_STATES = [
   "Submitted and indexed",
@@ -66,7 +67,10 @@ export default async function SitemapCheckPage({ params }: { params: Promise<{ i
   const rules = ((latest?.results ?? []) as unknown as RuleReport[])
     .slice()
     .sort((a, b) => a.ruleId.localeCompare(b.ruleId));
-  const fixable = rules.filter((r) => r.status === "fail" && r.autoFixable).length;
+  // Only rules with an automatic fix (M17 auto-fix); the others stay guide-only.
+  const fixable = rules.filter(
+    (r) => r.status === "fail" && SITEMAP_FIX_RULE_IDS.includes(r.ruleId),
+  ).length;
   const applicable = rules.filter((r) => r.status !== "na");
   const indexFiles = latest?.files.filter((f) => f.kind === "sitemapindex").length ?? 0;
   const gsc = latest?.gsc as {
@@ -119,9 +123,17 @@ export default async function SitemapCheckPage({ params }: { params: Promise<{ i
               </Button>
             </form>
           )}
-          <Button type="button" disabled title="Sitemap auto-fix arrives in Phase 3">
-            Fix {fixable} {fixable === 1 ? "issue" : "issues"} automatically
-          </Button>
+          {editable && latest && fixable > 0 ? (
+            <form action={fixSitemapAction.bind(null, project.id, latest.id)}>
+              <Button type="submit">
+                Fix {fixable} {fixable === 1 ? "issue" : "issues"} automatically
+              </Button>
+            </form>
+          ) : (
+            <Button type="button" disabled title="No sitemap issue with an automatic fix">
+              Fix {fixable} {fixable === 1 ? "issue" : "issues"} automatically
+            </Button>
+          )}
         </>
       }
     />

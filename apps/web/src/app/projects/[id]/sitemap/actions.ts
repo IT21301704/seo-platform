@@ -1,9 +1,11 @@
 "use server";
 
+import { SITEMAP_FIX_RULE_IDS } from "@seo/fixes";
 import { createSitemapCheck } from "@seo/worker/crawls";
 import { enqueueSitemapCheck } from "@seo/worker/queue";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { startFixBatch } from "@/lib/fixes";
 import { assertCanEdit, logAction, requireProject, requireUser } from "@/lib/session";
 
 /** "Run check" / "Re-check sitemap": queue a sitemap check (the same job the API starts). */
@@ -48,4 +50,26 @@ export async function toggleAdded(projectId: string, urlId: string, added: boole
     after: { url: row.url },
   });
   revalidatePath(`/projects/${projectId}/sitemap/urls`);
+}
+
+/**
+ * "Fix N automatically" (M17 auto-fix): one preview batch per failing sitemap rule that has an
+ * automatic fix, built from this check. Nothing is published until each batch is approved.
+ */
+export async function fixSitemapAction(projectId: string, checkId: string): Promise<void> {
+  const { user, db } = await requireUser();
+  assertCanEdit(user);
+  await requireProject(db, projectId);
+  const check = await db.sitemapCheck.findFirstOrThrow({ where: { id: checkId, projectId } });
+  const failing = ((check.results ?? []) as { ruleId: string; status: string }[])
+    .filter((r) => r.status === "fail" && SITEMAP_FIX_RULE_IDS.includes(r.ruleId))
+    .map((r) => r.ruleId);
+  const ids: string[] = [];
+  for (const ruleId of failing) {
+    const result = await startFixBatch(db, user, projectId, ruleId, { sitemapCheckId: check.id });
+    if ("id" in result) ids.push(result.id);
+  }
+  redirect(
+    ids.length === 1 ? `/projects/${projectId}/fixes/${ids[0]}` : `/projects/${projectId}/fixes`,
+  );
 }

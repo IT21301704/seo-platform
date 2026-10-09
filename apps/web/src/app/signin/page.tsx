@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { AuthError } from "next-auth";
 import { auth, devLoginEnabled, googleEnabled, signIn } from "@/auth";
 import { Button, Card } from "@/components/ui";
+import { prisma } from "@/lib/db";
 
 async function emailSignIn(formData: FormData): Promise<void> {
   "use server";
@@ -31,7 +32,12 @@ export default async function SignInPage({
 }: {
   searchParams: Promise<{ sent?: string; error?: string }>;
 }) {
-  if ((await auth())?.user) redirect("/");
+  // Only skip the form for a session whose user still exists (a deleted user, e.g. after a
+  // re-seed, would otherwise bounce between "/" and "/signin" forever).
+  const userId = (await auth())?.user?.id;
+  if (userId && (await prisma.user.findUnique({ where: { id: userId }, select: { id: true } }))) {
+    redirect("/");
+  }
   const { sent, error } = await searchParams;
   return (
     <main className="flex min-h-screen items-center justify-center p-4">

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { RULES } from "@seo/rules";
-import { COUNTRY_TIMEZONE } from "@seo/worker/schedule";
+import { COUNTRY_TIMEZONE, nextCrawlAt } from "@seo/worker/schedule";
 import { ActionForm } from "@/components/action-form";
 import { GoogleConnections } from "@/components/google-connections";
 import { IssueHistory, QuerySelect, ScoreHistory } from "@/components/monitoring-charts";
@@ -125,10 +125,17 @@ export default async function MonitoringPage({
       }
     | undefined;
 
+  // Until the scheduler has stored the next run, show when it will be.
+  const nextRun =
+    project.nextCrawlAt ??
+    (project.crawlFrequency === "manual"
+      ? null
+      : nextCrawlAt(project.crawlFrequency, project.timezone, new Date()));
+
   return (
     <>
       <PageHeader
-        eyebrow={`${frequencyLabel}${project.nextCrawlAt ? ` · next run ${formatZoned(project.nextCrawlAt, project.timezone)}` : ""}`}
+        eyebrow={`${frequencyLabel}${nextRun ? ` · next run ${formatZoned(nextRun, project.timezone)}` : ""}`}
         title="Monitoring"
         actions={<QuerySelect name="range" label="Range" value={range} options={RANGES} />}
       />

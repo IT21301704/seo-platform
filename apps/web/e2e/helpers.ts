@@ -18,15 +18,13 @@ export async function signIn(page: Page, project = "example-store.com"): Promise
   if (((await switcher(page).textContent()) ?? "").includes(project)) {
     return new URL(page.url()).pathname;
   }
-  const before = new URL(page.url()).pathname;
-  await switcher(page).click();
-  await page
-    .getByRole("list", { name: "Switch project" })
-    .getByRole("link", { name: project, exact: true })
-    .click();
-  await page.waitForURL(
-    (url) => url.pathname !== before && /^\/projects\/[^/]+$/.test(url.pathname),
-  );
+  // Read the link instead of clicking: on phones the sidebar (and its switcher) is hidden.
+  const href = await page
+    .getByRole("list", { name: "Switch project", includeHidden: true })
+    .getByRole("link", { name: project, exact: true, includeHidden: true })
+    .getAttribute("href");
+  if (!href) throw new Error(`No project named ${project}`);
+  await page.goto(href);
   return new URL(page.url()).pathname;
 }
 
@@ -34,9 +32,8 @@ export async function signIn(page: Page, project = "example-store.com"): Promise
 export async function hasProject(page: Page, project: string): Promise<boolean> {
   await signIn(page);
   if (((await switcher(page).textContent()) ?? "").includes(project)) return true;
-  await switcher(page).click();
   const link = page
-    .getByRole("list", { name: "Switch project" })
-    .getByRole("link", { name: project, exact: true });
+    .getByRole("list", { name: "Switch project", includeHidden: true })
+    .getByRole("link", { name: project, exact: true, includeHidden: true });
   return (await link.count()) > 0;
 }

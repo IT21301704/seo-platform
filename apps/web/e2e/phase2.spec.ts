@@ -2,18 +2,20 @@ import { expect, test } from "@playwright/test";
 import { signIn } from "./helpers";
 
 test.describe("Phase 2: Google data, monitoring, sitemap API, issue manager", () => {
-  test("sitemap check (screen 13) shows checks, quota and runs a new check", async ({ page }) => {
+  test("sitemap check (screen 13) shows checks and quota; auto-fix opens previews", async ({
+    page,
+  }) => {
     const project = await signIn(page);
     await page.goto(`${project}/sitemap`);
     await expect(page.getByRole("heading", { name: "Sitemap check", exact: true })).toBeVisible();
     await expect(page.getByText("Google index status (URL Inspection)")).toBeVisible();
     await expect(page.getByText(/limit 2,000 per day/)).toBeVisible();
     await expect(page.getByText("Demo data").first()).toBeVisible();
-    await expect(page.getByRole("button", { name: /automatically/ })).toBeDisabled();
-    await page.getByRole("button", { name: "Run check" }).click();
-    await expect(page.getByRole("button", { name: "Check running…" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Run check" })).toBeVisible({ timeout: 150_000 });
     await expect(page.getByText("Sitemap files")).toBeVisible();
+    // M17 auto-fix: previews only; nothing is published without approval.
+    await page.getByRole("button", { name: /Fix \d+ issues? automatically/ }).click();
+    await expect(page).toHaveURL(/\/fixes(\/[^/]+)?$/);
+    await expect(page.getByRole("heading", { name: /Auto-fix review|Review fixes/ })).toBeVisible();
   });
 
   test("sitemap URL lists (screen 14) have both tabs and downloads", async ({ page }) => {
@@ -148,5 +150,15 @@ test.describe("Phase 2: Google data, monitoring, sitemap API, issue manager", ()
     await page.getByRole("link", { name: /Notifications, \d+ unread/ }).click();
     await expect(page).toHaveURL(`${project}/notifications`);
     await expect(page.getByRole("heading", { name: "Notifications", exact: true })).toBeVisible();
+  });
+
+  // Last: a new check of the (clean) fixture site replaces the seeded check with its faults.
+  test("Run check starts a new sitemap check", async ({ page }) => {
+    const project = await signIn(page);
+    await page.goto(`${project}/sitemap`);
+    await page.getByRole("button", { name: "Run check" }).click();
+    await expect(page.getByRole("button", { name: "Check running…" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Run check" })).toBeVisible({ timeout: 150_000 });
+    await expect(page.getByText("Sitemap files")).toBeVisible();
   });
 });
