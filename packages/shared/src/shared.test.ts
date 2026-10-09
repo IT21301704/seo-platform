@@ -46,3 +46,27 @@ describe("rule ids", () => {
     expect(isRuleId(id)).toBe(false);
   });
 });
+
+describe("plans", () => {
+  it("grow monotonically and gate features by plan", async () => {
+    const { PLANS, PLAN_ORDER, allowedFrequency, planAllowsFix, usageMonthStart } =
+      await import("./plans");
+    for (let i = 1; i < PLAN_ORDER.length; i++) {
+      const prev = PLANS[PLAN_ORDER[i - 1] ?? "free"];
+      const next = PLANS[PLAN_ORDER[i] ?? "free"];
+      expect(next.projects).toBeGreaterThanOrEqual(prev.projects);
+      expect(next.pagesPerCrawl).toBeGreaterThanOrEqual(prev.pagesPerCrawl);
+      expect(next.copilotQuestions).toBeGreaterThanOrEqual(prev.copilotQuestions);
+    }
+    expect(allowedFrequency(PLANS.free, "daily")).toBe("manual");
+    expect(allowedFrequency(PLANS.starter, "daily")).toBe("weekly");
+    expect(allowedFrequency(PLANS.pro, "weekly")).toBe("weekly");
+    expect(planAllowsFix(PLANS.free, "low")).toBe(false);
+    expect(planAllowsFix(PLANS.starter, "low")).toBe(true);
+    expect(planAllowsFix(PLANS.starter, "high")).toBe(false);
+    expect(planAllowsFix(PLANS.pro, "high")).toBe(true);
+    expect(usageMonthStart(new Date("2026-10-09T21:00:00Z")).toISOString()).toBe(
+      "2026-10-01T00:00:00.000Z",
+    );
+  });
+});

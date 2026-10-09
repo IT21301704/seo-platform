@@ -15,6 +15,8 @@ export const PROMPT_VERSION = "v1.0";
  * from PROMPT_VERSION, which is stored on reports: these prompts never feed a report.
  */
 export const DRAFT_PROMPT_VERSION = "draft-v1.0";
+/** Version of the Copilot prompt and answer schema (M15). Never part of a report. */
+export const COPILOT_PROMPT_VERSION = "copilot-v1.0";
 
 /** The full fingerprint saved on every crawl/report. */
 export interface VersionSet {

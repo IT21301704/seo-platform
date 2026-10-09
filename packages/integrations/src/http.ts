@@ -2,7 +2,7 @@ import { assertSafeUrl, guardedLookup } from "@seo/crawler";
 import { Agent, request } from "undici";
 
 export interface JsonRequest {
-  method: "GET" | "POST";
+  method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   url: string;
   headers?: Record<string, string>;
   /** JSON body, or form fields (sent as application/x-www-form-urlencoded). */
