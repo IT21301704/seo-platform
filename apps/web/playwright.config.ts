@@ -8,6 +8,8 @@ const env = {
   AUTH_DEV_LOGIN: "true",
   FIXTURE_SITES: "true",
   FIXTURE_SITE_NAME: "golden-site",
+  // No scheduled audits or syncs while tests run against the seeded data.
+  SCHEDULER_ENABLED: "false",
 };
 
 export default defineConfig({

@@ -53,6 +53,7 @@ const alerts = {
   appUrl: process.env["APP_URL"] ?? "http://localhost:3000",
 };
 const now = () => new Date();
+const schedulerEnabled = process.env["SCHEDULER_ENABLED"] !== "false";
 const connection = () => redisConnection();
 
 await registerRules(prisma);
@@ -163,18 +164,24 @@ const workers = [
     },
     { connection: connection(), concurrency: 2 },
   ),
-  new Worker(SCHEDULER_QUEUE, async () => schedulerTick({ prisma, now, alerts }), {
-    connection: connection(),
-    concurrency: 1,
-  }),
+  // SCHEDULER_ENABLED=false (e2e tests): ticks are ignored, so seeded data is not re-audited.
+  new Worker(
+    SCHEDULER_QUEUE,
+    async () => (schedulerEnabled ? schedulerTick({ prisma, now, alerts }) : null),
+    {
+      connection: connection(),
+      concurrency: 1,
+    },
+  ),
 ];
 
 const scheduler = new Queue(SCHEDULER_QUEUE, { connection: connection() });
-await scheduler.upsertJobScheduler(
-  "tick",
-  { every: 5 * 60_000 },
-  { name: "tick", opts: { removeOnComplete: 50, removeOnFail: 50 } },
-);
+if (schedulerEnabled)
+  await scheduler.upsertJobScheduler(
+    "tick",
+    { every: 5 * 60_000 },
+    { name: "tick", opts: { removeOnComplete: 50, removeOnFail: 50 } },
+  );
 
 for (const w of workers) {
   w.on("completed", (job) => console.log(`${w.name} ${job.id} completed`));

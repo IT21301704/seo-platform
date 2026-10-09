@@ -136,7 +136,7 @@ Format: **Decision** — why. (Revisit: when to reconsider.)
 69. **Ranges:** Search Console uses the 28 days ending 3 days ago (data delay); GA4 uses the last 28 complete days.
 70. **OAuth is read-only** (`webmasters.readonly`, `analytics.readonly`). Tokens are encrypted with AES-256-GCM (`ENCRYPTION_KEY`) and refreshed server-side; they never reach the browser. The OAuth state is an encrypted, short-lived cookie compared in constant time. All Google calls go through the SSRF-guarded HTTP client.
 71. **Demo provider:** when no Google OAuth client is configured and `FIXTURE_SITES=true` (development only), "Connect" creates a deterministic demo connection labelled "Demo data" everywhere. The seed uses it. It is refused in production.
-72. **Where Google is connected:** the Integrations screen (09) is Phase 3, so the Connect / Sync now / Disconnect controls sit on the Sitemap check and Monitoring screens. Onboarding step 3 points there ("After setup"), because the project does not exist yet while the form is filled in.
+72. **Where Google is connected:** in Phase 2, before the Integrations screen (09) existed, the Connect / Sync now / Disconnect controls sit on the Sitemap check and Monitoring screens. Onboarding step 3 points there ("After setup"), because the project does not exist yet while the form is filled in.
 73. **Ruleset 1.1.0 adds three GSC rules: SMP-003 (sitemap submitted in Search Console), SMP-013 (Search Console reports sitemap errors) and SMP-014 (listed in sitemap but not indexed).** They are N/A without GSC data, so fixture scores are unchanged (golden = 100); reports were re-recorded for the version bump.
 
 ### Monitoring and alerts (M10, M11)
@@ -149,7 +149,7 @@ Format: **Decision** — why. (Revisit: when to reconsider.)
 ### Sitemap Validation API (M17)
 79. **A sitemap check reuses the crawler and the SMP rules** on its own record (`smc_…` id), without a full audit. Its issues have source "Sitemap API" and it only resolves SMP issues, so it never closes audit issues.
 80. **Lists:** "Add manually" only contains URLs that return 200, are self-canonical, indexable, not blocked by robots.txt, missing from every sitemap *and* cannot be added automatically (generator unknown or not writable). "Remove" lists sitemap URLs that are not 200, noindex, canonicalised elsewhere or blocked, with the reason. Downloads: CSV, JSON and an XML urlset.
-81. **REST API under `/v1`:** Bearer API keys (`seo_live_…`, shown once, stored as SHA-256), scopes `sitemap:read` / `sitemap:write`, 60 requests per minute per key (Redis). A signed-in session also works for the same endpoints (used by the download buttons); viewers are read-only. The fix endpoints (`/fixes`, `/fix-batches/…`) return 501 until Phase 3 ("no auto-fix yet").
+81. **REST API under `/v1`:** Bearer API keys (`seo_live_…`, shown once, stored as SHA-256), scopes `sitemap:read` / `sitemap:write`, 60 requests per minute per key (Redis). A signed-in session also works for the same endpoints (used by the download buttons); viewers are read-only. The fix endpoints (`/fixes`, `/fix-batches/…`) returned 501 until Phase 3 (see 102).
 82. **Webhooks:** https only, SSRF-checked when saved and when sent. Events `sitemap.check.completed` and `audit.completed`. Header `x-seo-signature: t=<unix>,v1=<hex>` = HMAC-SHA256 of `<t>.<body>`; receivers should reject timestamps older than 5 minutes. 5 retries with exponential backoff; every attempt is logged.
 
 ### Issue manager (M19)
@@ -157,3 +157,41 @@ Format: **Decision** — why. (Revisit: when to reconsider.)
 84. **Saved views are per user** and store the filter query string. There is one view per filter set: saving the same filters under a new name renames the view.
 85. **Bulk actions:** status, ignore (reason required), assign (notifies the assignee in-app and by email), due date. Exports: CSV and Excel with the same filters (max 50,000 rows).
 86. **Comments are per issue type**, with `@name` / `@email` mentions that notify teammates. Notifications (mentions, assignments, regressions, alerts) have a page and an unread badge in the sidebar.
+
+## Phase 3 — Auto-fix, WordPress plugin, verify and rollback, sitemap fixes, keywords (Oct 2026)
+
+### Auto-fix engine (M12)
+87. **Fix kinds per rule** (`packages/fixes`): meta description (ONP-004), title (ONP-001/002/003), image alt (ONP-008) and broken internal link (LNK-002) are **low risk** (pre-ticked when they pass the re-check, bulk approval). noindex (IDX-003), canonical (IDX-001/002), redirect chain (TEC-004), robots.txt `Sitemap:` line (SMP-002), sitemap removal (SMP-007/008/009/010) and sitemap inclusion (SMP-012) are **high risk** (never pre-ticked; the API requires each fix id). Other auto-fixable rules (schema, AI crawler rules, sitemap regeneration, lastmod, robots edits beyond the Sitemap line) stay "guide only" in Phase 3.
+88. **The rule engine re-checks every proposed value by simulation:** the value is applied to the stored audit snapshot (HTML head, image alt, links, redirect chain, robots.txt, sitemap XML) and the same rules are re-run. All drafts of a batch are applied together, so drafts that duplicate each other fail. The LLM never decides acceptance.
+89. **Drafts:** descriptions and titles come from Claude (cached; titles use the new `DRAFT_PROMPT_VERSION = draft-v1.0`, kept separate from `PROMPT_VERSION` so reports and cached explanations do not change). Without an API key the owner types the values. Alt text comes from the file name (deterministic; marked "check it matches the picture"); broken-link targets from the most similar crawled page. Nothing invents numbers.
+90. **A batch covers one rule** and at most 200 items, numbered per project (`B-0001`). Generation runs in the worker (`fixes` queue). "Regenerate all" replaces an unpublished preview.
+91. **Publishing needs a verified domain and a connected target.** Without WordPress the batch is preview-only, with a CSV of the values that pass (REQUIREMENTS M13 "No access → download corrected files").
+
+### WordPress companion plugin (M13)
+92. **Connection:** the app creates a connection key `seowp_<base64url {app, key id, secret}>`, shown once; the secret is stored encrypted on the integration row. The owner pastes it in Settings → SEO Platform. "Check connection" calls the plugin's signed `/status`; a correctly signed answer from the project's host **verifies the domain** (new verification method `plugin`), because only a site admin can install the key.
+93. **Signing (both directions):** headers `x-seo-key`, `x-seo-timestamp`, `x-seo-nonce`, `x-seo-signature: v1=<hex>`, HMAC-SHA256 over `timestamp\nnonce\nMETHOD\nroute\nsha256(body)`; ±5 minutes; nonces single-use (WordPress transients / Redis). The REST route is called through `?rest_route=`, so it works without pretty permalinks. A shared test vector checks that PHP and TypeScript sign identically.
+94. **Fix the generator:** values are written where the active SEO plugin reads them: Yoast (`_yoast_wpseo_*`), Rank Math (`rank_math_*`), or the plugin's own fields when neither is active (it then outputs title, description, robots and canonical itself). Alt text goes to the media library, plus a `wp_content_img_tag` filter for content images without alt. Redirects, robots.txt lines and sitemap exclusions are plugin options applied through WordPress, Yoast and Rank Math filters. Category and tag archives cannot be changed yet (item skipped and shown as manual).
+95. **Every write is conditional:** the plugin writes only if the site still has the value we expect, otherwise `conflict`. Publishing reads the old value and stores it before writing; rollback writes the old value only if the site still shows what we published, then reads it back and compares. Values are normalised (null = not set, booleans, arrays); that normalised value is what "exactly the original value" means.
+96. **Content-change webhooks** (`page.updated`, `page.deleted`) re-audit the site at most once per 10 minutes per project (BullMQ job id per time bucket). Changes made by the platform itself are not reported back.
+97. **Rank Math outputs nothing until its setup wizard is finished or skipped;** the plugin reports `seoPluginReady` and "Check connection" explains it. Local dev: `pnpm wp:setup` (WP-CLI in Docker) installs WordPress, the plugin, optionally Yoast and Rank Math (`-- --seo-plugins`), sample content with known faults, connects it to a "WordPress test site" project and audits it.
+98. **Dev-only SSRF exception:** `DEV_ALLOW_PRIVATE_HOSTS=localhost:8088` lets the worker reach the Docker site (exact host and port). It is ignored when `NODE_ENV=production`.
+
+### Verification, audit log, rollback (M14)
+99. **Verify = re-crawl the changed URLs** (and robots.txt or sitemaps for those fixes), patch them into the audit snapshot and re-run the same rules; text fields must also show the published value. A page that does not load never counts as verified. Retries at 5 min, 30 min and 24 h (delayed jobs, "Re-checking · CDN cache, next try …"); after that, fixes that never verified are **rolled back automatically** and the approver is notified.
+100. **Issue items follow fixes:** published → Fixed, verified → Verified, rolled back → Open. The next audit tags them as usual.
+101. **Audit log:** every create, edit, approve, publish, verification failure and rollback is logged with actor, before and after values and source (AI, user or system). The Change log (screen 08) shows published batches with per-item Undo, Roll back batch and Re-apply.
+
+### Sitemap auto-fix (M17)
+102. **`POST /v1/sitemap-checks/{id}/fixes`** creates one batch per failing sitemap rule that has a fix (using the check's own stored snapshot); `GET /v1/fix-batches/{id}` shows its state; `/approve` (high risk: `fixIds` required) and `/rollback` work. SMP-003 "submit via API" stays manual: it needs the write scope `webmasters`, and Phase 2 chose read-only OAuth.
+
+### Keyword research (M18)
+103. **Source: Search Console query × page × country**, saved daily as a dated `keyword_snapshots` row (up to 25,000 rows). No paid provider yet: volume and difficulty show "—" with "Connect keyword data"; language filtering also needs a provider (Search Console has no language dimension).
+104. **Deterministic analysis** (`packages/keywords`): impression-weighted positions; intent from fixed word lists; ideas = queries sharing a word with the seed; quick wins = position 5–20 and at least 50 impressions; cannibalization (KWD-002) = two or more pages each with at least 10% and 10 impressions of a query; content gap = a cluster with no mapped page ranking in the top 20.
+105. **Clusters:** Claude groups the queries (cached, no numbers asked); queries it leaves out, or all of them without an API key, are grouped by their most common word.
+106. **Keyword map:** one primary plus up to 5 secondary keywords per page, filled automatically from Search Console clicks. Entries the owner sets are never changed automatically. KWD-001 checks the primary keyword's words in the title, H1 and description (no density targets).
+107. **Keyword issues are not part of the Health Score** (they depend on the owner's map and on Search Console data). They appear in the issue manager with source "Keywords".
+108. **Page briefs** for content gaps are Claude drafts for review (cached, Zod-validated, no volumes or ranking claims).
+
+### Other
+109. **Project switcher** in the sidebar, for owners with several sites (for example after adding the WordPress test site).
+110. **Bug fixed:** URL inspections were stamped with the wall clock instead of the sync time, so an audit could miss them when the sync time and the clock differ.

@@ -59,6 +59,10 @@ jobs:
 
       - name: Fixture tests (golden = 100, broken sites, determinism ×10, ruleset gate)
         run: pnpm test:fixtures
+      - name: WordPress plugin (PHP syntax + signature test vector)
+        run: |
+          for f in apps/wp-plugin/*.php apps/wp-plugin/includes/*.php apps/wp-plugin/tests/*.php; do php -l "$f"; done
+          php apps/wp-plugin/tests/signature-test.php
 
       - name: Seed example-store.com
         run: pnpm db:seed

@@ -35,7 +35,7 @@ test.describe("Phase 3: auto-fix, change log, integrations, keyword research", (
     const zip = await page.request.get(`${project}/integrations/wordpress/plugin.zip`);
     expect(zip.headers()["content-type"]).toBe("application/zip");
     expect((await zip.body()).subarray(0, 2).toString()).toBe("PK");
-    await page.getByRole("button", { name: /connection key/ }).click();
+    await page.getByRole("button", { name: /Create (connection key|a new key)/ }).click();
     await expect(page.getByRole("status").locator("code")).toHaveText(/^seowp_/);
   });
 
@@ -180,16 +180,10 @@ test.describe("Phase 3: auto-fix, change log, integrations, keyword research", (
     await expect(card.getByText("Verified 1 / 1")).toBeVisible();
     page.once("dialog", (d) => void d.accept());
     await card.getByRole("button", { name: /^Roll back/ }).click();
-    await expect(card.getByText(/rolled back to the saved old value/)).toBeVisible({
+    // Rolled back: the saved old value is restored and "Re-apply" is offered.
+    await expect(card.getByText("Rolled back", { exact: true }).first()).toBeVisible({
       timeout: 60_000,
     });
-    await page.reload();
-    await expect(
-      page
-        .getByRole("region", { name: /^Batch B-/ })
-        .first()
-        .getByText("Rolled back")
-        .first(),
-    ).toBeVisible();
+    await expect(card.getByRole("button", { name: "Re-apply" })).toBeVisible();
   });
 });

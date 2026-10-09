@@ -196,16 +196,20 @@ export interface Cluster {
 
 /**
  * Word-based clusters used when no LLM is configured: each query joins the cluster of its most
- * common significant word across all queries (ties alphabetical).
+ * common significant word across all queries (ties alphabetical), ignoring words that appear in
+ * more than half of the queries.
  */
 export function fallbackClusters(keywords: readonly string[]): Cluster[] {
   const unique = [...new Set(keywords)].sort();
   const freq = new Map<string, number>();
   for (const k of unique)
     for (const w of new Set(significantWords(k))) freq.set(w, (freq.get(w) ?? 0) + 1);
+  // Words in more than half of all queries (e.g. "mug" for a mug shop) do not tell topics apart.
+  const tooCommon = (w: string) => unique.length > 2 && (freq.get(w) ?? 0) > unique.length / 2;
   const groups = new Map<string, string[]>();
   for (const k of unique) {
-    const words = [...new Set(significantWords(k))];
+    const all = [...new Set(significantWords(k))];
+    const words = all.some((w) => !tooCommon(w)) ? all.filter((w) => !tooCommon(w)) : all;
     const head =
       words.sort((a, b) => (freq.get(b) ?? 0) - (freq.get(a) ?? 0) || a.localeCompare(b))[0] ?? k;
     groups.set(head, [...(groups.get(head) ?? []), k]);

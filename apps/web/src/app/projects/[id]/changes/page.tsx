@@ -51,7 +51,10 @@ export default async function ChangeLogPage({
     where,
     orderBy: { publishedAt: "desc" },
     take: 50,
-    include: { fixes: { where: { state: { not: "draft" } }, orderBy: { url: "asc" } } },
+    // Only changes that were published (drafts and skipped items never reached the site).
+    include: {
+      fixes: { where: { state: { notIn: ["draft", "skipped"] } }, orderBy: { url: "asc" } },
+    },
   });
   const userIds = [
     ...new Set(batches.flatMap((b) => [b.approvedById, b.rolledBackById]).filter(Boolean)),

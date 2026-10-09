@@ -28,14 +28,17 @@ Full spec: `docs/REQUIREMENTS.md` (single source of truth). Decisions log: `docs
 - `pnpm install` — needs pnpm 10 (`npm i -g pnpm@10` or `corepack enable`)
 - `pnpm --filter @seo/crawler exec playwright install chromium` — browser for rendering, PDF export and e2e
 - `pnpm db:migrate` — apply Prisma migrations (needs `DATABASE_URL`); `pnpm db:generate` — Prisma client
-- `pnpm db:seed` — example-store.com with 6 fixture audits, demo Google data and a sitemap check (dev login: owner@example-store.com)
+- `pnpm db:seed` — example-store.com with 6 fixture audits, demo Google + keyword data and a sitemap check (dev login: owner@example-store.com)
+- `pnpm wp:setup` — after the seed: installs WordPress + our plugin in Docker (WP-CLI), sample content with known faults, connects it as project "localhost:8088" and audits it; add `-- --seo-plugins` to also install Yoast SEO and Rank Math (needs `DEV_ALLOW_PRIVATE_HOSTS=localhost:8088`)
 - `pnpm dev` — web (http://localhost:3000) + worker
 - `pnpm lint` / `pnpm typecheck` / `pnpm format:check`
-- `pnpm test` — unit + integration tests (Vitest; DB tests, incl. the 50k-item issue manager test, skip when Postgres is down)
+- `pnpm test` — unit + integration tests (Vitest; DB tests, incl. the 50k-item issue manager test, skip when Postgres is down; the WordPress apply → verify → rollback proof in `apps/worker/src/wordpress.test.ts` skips when the Docker plugin is not reachable)
+- `docker compose exec wordpress php wp-content/plugins/seo-platform/tests/signature-test.php` — PHP signing matches TypeScript
 - `pnpm test:fixtures` — golden = 100, broken-site results, determinism (10 runs), report snapshots
 - `pnpm fixtures:update` — re-record fixture reports (refuses unless RULESET_VERSION was bumped)
-- `pnpm test:e2e` — Playwright; starts its own worker + web on :3100 (needs docker services + `pnpm db:seed`)
+- `pnpm test:e2e` — Playwright; starts its own worker (scheduler off) + web on :3100 (needs docker services + `pnpm db:seed`; the WordPress UI test also needs `pnpm wp:setup`)
 
 ## Environment variables (never commit values)
 DATABASE_URL, REDIS_URL, S3_*, ANTHROPIC_API_KEY, LLM_MODEL_ID, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, PSI_API_KEY, ENCRYPTION_KEY (32 bytes: `openssl rand -hex 32`), NEXTAUTH_SECRET (or AUTH_SECRET), APP_URL, EMAIL_SERVER, EMAIL_FROM, STRIPE_* (Phase 4)
-Dev-only flags (never in production): AUTH_DEV_LOGIN=true, FIXTURE_SITES=true
+Dev-only flags (never in production): AUTH_DEV_LOGIN=true, FIXTURE_SITES=true, DEV_ALLOW_PRIVATE_HOSTS=localhost:8088 (SSRF exception for the Docker WordPress site; ignored in production)
+Optional: POSTGRES_PORT / REDIS_PORT (local port clash), SCHEDULER_ENABLED=false (worker ignores scheduled ticks; e2e)

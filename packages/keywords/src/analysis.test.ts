@@ -121,19 +121,15 @@ describe("map, clusters and content gaps", () => {
     ]);
   });
 
-  it("groups queries by their most common word without an LLM", () => {
-    const clusters = fallbackClusters(rows.map((r) => r.query));
-    expect(clusters[0]).toEqual({
-      name: "gift mugs",
-      keywords: [
-        "buy coffee mugs online",
-        "ceramic mugs",
-        "gift mugs",
-        "how to clean ceramic mugs",
-        "personalised mugs",
-        "personalised name mugs",
-      ],
-    });
+  it("groups queries by their most common word without an LLM, ignoring site-wide words", () => {
+    // "mug" is in 6 of 7 queries, so it does not decide the topic.
+    expect(fallbackClusters(rows.map((r) => r.query))).toEqual([
+      { name: "ceramic mugs", keywords: ["ceramic mugs", "how to clean ceramic mugs"] },
+      { name: "personalised mugs", keywords: ["personalised mugs", "personalised name mugs"] },
+      { name: "buy coffee mugs online", keywords: ["buy coffee mugs online"] },
+      { name: "example store", keywords: ["example store"] },
+      { name: "gift mugs", keywords: ["gift mugs"] },
+    ]);
   });
 
   it("reports clusters the site ranks beyond position 20 for as gaps", () => {
