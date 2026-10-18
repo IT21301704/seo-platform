@@ -24,6 +24,7 @@ Full spec: `docs/REQUIREMENTS.md` (single source of truth). Decisions log: `docs
 - Keep functions small and typed. No `any`. Prefer server components; client components only for interactivity.
 
 ## Commands (keep this section up to date)
+- Production: `docker compose -f docker-compose.prod.yml --env-file .env.production up -d --build` (see `docs/DEPLOY.md`)
 - `docker compose up -d` — Postgres, Redis, S3 storage (SeaweedFS), WordPress test site (http://localhost:8088)
 - `pnpm install` — needs pnpm 10 (`npm i -g pnpm@10` or `corepack enable`)
 - `pnpm --filter @seo/crawler exec playwright install chromium` — browser for rendering, PDF export and e2e
