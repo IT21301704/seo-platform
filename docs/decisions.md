@@ -195,3 +195,6 @@ Format: **Decision** — why. (Revisit: when to reconsider.)
 ### Other
 109. **Project switcher** in the sidebar, for owners with several sites (for example after adding the WordPress test site).
 110. **Bug fixed:** URL inspections were stamped with the wall clock instead of the sync time, so an audit could miss them when the sync time and the clock differ.
+
+### Deployment
+111. **Single-VPS deployment** with Docker Compose (`docker-compose.prod.yml`): one image for web, worker and a one-shot `migrate` service; Postgres, Redis (noeviction for BullMQ) and SeaweedFS on the internal network; Caddy terminates HTTPS. Simplest setup that runs the always-on worker and Chromium. Steps in `docs/DEPLOY.md`.

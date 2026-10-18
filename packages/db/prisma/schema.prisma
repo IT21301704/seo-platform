@@ -132,6 +132,13 @@ enum IntegrationType {
   gsc
   ga4
   wordpress
+  shopify
+  webflow
+  github
+  /// Paid keyword data (search volume, difficulty), optional (M18).
+  keyword_data
+  /// Backlink data for the Authority panel (M16).
+  backlink_data
 }
 
 /// "demo" serves deterministic sample data (local development with FIXTURE_SITES only).
@@ -140,6 +147,11 @@ enum IntegrationProvider {
   demo
   /// Our WordPress companion plugin (apps/wp-plugin).
   plugin
+  shopify
+  webflow
+  github
+  /// DataForSEO (keyword data and backlinks).
+  dataforseo
 }
 
 enum IntegrationStatus {
@@ -185,6 +197,8 @@ enum FixBatchState {
   preview
   publishing
   verifying
+  /// GitHub: the pull request is open; verification starts once it is merged.
+  awaiting_merge
   /// Verification failed once; retried after 5 min, 30 min and 24 h (CDN caches).
   rechecking
   verified
@@ -207,6 +221,10 @@ enum FixState {
 /// Where approved fixes are published.
 enum FixTarget {
   wordpress
+  shopify
+  webflow
+  /// Opens a pull request with the changed source files.
+  github
   /// No integration: the owner downloads the approved values and applies them.
   manual
 }
@@ -262,6 +280,11 @@ model Organization {
   fixes             Fix[]
   keywordSnapshots  KeywordSnapshot[]
   keywordPageMaps   KeywordPageMap[]
+  subscription      Subscription?
+  billingEvents     BillingEvent[]
+  copilotChats      CopilotConversation[]
+  copilotMessages   CopilotMessage[]
+  backlinkSnapshots BacklinkSnapshot[]
 
   @@map("organizations")
 }
@@ -277,13 +300,14 @@ model User {
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
-  organization  Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organization  Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   assignedItems IssueItem[]
   auditLogs     AuditLog[]
   accounts      Account[]
   sessions      Session[]
   comments      IssueComment[]
   notifications Notification[]
+  copilotChats  CopilotConversation[]
   savedViews    SavedView[]
 
   @@unique([email])
@@ -317,26 +341,28 @@ model Project {
   createdAt          DateTime           @default(now())
   updatedAt          DateTime           @updatedAt
 
-  organization     Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  crawls           Crawl[]
-  issues           Issue[]
-  issueItems       IssueItem[]
-  integrations     Integration[]
-  gscSnapshots     GscSnapshot[]
-  ga4Snapshots     Ga4Snapshot[]
-  cruxSnapshots    CruxSnapshot[]
-  urlInspections   UrlInspection[]
-  sitemapChecks    SitemapCheck[]
-  monitoringEvents MonitoringEvent[]
-  alertChannels    AlertChannel[]
-  alertRules       AlertRule[]
-  apiKeys          ApiKey[]
-  webhooks         Webhook[]
-  savedViews       SavedView[]
-  fixBatches       FixBatch[]
-  fixes            Fix[]
-  keywordSnapshots KeywordSnapshot[]
-  keywordPageMaps  KeywordPageMap[]
+  organization      Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  crawls            Crawl[]
+  issues            Issue[]
+  issueItems        IssueItem[]
+  integrations      Integration[]
+  gscSnapshots      GscSnapshot[]
+  ga4Snapshots      Ga4Snapshot[]
+  cruxSnapshots     CruxSnapshot[]
+  urlInspections    UrlInspection[]
+  sitemapChecks     SitemapCheck[]
+  monitoringEvents  MonitoringEvent[]
+  alertChannels     AlertChannel[]
+  alertRules        AlertRule[]
+  apiKeys           ApiKey[]
+  webhooks          Webhook[]
+  savedViews        SavedView[]
+  fixBatches        FixBatch[]
+  fixes             Fix[]
+  keywordSnapshots  KeywordSnapshot[]
+  keywordPageMaps   KeywordPageMap[]
+  copilotChats      CopilotConversation[]
+  backlinkSnapshots BacklinkSnapshot[]
 
   @@unique([organizationId, rootUrl])
   @@map("projects")
@@ -1134,6 +1160,9 @@ model FixBatch {
   /// Verification attempts so far and the next retry (5 min, 30 min, 24 h).
   verifyAttempts Int           @default(0)
   nextVerifyAt   DateTime?
+  /// GitHub: URL of the pull request that publishes the batch, and of its revert.
+  externalRef    String?
+  revertRef      String?
   error          String?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
@@ -1208,6 +1237,8 @@ model KeywordSnapshot {
   rows           Json
   /// { modelId, promptVersion, clusters: [{ name, keywords }] } or null until clustered.
   clusters       Json?
+  /// Paid provider data: { provider, fetchedAt, keywords: { [query]: { volume, difficulty } } }.
+  metrics        Json?
 
   organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -1236,4 +1267,117 @@ model KeywordPageMap {
   @@unique([projectId, url, keyword])
   @@index([organizationId, projectId, keyword])
   @@map("keyword_page_map")
+}
+
+// ─── Plans & billing (Phase 4) ──────────────────────────────────────────────
+
+enum PlanId {
+  free
+  starter
+  pro
+  agency
+}
+
+enum SubscriptionStatus {
+  active
+  trialing
+  past_due
+  canceled
+  incomplete
+}
+
+/// The plan of an organization. Provider "stripe" (Checkout and webhooks) or "demo" (local test mode).
+model Subscription {
+  id                   String             @id @default(cuid())
+  organizationId       String             @unique
+  plan                 PlanId             @default(free)
+  status               SubscriptionStatus @default(active)
+  provider             String             @default("demo")
+  stripeCustomerId     String?            @unique
+  stripeSubscriptionId String?            @unique
+  currentPeriodEnd     DateTime?
+  cancelAtPeriodEnd    Boolean            @default(false)
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
+
+/// Processed Stripe webhook events (each event is applied once).
+model BillingEvent {
+  id             String   @id @default(cuid())
+  organizationId String
+  stripeEventId  String   @unique
+  type           String
+  createdAt      DateTime @default(now())
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, createdAt])
+  @@map("billing_events")
+}
+
+// ─── AI Copilot (M15) ───────────────────────────────────────────────────────
+
+model CopilotConversation {
+  id             String   @id @default(cuid())
+  organizationId String
+  projectId      String
+  userId         String
+  title          String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  organization Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user         User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages     CopilotMessage[]
+
+  @@index([organizationId, projectId, userId, updatedAt])
+  @@map("copilot_conversations")
+}
+
+/// One turn. Assistant content: { answer, citedChecks, dataSources, actions, context }.
+model CopilotMessage {
+  id             String   @id @default(cuid())
+  organizationId String
+  conversationId String
+  role           String
+  content        Json
+  /// "template" when answered without an LLM.
+  modelId        String?
+  promptVersion  String?
+  createdAt      DateTime @default(now())
+
+  organization Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  conversation CopilotConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, conversationId, createdAt])
+  @@index([organizationId, role, createdAt])
+  @@map("copilot_messages")
+}
+
+// ─── Authority (M16) ────────────────────────────────────────────────────────
+
+/// Weekly backlink snapshot from the backlink provider. Not part of the Health Score.
+model BacklinkSnapshot {
+  id             String              @id @default(cuid())
+  organizationId String
+  projectId      String
+  provider       IntegrationProvider
+  fetchedAt      DateTime
+  /// { referringDomains, backlinks, newReferringDomains30d }
+  summary        Json
+  /// [{ domain, links, type, firstSeen, anchors }] sorted by links.
+  domains        Json
+  /// Directory listings with name, address and phone, when the provider has them.
+  citations      Json                @default("[]")
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  project      Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId, projectId, fetchedAt])
+  @@map("backlink_snapshots")
 }

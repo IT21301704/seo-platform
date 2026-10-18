@@ -87,7 +87,23 @@ export interface WordPressConnection {
   secret: string;
 }
 
+/** Every field the plugin supports. */
+export const WORDPRESS_FIELDS: ReadonlySet<WpField> = new Set<WpField>([
+  "title",
+  "description",
+  "noindex",
+  "canonical",
+  "image_alt",
+  "post_content",
+  "redirect",
+  "robots_lines",
+  "sitemap_exclude",
+]);
+
 export class WordPressClient {
+  readonly kind = "wordpress" as const;
+  readonly fields = WORDPRESS_FIELDS;
+
   constructor(
     private readonly http: JsonHttp,
     private readonly connection: WordPressConnection,
