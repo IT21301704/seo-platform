@@ -25,6 +25,7 @@ Full spec: `docs/REQUIREMENTS.md` (single source of truth). Decisions log: `docs
 
 ## Commands (keep this section up to date)
 - Production: `docker compose -f docker-compose.prod.yml --env-file .env.production up -d --build` (see `docs/DEPLOY.md`)
+- Vercel: `vercel --prod` — `vercel.json` (web container service at `/`, team-only via Vercel Deployment Protection; worker daemon; needs `PORT=3000` and external Postgres/Redis/S3, see `docs/DEPLOY.md`)
 - `docker compose up -d` — Postgres, Redis, S3 storage (SeaweedFS), WordPress test site (http://localhost:8088)
 - `pnpm install` — needs pnpm 10 (`npm i -g pnpm@10` or `corepack enable`)
 - `pnpm --filter @seo/crawler exec playwright install chromium` — browser for rendering, PDF export and e2e

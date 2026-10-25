@@ -61,3 +61,30 @@ Run it from cron and copy the file off the server. Snapshots live in the `s3-dat
 
 - Google OAuth: authorised redirect URI `https://<DOMAIN>/api/auth/callback/google`.
 - Never set `AUTH_DEV_LOGIN`, `FIXTURE_SITES` or `DEV_ALLOW_PRIVATE_HOSTS` in production.
+
+# Deploying to Vercel (services + daemon)
+
+`vercel.json` defines one Vercel project built from the root `Dockerfile`:
+
+| Name     | Kind                  | Public          | Role                                              |
+| -------- | --------------------- | --------------- | ------------------------------------------------- |
+| `web`    | container service     | team only, `/(.*)` | Next.js app: UI, `/api/*`, `/v1/*`, PDF export  |
+| `worker` | daemon (always on)    | no              | Runs migrations, then the BullMQ queue consumer    |
+
+No service bindings: web and worker only talk through Redis and Postgres.
+
+1. **External data services** (Vercel does not host them): Postgres (e.g. Neon), Redis with
+   `maxmemory-policy noeviction` (BullMQ needs it), S3-compatible storage (e.g. Cloudflare R2 or AWS S3).
+2. **Project environment variables** (Production): everything from `.env.production.example`
+   except the Postgres/Caddy ones, plus **`PORT=3000`** (the container runs as a non-root user and
+   cannot bind Vercel's default port 80). `APP_URL` = the public Vercel domain.
+3. **Deploy:** `vercel --prod` (or push to the connected branch). Migrations run when the worker starts.
+4. **Google OAuth:** add `https://<vercel-domain>/api/auth/callback/google` as a redirect URI.
+5. **Team-only access:** Project Settings → Deployment Protection → Vercel Authentication, scope
+   **All Deployments** (the standard scope leaves the production domain open). Visitors must log in
+   to Vercel as a team member before they reach our own sign-in page. Machine callers (the WordPress
+   plugin's `/v1/wordpress/events`, API-key clients on `/v1/*`) are blocked too unless they send a
+   Protection Bypass for Automation secret (`x-vercel-protection-bypass` header).
+
+Daemons are in beta and only run in **production** deployments: on preview deployments jobs
+stay queued. Test locally with `vercel dev`.
